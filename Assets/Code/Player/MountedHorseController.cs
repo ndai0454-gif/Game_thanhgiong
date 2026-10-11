@@ -77,6 +77,7 @@ public class MountedHorseController : MonoBehaviour
     private float prevForwardSpeed;
     private float currentPitchAccel;
     private GodotMountedMotion godotMotion;
+    private MountedHorseMeshMotion originalHorseMotion;
     private ThanhGiongCampaignController campaignController;
     private Coroutine attackSlash;
     private GameObject activeSlash;
@@ -103,6 +104,7 @@ public class MountedHorseController : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         godotMotion = GetComponent<GodotMountedMotion>();
+        originalHorseMotion = GetComponent<MountedHorseMeshMotion>();
         campaignController = GetComponent<ThanhGiongCampaignController>();
         gameplayCamera = Camera.main;
         if (visual == null)
@@ -144,7 +146,7 @@ public class MountedHorseController : MonoBehaviour
 
         ThanhGiongRibbonCape cape = GetComponent<ThanhGiongRibbonCape>();
         if (cape == null) cape = gameObject.AddComponent<ThanhGiongRibbonCape>();
-        cape.anchorTransform = visual != null ? visual : transform;
+        if (cape.anchorTransform == null) cape.anchorTransform = visual != null ? visual : transform;
         foreach (GeneratedCharacterMotion motion in generatedMotions)
             if (motion != null && motion.kind == GeneratedCharacterMotion.CharacterKind.ThanhGiong)
             {
@@ -180,17 +182,18 @@ public class MountedHorseController : MonoBehaviour
     {
         if (Time.deltaTime <= 0f) return;
         bool equipmentBusy = godotMotion != null && godotMotion.IsBusy;
-        Vector2 input = equipmentBusy ? Vector2.zero : new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        bool arenaMode = campaignController != null && campaignController.IsArena;
+        Vector2 input = equipmentBusy ? Vector2.zero : arenaMode ? ThanhGiongArenaInput.Move : new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         Vector3 move = CameraRelativeDirection(input);
         if (move.sqrMagnitude > .01f) { recentDirection = move; recentDirectionTime = Time.time; }
-        if (Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.LeftControl)) TryDodge(move);
+        if (arenaMode ? ThanhGiongArenaInput.Down(KeyCode.C) || ThanhGiongArenaInput.Down(KeyCode.LeftAlt) || ThanhGiongArenaInput.Down(KeyCode.LeftControl) : Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.LeftControl)) TryDodge(move);
         if (!equipmentBusy && campaignController == null && Input.GetMouseButtonDown(0))
             TryAttack();
 
-        if (!equipmentBusy && Input.GetKeyDown(KeyCode.Space))
+        if (!equipmentBusy && (arenaMode ? ThanhGiongArenaInput.Down(KeyCode.Space) : Input.GetKeyDown(KeyCode.Space)))
             RequestJump();
 
-        bool running = Input.GetKey(KeyCode.LeftShift);
+        bool running = arenaMode ? ThanhGiongArenaInput.Running : Input.GetKey(KeyCode.LeftShift);
         float speed = running ? runSpeed : walkSpeed;
         if (IsAttacking) speed *= 0.25f;
         Vector3 desiredPlanarVelocity = move * speed;
@@ -240,7 +243,8 @@ public class MountedHorseController : MonoBehaviour
         // release of WASD cannot leave the legs cycling at a fixed rate.
         if (travelSpeed > .08f)
             gaitTime += travelSpeed * (Mathf.PI * 2f) /
-                Mathf.Lerp(3.1f, 4f, speed01) *
+                (originalHorseMotion != null && originalHorseMotion.IsReady
+                    ? originalHorseMotion.CycleDistance(speed01 > .72f) : Mathf.Lerp(3.1f, 4f, speed01)) *
                 Mathf.Clamp(gallopFrequency / 9f, .5f, 1.8f) * Time.deltaTime;
         if (generatedMotions != null)
             foreach (GeneratedCharacterMotion motion in generatedMotions)
@@ -344,19 +348,21 @@ public class MountedHorseController : MonoBehaviour
             float doubleWave = Mathf.Sin(gaitTime * 2f);
 
             // True physical vertical trot & gallop bobbing
-            float verticalBob = Mathf.Abs(wave) * (running ? gallopHeight * 1.55f : gallopHeight * 0.9f);
+            bool plantedMesh = originalHorseMotion != null && originalHorseMotion.IsReady;
+            float verticalBob = Mathf.Abs(wave) * (plantedMesh ? (running ? .025f : .012f) :
+                (running ? gallopHeight * 1.55f : gallopHeight * 0.9f));
             position.y += verticalBob;
             position.z += doubleWave * 0.032f;
 
             // Pitch & roll + lean into turns + acceleration pitch
             rotation *= Quaternion.Euler(
-                doubleWave * gallopPitch + currentPitchAccel,
+                doubleWave * (plantedMesh ? .65f : gallopPitch) + currentPitchAccel * (plantedMesh ? .12f : 1f),
                 0f,
-                wave * gallopRoll + currentBankAngle
+                wave * (plantedMesh ? .4f : gallopRoll) + currentBankAngle * (plantedMesh ? .25f : 1f)
             );
 
             // Stride squash & stretch
-            targetScale = new Vector3(
+            targetScale = plantedMesh ? visualBaseScale : new Vector3(
                 visualBaseScale.x * (1f - wave * 0.018f),
                 visualBaseScale.y * (1f + wave * 0.024f),
                 visualBaseScale.z * (1f + (running ? 0.035f : 0f))
@@ -367,14 +373,15 @@ public class MountedHorseController : MonoBehaviour
             // Organic idle breathing & alert sway
             float breathe = Mathf.Sin(Time.time * 2.2f);
 
-            position += Vector3.up * (breathe * 0.022f);
-            rotation *= Quaternion.Euler(breathe * 1.2f, Mathf.Cos(Time.time * 1.3f) * 1.6f, 0f);
+            bool plantedMesh = originalHorseMotion != null && originalHorseMotion.IsReady;
+            position += Vector3.up * (breathe * (plantedMesh ? .003f : .022f));
+            rotation *= Quaternion.Euler(breathe * (plantedMesh ? .15f : 1.2f), Mathf.Cos(Time.time * 1.3f) * 1.6f, 0f);
 
             // Relax banking & pitch
             currentBankAngle = Mathf.Lerp(currentBankAngle, 0f, 1f - Mathf.Exp(-8f * Time.deltaTime));
             currentPitchAccel = Mathf.Lerp(currentPitchAccel, 0f, 1f - Mathf.Exp(-8f * Time.deltaTime));
 
-            targetScale = new Vector3(
+            targetScale = plantedMesh ? visualBaseScale : new Vector3(
                 visualBaseScale.x * (1f - breathe * 0.012f),
                 visualBaseScale.y * (1f + breathe * 0.018f),
                 visualBaseScale.z * (1f - breathe * 0.012f)
@@ -393,6 +400,11 @@ public class MountedHorseController : MonoBehaviour
 
     private void AnimateLegs(float movementAmount, bool running)
     {
+        if (originalHorseMotion != null && originalHorseMotion.IsReady)
+        {
+            originalHorseMotion.Pose(gaitTime, movementAmount, running, AttackProgress, Grounded);
+            return;
+        }
         if (legs == null || legBaseRotations == null) return;
 
         float attackProgress = attackDuration > 0.001f ? 1f - attackTimer / attackDuration : 1f;

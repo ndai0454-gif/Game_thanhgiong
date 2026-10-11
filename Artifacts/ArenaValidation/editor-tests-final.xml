@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Failed(Child)" total="10" passed="7" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-11 14:05:55Z" end-time="2026-10-11 14:05:57Z" duration="1.6303148">
+  <test-suite type="TestSuite" id="1000" name="Game_thanhgiong" fullname="Game_thanhgiong" runstate="Runnable" testcasecount="1611" result="Failed" site="Child" start-time="2026-10-11 14:05:55Z" end-time="2026-10-11 14:05:57Z" duration="1.630315" total="10" passed="7" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1016" name="ThanhGiong.ProjectTests.dll" fullname="D:/School/PRU/Game_thanhgiong/Library/ScriptAssemblies/ThanhGiong.ProjectTests.dll" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-10-11 14:05:55Z" end-time="2026-10-11 14:05:57Z" duration="1.599490" total="10" passed="7" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="5460" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestFixture" id="1003" name="MountedHorseLegAnimationTests" fullname="MountedHorseLegAnimationTests" classname="MountedHorseLegAnimationTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-11 14:05:55Z" end-time="2026-10-11 14:05:56Z" duration="0.381248" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-case id="1006" name="AllFourOriginalLegsDeformWhileTheRiderStaysStill" fullname="MountedHorseLegAnimationTests.AllFourOriginalLegsDeformWhileTheRiderStaysStill" methodname="AllFourOriginalLegsDeformWhileTheRiderStaysStill" classname="MountedHorseLegAnimationTests" runstate="Runnable" seed="1259993552" result="Passed" start-time="2026-10-11 14:05:55Z" end-time="2026-10-11 14:05:55Z" duration="0.100120" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1005" name="LevelRestPosePlacesAllFourOriginalHoovesOnOnePlane" fullname="MountedHorseLegAnimationTests.LevelRestPosePlacesAllFourOriginalHoovesOnOnePlane" methodname="LevelRestPosePlacesAllFourOriginalHoovesOnOnePlane" classname="MountedHorseLegAnimationTests" runstate="Runnable" seed="1572494447" result="Failed" start-time="2026-10-11 14:05:55Z" end-time="2026-10-11 14:05:55Z" duration="0.110939" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  Skinning must preserve the authored level rest pose.
+  Expected: less than 0.00100000005f
+  But was:  2.28641224f
+]]></message>
+            <stack-trace><![CDATA[at MountedHorseLegAnimationTests.LevelRestPosePlacesAllFourOriginalHoovesOnOnePlane () [0x00114] in D:\School\PRU\Game_thanhgiong\Assets\Tests\Editor\MountedHorseLegAnimationTests.cs:58
+]]></stack-trace>
+          </failure>
+        </test-case>
+        <test-case id="1004" name="OriginalHorseMeshReplacesTheAddedCubeLegs" fullname="MountedHorseLegAnimationTests.OriginalHorseMeshReplacesTheAddedCubeLegs" methodname="OriginalHorseMeshReplacesTheAddedCubeLegs" classname="MountedHorseLegAnimationTests" runstate="Runnable" seed="1997686746" result="Passed" start-time="2026-10-11 14:05:55Z" end-time="2026-10-11 14:05:56Z" duration="0.135034" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1007" name="ThanhGiongArenaSceneTests" fullname="ThanhGiongArenaSceneTests" classname="ThanhGiongArenaSceneTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-11 14:05:56Z" end-time="2026-10-11 14:05:56Z" duration="0.367991" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1008" name="ArenaIsFirstSceneAndKeepsPreviousWorlds" fullname="ThanhGiongArenaSceneTests.ArenaIsFirstSceneAndKeepsPreviousWorlds" methodname="ArenaIsFirstSceneAndKeepsPreviousWorlds" classname="ThanhGiongArenaSceneTests" runstate="Runnable" seed="174701870" result="Passed" start-time="2026-10-11 14:05:56Z" end-time="2026-10-11 14:05:56Z" duration="0.002790" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1009" name="SavedArenaHasConnectedGameplayAndOriginalFourLegHorse" fullname="ThanhGiongArenaSceneTests.SavedArenaHasConnectedGameplayAndOriginalFourLegHorse" methodname="SavedArenaHasConnectedGameplayAndOriginalFourLegHorse" classname="ThanhGiongArenaSceneTests" runstate="Runnable" seed="1446252526" result="Passed" start-time="2026-10-11 14:05:56Z" end-time="2026-10-11 14:05:56Z" duration="0.362801" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1010" name="ThanhGiongProjectTests" fullname="ThanhGiongProjectTests" classname="ThanhGiongProjectTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-11 14:05:56Z" end-time="2026-10-11 14:05:57Z" duration="0.847410" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-case id="1014" name="BattleMaps_HaveInvadersAndRequiredBosses" fullname="ThanhGiongProjectTests.BattleMaps_HaveInvadersAndRequiredBosses" methodname="BattleMaps_HaveInvadersAndRequiredBosses" classname="ThanhGiongProjectTests" runstate="Runnable" seed="820806092" result="Failed" start-time="2026-10-11 14:05:56Z" end-time="2026-10-11 14:05:56Z" duration="0.213548" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  Expected: greater than or equal to 20
+  But was:  0
+]]></message>
+            <stack-trace><![CDATA[at ThanhGiongProjectTests+<>c.<BattleMaps_HaveInvadersAndRequiredBosses>b__7_0 (UnityEngine.SceneManagement.Scene scene) [0x00000] in D:\School\PRU\Game_thanhgiong\Assets\Tests\Editor\ThanhGiongProjectTests.cs:140
+at ThanhGiongProjectTests.WithScene (System.String path, System.Action`1[T] check) [0x00022] in D:\School\PRU\Game_thanhgiong\Assets\Tests\Editor\ThanhGiongProjectTests.cs:40
+at ThanhGiongProjectTests.BattleMaps_HaveInvadersAndRequiredBosses () [0x00000] in D:\School\PRU\Game_thanhgiong\Assets\Tests\Editor\ThanhGiongProjectTests.cs:138
+]]></stack-trace>
+          </failure>
+          <output><![CDATA[MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Bush_1_G_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Rock_3_E_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Bush_1_F_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Rock_3_M_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Tree_Bare_2_C_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Tree_Bare_1_A_Color1.fbx)
+]]></output>
+        </test-case>
+        <test-case id="1011" name="BuildSettings_ContainsOnlyExistingScenes" fullname="ThanhGiongProjectTests.BuildSettings_ContainsOnlyExistingScenes" methodname="BuildSettings_ContainsOnlyExistingScenes" classname="ThanhGiongProjectTests" runstate="Runnable" seed="1841404935" result="Passed" start-time="2026-10-11 14:05:56Z" end-time="2026-10-11 14:05:56Z" duration="0.001506" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1015" name="CombatContracts_ArePresent" fullname="ThanhGiongProjectTests.CombatContracts_ArePresent" methodname="CombatContracts_ArePresent" classname="ThanhGiongProjectTests" runstate="Runnable" seed="1434027788" result="Passed" start-time="2026-10-11 14:05:56Z" end-time="2026-10-11 14:05:56Z" duration="0.180174" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1012" name="SceneTransitions_FollowNarrativeOrder" fullname="ThanhGiongProjectTests.SceneTransitions_FollowNarrativeOrder" methodname="SceneTransitions_FollowNarrativeOrder" classname="ThanhGiongProjectTests" runstate="Runnable" seed="1995526416" result="Passed" start-time="2026-10-11 14:05:56Z" end-time="2026-10-11 14:05:56Z" duration="0.120483" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1013" name="WorldMaps_HavePlayerCampaignCameraAndFourLegRig" fullname="ThanhGiongProjectTests.WorldMaps_HavePlayerCampaignCameraAndFourLegRig" methodname="WorldMaps_HavePlayerCampaignCameraAndFourLegRig" classname="ThanhGiongProjectTests" runstate="Runnable" seed="110891709" result="Failed" start-time="2026-10-11 14:05:56Z" end-time="2026-10-11 14:05:57Z" duration="0.326331" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  LangGiongTienTuyen thiếu campaign
+  Expected: greater than or equal to 1
+  But was:  0
+]]></message>
+            <stack-trace><![CDATA[at ThanhGiongProjectTests+<>c__DisplayClass6_0.<WorldMaps_HavePlayerCampaignCameraAndFourLegRig>b__0 (UnityEngine.SceneManagement.Scene scene) [0x00027] in D:\School\PRU\Game_thanhgiong\Assets\Tests\Editor\ThanhGiongProjectTests.cs:81
+at ThanhGiongProjectTests.WithScene (System.String path, System.Action`1[T] check) [0x00022] in D:\School\PRU\Game_thanhgiong\Assets\Tests\Editor\ThanhGiongProjectTests.cs:40
+at ThanhGiongProjectTests.WorldMaps_HavePlayerCampaignCameraAndFourLegRig () [0x00023] in D:\School\PRU\Game_thanhgiong\Assets\Tests\Editor\ThanhGiongProjectTests.cs:78
+]]></stack-trace>
+          </failure>
+          <output><![CDATA[MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Tree_1_A_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Grass_2_B_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Tree_4_C_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Bush_2_A_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Rock_1_A_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Bush_3_B_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Grass_1_C_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Bush_1_D_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Tree_3_C_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Tree_4_A_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Bush_4_C_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Grass_2_D_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Rock_1_H_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Bush_2_E_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Grass_1_A_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Tree_3_A_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Tree_2_D_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Bush_1_A_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Tree_2_B_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Tree_1_C_Color1.fbx)
+<b><color=#2EA3FF>MCP-FOR-UNITY</color></b>: [TestRunnerNoThrottle] Restored Interaction Mode after test run.
+Saving results to: C:/Users/ANKIN/AppData/LocalLow/DefaultCompany/Game_thanhgiong\TestResults.xml
+]]></output>
+        </test-case>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

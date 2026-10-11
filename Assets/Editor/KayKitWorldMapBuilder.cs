@@ -35,8 +35,9 @@ public static class KayKitWorldMapBuilder
             !AssetDatabase.IsValidFolder(KenneyForest)) return;
         EditorApplication.update -= TryBuild;
         string versionKey = "ThanhGiong.KayKitWorlds." + Application.dataPath;
-        if (AssetDatabase.LoadAssetAtPath<SceneAsset>(Output + "/DinhSocHoaThanh.unity") != null &&
-            EditorPrefs.GetString(versionKey) == BuildVersion) return;
+        // Existing authored maps must not be regenerated when the checkout path or preferences change.
+        if (AssetDatabase.LoadAssetAtPath<SceneAsset>(Output + "/DinhSocHoaThanh.unity") != null)
+        { EditorPrefs.SetString(versionKey, BuildVersion); return; }
         try { BuildAllMaps(); }
         catch (Exception exception) { Debug.LogException(exception); }
     }

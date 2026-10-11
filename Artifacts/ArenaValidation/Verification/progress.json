@@ -1,0 +1,21 @@
+{
+    "verdict": "",
+    "stage": "VictoryCinematic",
+    "runtimeErrors": 0,
+    "kills": 22,
+    "attacks": 193,
+    "bambooPresses": 0,
+    "wave": 2,
+    "alive": 0,
+    "spawned": 8,
+    "position": "(21.45, 7.77, 11.25)",
+    "gameplaySeconds": 294.46197509765625,
+    "realSeconds": 0.0,
+    "remainingHealth": 82.935791015625,
+    "p95FrameMs": 0.0,
+    "worstFrameMs": 0.0,
+    "pausePassed": false,
+    "movementPassed": false,
+    "restartPassed": false,
+    "visitedStages": []
+}

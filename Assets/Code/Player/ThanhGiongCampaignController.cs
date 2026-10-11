@@ -41,7 +41,8 @@ public class ThanhGiongCampaignController : MonoBehaviour
     public float Health { get; private set; }
     public float Health01 => Mathf.Clamp01(Health / Mathf.Max(1f, maxHealth));
     public bool IsDead => Health <= 0f;
-    public bool IsBattleActive => CurrentChapter == Chapter.Battle && !IsDead && !isTransitioning;
+    public bool IsBattleActive => CurrentChapter == Chapter.Battle && !IsDead && !isTransitioning && (arena == null || arena.CanFight);
+    public bool IsArena => arena != null;
     public float FoodProgress => CurrentChapter == Chapter.Prologue ? Mathf.Clamp01(Food / (foodPerGrowth * 3f)) : 1f;
     public float Heat01 => Heat / maxHeat;
     public float BattlePressure01 => CurrentChapter == Chapter.Battle ? Mathf.Clamp01(startingBattlePressure + (Kills / Mathf.Max(1f, victoryKills)) * (1f - startingBattlePressure)) : 0f;
@@ -144,6 +145,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
     }
 
     private MountedHorseController movement;
+    private ThanhGiongArenaFlow arena;
     private ThanhGiongCampaignAudio audioFx;
     private GodotMountedMotion mountedMotion;
     private GodotCombatFeedback combatFeedback;
@@ -169,6 +171,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
 
     private void Awake()
     {
+        arena = GetComponent<ThanhGiongArenaFlow>();
         movement = GetComponent<MountedHorseController>();
         audioFx = GetComponent<ThanhGiongCampaignAudio>();
         mountedMotion = GetComponent<GodotMountedMotion>();
@@ -181,11 +184,12 @@ public class ThanhGiongCampaignController : MonoBehaviour
         if (vfx == null) vfx = FindAnyObjectByType<ThanhGiongCampaignVFX>();
         if (hud == null) hud = FindAnyObjectByType<ThanhGiongCampaignHUD>();
         if (hud != null) hud.campaign = this;
-        RegisterSceneBambooGroves();
+        if (arena == null) RegisterSceneBambooGroves();
     }
 
     private void Start()
     {
+        if (arena != null) return;
         hurtUntil = Time.time + 1.2f;
         WarpToChapter(startingChapter);
     }
@@ -204,6 +208,11 @@ public class ThanhGiongCampaignController : MonoBehaviour
 
     private void Update()
     {
+        if (arena != null)
+        {
+            if (arena.CanFight && ThanhGiongArenaInput.AttackDown()) TryMeleeAttack();
+            return;
+        }
         if (isTransitioning || Time.timeScale <= 0) return;
         if (IsDead) {
             if (Input.GetKeyDown(KeyCode.R)) {
@@ -219,6 +228,53 @@ public class ThanhGiongCampaignController : MonoBehaviour
         else if (CurrentChapter == Chapter.Ascension) UpdateAscensionQte();
     }
 
+    public void ResetArenaRound(Vector3 position, Quaternion rotation)
+    {
+        StopAllCoroutines(); clearMessageRoutine = null; pendingStrike = null;
+        comboBeat = 0; comboUntil = 0; nextAttackTime = 0; isTransitioning = false;
+        chargeHits.Clear(); struckEnemies.Clear();
+        if (CarriedWeapon != null) { Destroy(CarriedWeapon.gameObject); CarriedWeapon = null; }
+        CurrentChapter = Chapter.Battle; CurrentWeapon = Weapon.IronSword;
+        CurrentBambooVariant = BambooVariant.Standard;
+        GrowthPhase = 3; Health = maxHealth; Food = 0; Heat = 0; Kills = 0;
+        qteIndex = 0; bambooQte = 0; CenterMessage = string.Empty; hurtUntil = Time.time + 1.2f;
+        transform.localScale = originalScale;
+        TeleportPlayer(position); transform.rotation = rotation;
+        movement.ResetMovementState(); movement.enabled = false;
+        mountedMotion?.SetFlying(false);
+    }
+
+    public void SetArenaMovement(bool allowed)
+    {
+        if (movement == null) movement = GetComponent<MountedHorseController>();
+        if (!allowed)
+        {
+            if (pendingStrike != null) StopCoroutine(pendingStrike);
+            pendingStrike = null; movement.ResetMovementState();
+        }
+        movement.enabled = allowed;
+    }
+
+    public void BreakArenaRod()
+    {
+        CurrentWeapon = Weapon.None;
+        vfx?.PlaySwordBreak(transform); audioFx?.PlaySwordBreak();
+        IsometricCameraFollow.Instance?.Shake(.55f, .6f);
+    }
+
+    public void EquipArenaBamboo()
+    {
+        CurrentWeapon = Weapon.Bamboo; CurrentBambooVariant = BambooVariant.Standard;
+        vfx?.PlayBambooSweep(transform, 4f);
+    }
+
+    public void TeleportArenaCinematic(Vector3 position)
+    {
+        var cc = GetComponent<CharacterController>();
+        if (cc != null) cc.enabled = false;
+        transform.position = position;
+    }
+
     public void TeleportPlayer(Vector3 destinationPosition)
     {
         var cc = GetComponent<CharacterController>();
@@ -230,6 +286,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
 
     public void WarpToChapter(Chapter targetChapter, Vector3? destinationPosition = null)
     {
+        if (arena != null) return;
         CurrentChapter = targetChapter;
         qteIndex = 0;
         bambooQte = 0;
@@ -305,6 +362,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
 
     public bool TryCollect(ThanhGiongCollectible item)
     {
+        if (arena != null) return false;
         if (IsDead || Time.timeScale <= 0) return false;
         if (CurrentChapter == Chapter.Prologue && item.kind <= ThanhGiongCollectible.Kind.Meat)
         {
@@ -785,6 +843,11 @@ public class ThanhGiongCampaignController : MonoBehaviour
 
     public void NotifyEnemyDefeated(ThanhGiongEnemy enemy)
     {
+        if (arena != null)
+        {
+            if (arena.NotifyEnemyDefeated(enemy)) Kills++;
+            return;
+        }
         if (IsDead) return;
         Kills++;
         Heat = Mathf.Min(maxHeat, Heat + (enemy.isBoss ? 35f : 10f));
@@ -880,6 +943,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
 
     public void RestartBattle()
     {
+        if (arena != null) { arena.RestartRound(); return; }
         if (CurrentChapter != Chapter.Battle || isTransitioning) return;
         StopAllCoroutines(); clearMessageRoutine = null; pendingStrike=null;comboBeat=0;comboUntil=0;
         Health = maxHealth; hurtUntil = 0; nextAttackTime = 0;

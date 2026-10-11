@@ -22,7 +22,9 @@ public class MountedHorsePhysicsTrample : MonoBehaviour
 
     private void Update()
     {
-        bool isSprinting = Input.GetKey(KeyCode.LeftShift) && (Input.GetAxisRaw("Horizontal") != 0f || Input.GetAxisRaw("Vertical") != 0f);
+        bool arenaRunning = ThanhGiongArenaInput.Running && ThanhGiongArenaInput.Move.sqrMagnitude > 0.01f;
+        bool legacyRunning = Input.GetKey(KeyCode.LeftShift) && (Input.GetAxisRaw("Horizontal") != 0f || Input.GetAxisRaw("Vertical") != 0f);
+        bool isSprinting = arenaRunning || legacyRunning;
         if (!isSprinting || Time.time < nextTrampleTime) return;
 
         Vector3 chestPos = transform.position + Vector3.up * 1.0f + transform.forward * 1.5f;

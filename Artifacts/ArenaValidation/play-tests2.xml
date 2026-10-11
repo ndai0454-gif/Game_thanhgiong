@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Failed(Child)" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-11 16:03:35Z" end-time="2026-10-11 16:03:42Z" duration="6.7886722">
+  <test-suite type="TestSuite" id="1022" name="Game_thanhgiong" fullname="Game_thanhgiong" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-10-11 16:03:35Z" end-time="2026-10-11 16:03:42Z" duration="6.788672" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1012" name="ThanhGiong.PlayModeTests.dll" fullname="D:/School/PRU/Game_thanhgiong/Library/ScriptAssemblies/ThanhGiong.PlayModeTests.dll" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-11 16:03:35Z" end-time="2026-10-11 16:03:42Z" duration="6.745014" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="396" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestFixture" id="1001" name="ThanhGiongArenaPlayModeTests" fullname="ThanhGiongArenaPlayModeTests" classname="ThanhGiongArenaPlayModeTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-11 16:03:35Z" end-time="2026-10-11 16:03:41Z" duration="6.319304" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1006" name="ActualMeleeDamagesEnemyAndItsDeathAdvancesWave" fullname="ThanhGiongArenaPlayModeTests.ActualMeleeDamagesEnemyAndItsDeathAdvancesWave" methodname="ActualMeleeDamagesEnemyAndItsDeathAdvancesWave" classname="ThanhGiongArenaPlayModeTests" runstate="Runnable" seed="1676275296" result="Passed" start-time="2026-10-11 16:03:35Z" end-time="2026-10-11 16:03:36Z" duration="0.808870" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1009" name="DeathStopsWaveAndRestartFromPauseRecoversRound" fullname="ThanhGiongArenaPlayModeTests.DeathStopsWaveAndRestartFromPauseRecoversRound" methodname="DeathStopsWaveAndRestartFromPauseRecoversRound" classname="ThanhGiongArenaPlayModeTests" runstate="Runnable" seed="1675533982" result="Passed" start-time="2026-10-11 16:03:36Z" end-time="2026-10-11 16:03:37Z" duration="1.463654" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1004" name="EnteringBambooDoesNotPullAndERequiresRange" fullname="ThanhGiongArenaPlayModeTests.EnteringBambooDoesNotPullAndERequiresRange" methodname="EnteringBambooDoesNotPullAndERequiresRange" classname="ThanhGiongArenaPlayModeTests" runstate="Runnable" seed="1611068118" result="Passed" start-time="2026-10-11 16:03:37Z" end-time="2026-10-11 16:03:38Z" duration="0.378935" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1007" name="FinalWaveRunsCinematicThenVictoryAndRestartRestoresEverything" fullname="ThanhGiongArenaPlayModeTests.FinalWaveRunsCinematicThenVictoryAndRestartRestoresEverything" methodname="FinalWaveRunsCinematicThenVictoryAndRestartRestoresEverything" classname="ThanhGiongArenaPlayModeTests" runstate="Runnable" seed="1220748138" result="Passed" start-time="2026-10-11 16:03:38Z" end-time="2026-10-11 16:03:39Z" duration="0.896965" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1002" name="IntroStartsAdultWithIronAndNoEnemies" fullname="ThanhGiongArenaPlayModeTests.IntroStartsAdultWithIronAndNoEnemies" methodname="IntroStartsAdultWithIronAndNoEnemies" classname="ThanhGiongArenaPlayModeTests" runstate="Runnable" seed="179864641" result="Passed" start-time="2026-10-11 16:03:39Z" end-time="2026-10-11 16:03:39Z" duration="0.160401" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1005" name="PauseFreezesSpawnsTimerAndCombat" fullname="ThanhGiongArenaPlayModeTests.PauseFreezesSpawnsTimerAndCombat" methodname="PauseFreezesSpawnsTimerAndCombat" classname="ThanhGiongArenaPlayModeTests" runstate="Runnable" seed="1377523036" result="Passed" start-time="2026-10-11 16:03:39Z" end-time="2026-10-11 16:03:40Z" duration="1.034939" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1008" name="RestartCancelsCinematicAndRejectsOldDeath" fullname="ThanhGiongArenaPlayModeTests.RestartCancelsCinematicAndRejectsOldDeath" methodname="RestartCancelsCinematicAndRejectsOldDeath" classname="ThanhGiongArenaPlayModeTests" runstate="Runnable" seed="204009947" result="Passed" start-time="2026-10-11 16:03:40Z" end-time="2026-10-11 16:03:41Z" duration="0.976345" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1003" name="WaveWaitsForEverySpawnAndCountsDeathOnce" fullname="ThanhGiongArenaPlayModeTests.WaveWaitsForEverySpawnAndCountsDeathOnce" methodname="WaveWaitsForEverySpawnAndCountsDeathOnce" classname="ThanhGiongArenaPlayModeTests" runstate="Runnable" seed="1551684008" result="Passed" start-time="2026-10-11 16:03:41Z" end-time="2026-10-11 16:03:41Z" duration="0.522885" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1010" name="ThanhGiongPlayModeTests" fullname="ThanhGiongPlayModeTests" classname="ThanhGiongPlayModeTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-11 16:03:41Z" end-time="2026-10-11 16:03:42Z" duration="0.406798" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-case id="1011" name="UndergroundFortress_StartsAsPlayableBattle" fullname="ThanhGiongPlayModeTests.UndergroundFortress_StartsAsPlayableBattle" methodname="UndergroundFortress_StartsAsPlayableBattle" classname="ThanhGiongPlayModeTests" runstate="Runnable" seed="497106156" result="Failed" start-time="2026-10-11 16:03:41Z" end-time="2026-10-11 16:03:42Z" duration="0.404256" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  Campaign chưa khởi tạo trong Pháo Đài Ngầm
+  Expected: not null
+  But was:  null
+]]></message>
+            <stack-trace><![CDATA[at ThanhGiongPlayModeTests+<UndergroundFortress_StartsAsPlayableBattle>d__1.MoveNext () [0x000cb] in D:\School\PRU\Game_thanhgiong\Assets\Tests\PlayMode\ThanhGiongPlayModeTests.cs:34
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__8.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@7a3849e09bd0\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:52
+]]></stack-trace>
+          </failure>
+          <output><![CDATA[MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Bush_1_G_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Rock_3_M_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Tree_Bare_1_A_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Rock_3_E_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Bush_1_F_Color1.fbx)
+MaterialLocation.External is obsolete. External Material Location is no longer supported. (Assets/Plugins/KayKit_Forest_Nature_Pack_1.0_FREE/KayKit_Forest_Nature_Pack_1.0_FREE/Assets/fbx(unity)/Tree_Bare_2_C_Color1.fbx)
+]]></output>
+        </test-case>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="1018" name="UnitySkills.Tests.Runtime.dll" fullname="D:/School/PRU/Game_thanhgiong/Library/ScriptAssemblies/UnitySkills.Tests.Runtime.dll" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-11 16:03:42Z" end-time="2026-10-11 16:03:42Z" duration="0.010184" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="396" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1019" name="UnitySkills" fullname="UnitySkills" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-11 16:03:42Z" end-time="2026-10-11 16:03:42Z" duration="0.007224" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1020" name="Tests" fullname="UnitySkills.Tests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-11 16:03:42Z" end-time="2026-10-11 16:03:42Z" duration="0.006193" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1021" name="Runtime" fullname="UnitySkills.Tests.Runtime" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-11 16:03:42Z" end-time="2026-10-11 16:03:42Z" duration="0.005370" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1016" name="PlayModeRecoveryTests" fullname="UnitySkills.Tests.Runtime.PlayModeRecoveryTests" classname="UnitySkills.Tests.Runtime.PlayModeRecoveryTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-11 16:03:42Z" end-time="2026-10-11 16:03:42Z" duration="0.004663" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1017" name="TestRunnerJob_CompletesAcrossPlayModeReloads" fullname="UnitySkills.Tests.Runtime.PlayModeRecoveryTests.TestRunnerJob_CompletesAcrossPlayModeReloads" methodname="TestRunnerJob_CompletesAcrossPlayModeReloads" classname="UnitySkills.Tests.Runtime.PlayModeRecoveryTests" runstate="Runnable" seed="1691965898" result="Passed" start-time="2026-10-11 16:03:42Z" end-time="2026-10-11 16:03:42Z" duration="0.003192" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <reason>
+                  <message><![CDATA[]]></message>
+                </reason>
+                <output><![CDATA[<b><color=#2EA3FF>MCP-FOR-UNITY</color></b>: [TestRunnerNoThrottle] Restored Interaction Mode after test run.
+Saving results to: C:/Users/ANKIN/AppData/LocalLow/DefaultCompany/Game_thanhgiong\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

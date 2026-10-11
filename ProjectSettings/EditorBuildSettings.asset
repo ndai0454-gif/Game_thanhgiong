@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/ThanhGiongArena/PhuDongArena.unity
+    guid: e34abe921ce056b49b3c8f618fb07152
+  - enabled: 1
     path: Assets/Scenes/ThanhGiongWorld/LangGiongTienTuyen.unity
     guid: 7970de489970e174db1f469b33c942ab
   - enabled: 1

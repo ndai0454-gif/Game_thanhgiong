@@ -16,6 +16,11 @@ public class IsometricCameraFollow : MonoBehaviour
 
     [Header("2.5D isometric framing")]
     public bool useOrthographicIsometric = true;
+    [Header("Arena third person camera")]
+    public bool arenaPerspective;
+    public float arenaDistance = 10f;
+    public float arenaPitch = 28f;
+    public float arenaYaw;
     public float isometricPitch = 35.26439f;
     public float isometricYaw = 45f;
     public float cameraDistance = 38f;
@@ -42,7 +47,7 @@ public class IsometricCameraFollow : MonoBehaviour
     {
         if (view == null) view = GetComponent<Camera>();
         if (view == null) return;
-        view.orthographic = useOrthographicIsometric;
+        view.orthographic = useOrthographicIsometric && !arenaPerspective;
         view.fieldOfView = fieldOfView;
         if (!initialized) view.orthographicSize = Mathf.Max(1f, ShotSize);
     }
@@ -67,8 +72,9 @@ public class IsometricCameraFollow : MonoBehaviour
         isOverview = false;
         if (target == null) return;
         smoothLead = Vector3.zero; ApplyProjection();
-        Quaternion rotation = useOrthographicIsometric ? IsometricRotation : Quaternion.LookRotation(Vector3.up * lookHeight - offset, Vector3.up);
+        Quaternion rotation = arenaPerspective ? Quaternion.Euler(arenaPitch, arenaYaw, 0) : useOrthographicIsometric ? IsometricRotation : Quaternion.LookRotation(Vector3.up * lookHeight - offset, Vector3.up);
         smoothPosition = useOrthographicIsometric ? target.position + Vector3.up * lookHeight - rotation * Vector3.forward * cameraDistance : target.position + offset;
+        if (arenaPerspective) smoothPosition = target.position + Vector3.up * lookHeight - rotation * Vector3.forward * arenaDistance;
         transform.SetPositionAndRotation(smoothPosition, rotation);
         if (view != null) view.orthographicSize = Mathf.Max(1f, ShotSize);
         shakeTimer = shakeIntensity = shakeAge = 0f; initialized = true;
@@ -79,6 +85,11 @@ public class IsometricCameraFollow : MonoBehaviour
         float dt = Time.deltaTime;
         if (dt <= 0f) return;
         ApplyProjection();
+        if (arenaPerspective && !isOverview && ThanhGiongArenaInput.OrbitHeld)
+        {
+            arenaYaw += ThanhGiongArenaInput.OrbitDelta.x * 3f;
+            arenaPitch = Mathf.Clamp(arenaPitch - ThanhGiongArenaInput.OrbitDelta.y * 2f, 18f, 55f);
+        }
         if (!isOverview && target == null) return;
         Vector3 focus, desiredPosition;
         Quaternion desiredRotation;
@@ -100,6 +111,19 @@ public class IsometricCameraFollow : MonoBehaviour
             focus = target.position + Vector3.up * lookHeight + smoothLead;
             desiredRotation = useOrthographicIsometric ? IsometricRotation : Quaternion.LookRotation(Vector3.up * lookHeight - offset, Vector3.up);
             desiredPosition = useOrthographicIsometric ? focus - desiredRotation * Vector3.forward * cameraDistance : target.position + smoothLead + offset;
+            if (arenaPerspective)
+            {
+                desiredRotation = Quaternion.Euler(arenaPitch, arenaYaw, 0);
+                desiredPosition = focus - desiredRotation * Vector3.forward * arenaDistance;
+                Vector3 direction = desiredPosition - focus;
+                float distance = direction.magnitude;
+                foreach (RaycastHit hit in Physics.SphereCastAll(focus, .3f, direction.normalized, distance, ~0, QueryTriggerInteraction.Ignore))
+                {
+                    if (hit.collider.transform.root == target.root || hit.collider.GetComponentInParent<ThanhGiongEnemy>() != null) continue;
+                    distance = Mathf.Min(distance, Mathf.Max(1.2f, hit.distance - .25f));
+                }
+                desiredPosition = focus + direction.normalized * distance;
+            }
         }
         if (!initialized) { smoothPosition = desiredPosition; transform.rotation = desiredRotation; initialized = true; }
         float blend = 1f - Mathf.Exp(-followSmoothness * (isOverview ? .5f : 1f) * dt);

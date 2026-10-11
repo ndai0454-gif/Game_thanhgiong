@@ -1,0 +1,28 @@
+{
+    "verdict": "PASS",
+    "stage": "Intro",
+    "runtimeErrors": 0,
+    "kills": 0,
+    "attacks": 193,
+    "bambooPresses": 3,
+    "wave": -1,
+    "alive": 0,
+    "spawned": 0,
+    "position": "(0.00, 0.08, -8.00)",
+    "gameplaySeconds": 0.0,
+    "realSeconds": 301.78558349609375,
+    "remainingHealth": 180.0,
+    "p95FrameMs": 7.031002044677734,
+    "worstFrameMs": 92.44361877441406,
+    "pausePassed": true,
+    "movementPassed": true,
+    "restartPassed": true,
+    "visitedStages": [
+        "IronCombat",
+        "BreakingIronRod",
+        "SeekingBamboo",
+        "BambooCombat",
+        "VictoryCinematic",
+        "Victory"
+    ]
+}

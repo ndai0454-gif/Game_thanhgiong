@@ -200,6 +200,7 @@ public sealed class ThanhGiongSceneTransition : MonoBehaviour
 
     private void Update()
     {
+        if (SceneManager.GetActiveScene().name == "PhuDongArena") { navigationHelpVisible = false; return; }
         if (Input.GetKeyDown(KeyCode.F1)) navigationHelpVisible = !navigationHelpVisible;
         if (!demoNavigationEnabled || transitioning) return;
 

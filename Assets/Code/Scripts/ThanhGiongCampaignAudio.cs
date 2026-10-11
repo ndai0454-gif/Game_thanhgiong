@@ -37,7 +37,7 @@ public sealed class ThanhGiongCampaignAudio : MonoBehaviour
 
     public static string RegionForScene(string scene) => scene switch {
         "KinhThanhRenThep" => "forge", "PhaoDaiNgamQuanAn" => "camp",
-        "ThungLungVuotSong" => "river", "TranTuyenNuiSoc" => "battle",
+        "ThungLungVuotSong" => "river", "TranTuyenNuiSoc" => "battle", "PhuDongArena" => "battle",
         "DinhSocHoaThanh" => "sacred", _ => "village"
     };
 
@@ -235,9 +235,20 @@ public sealed class ThanhGiongCampaignAudio : MonoBehaviour
 
     public void PlayAscensionMusic()
     {
+        if (ascensionMusic == null && campaign != null && campaign.IsArena)
+        {
+            ascensionMusic = NewVoice(false); ascensionMusic.clip = Clip("music_ascension");
+        }
         if (ascensionMusic == null || ascensionMusic.clip == null || Time.timeScale <= 0) return;
         ascensionMusic.Stop(); ascensionMusic.Play();
         LastCue = "music_ascension";
+    }
+
+    public void ResetArenaAudio()
+    {
+        if (ascensionMusic != null) ascensionMusic.Stop();
+        ascensionMix = 0;
+        if (voices != null) foreach (var voice in voices) if (voice != null) voice.Stop();
     }
 
     public void PlayGrowth() => PlayCue("arrival", .95f);

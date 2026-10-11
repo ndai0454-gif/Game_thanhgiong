@@ -56,6 +56,13 @@ public class ThanhGiongCollectible : MonoBehaviour
         enabled = false;
     }
 
+    public void ResetCollected()
+    {
+        collected = false; enabled = true;
+        foreach (Collider c in GetComponentsInChildren<Collider>(true)) c.enabled = true;
+        if (visualRoot != null && visualRoot != transform) visualRoot.localPosition = baseVisualLocalPos;
+    }
+
     public Color GetAuraColor() => kind switch
     {
         Kind.Rice => new Color(1.0f, 0.88f, 0.25f, 0.95f),      // Gold
@@ -70,7 +77,7 @@ public class ThanhGiongCollectible : MonoBehaviour
     {
         ThanhGiongCampaignController campaign = other.GetComponentInParent<ThanhGiongCampaignController>();
         if (campaign == null) campaign = FindAnyObjectByType<ThanhGiongCampaignController>();
-        if (campaign == null || !campaign.TryCollect(this)) return;
+        if (campaign == null || campaign.IsArena || !campaign.TryCollect(this)) return;
         MarkCollected();
         gameObject.SetActive(false);
     }

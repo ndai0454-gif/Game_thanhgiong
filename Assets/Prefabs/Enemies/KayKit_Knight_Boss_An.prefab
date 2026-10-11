@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 1123835424202256269}
   - component: {fileID: 1105266535591183119}
   - component: {fileID: 3353659521973316298}
+  - component: {fileID: 4565500361768335113}
+  - component: {fileID: 5374652516632811420}
   m_Layer: 0
   m_Name: KayKit_Knight_Boss_An
   m_TagString: Untagged
@@ -73,6 +75,7 @@ MonoBehaviour:
   moveSpeed: 3
   engageDistance: 80
   isBoss: 1
+  role: 0
   enemyName: "T\u01B0\u1EDBng Gi\u1EB7c \xC2n - Thi\u1EBFt K\u1EF5 \u0110\u1EA1i \u0110ao"
   heavyAttackRange: 4.5
   heavyAttackCooldown: 5.5
@@ -87,6 +90,32 @@ MonoBehaviour:
   formationTolerance: 0.65
   separationRadius: 1.1
   separationStrength: 1.35
+--- !u!114 &4565500361768335113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6385909721010300908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
+--- !u!114 &5374652516632811420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6385909721010300908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
+  speedBlendTime: 0.2
+  stateBlendTime: 0.1
 --- !u!1001 &2168012876068960064
 PrefabInstance:
   m_ObjectHideFlags: 0

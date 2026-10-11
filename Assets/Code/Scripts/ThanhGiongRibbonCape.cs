@@ -52,6 +52,8 @@ public class ThanhGiongRibbonCape : MonoBehaviour
 
     private void Awake()
     {
+        if (ribbonLeft != null && lineLeft != null) return;
+        segmentCount = Mathf.Max(2, segmentCount);
         horseController = GetComponent<MountedHorseController>();
         if (horseController == null) horseController = GetComponentInParent<MountedHorseController>();
 
@@ -82,14 +84,16 @@ public class ThanhGiongRibbonCape : MonoBehaviour
     private void SetupLineRenderers()
     {
         // Line Left (Dải lụa trái)
-        GameObject leftGo = new GameObject("RibbonSilk_Left");
+        Transform existingLeft = transform.Find("RibbonSilk_Left");
+        GameObject leftGo = existingLeft != null ? existingLeft.gameObject : new GameObject("RibbonSilk_Left");
         leftGo.transform.SetParent(transform, false);
         lineLeft = SetupSingleLine(leftGo);
 
         if (isDualRibbon)
         {
             // Line Right (Dải lụa phải)
-            GameObject rightGo = new GameObject("RibbonSilk_Right");
+            Transform existingRight = transform.Find("RibbonSilk_Right");
+            GameObject rightGo = existingRight != null ? existingRight.gameObject : new GameObject("RibbonSilk_Right");
             rightGo.transform.SetParent(transform, false);
             lineRight = SetupSingleLine(rightGo);
         }
@@ -97,7 +101,8 @@ public class ThanhGiongRibbonCape : MonoBehaviour
 
     private LineRenderer SetupSingleLine(GameObject go)
     {
-        LineRenderer lr = go.AddComponent<LineRenderer>();
+        LineRenderer lr = go.GetComponent<LineRenderer>();
+        if (lr == null) lr = go.AddComponent<LineRenderer>();
         lr.sharedMaterial = ribbonMaterial;
         lr.useWorldSpace = true;
         lr.positionCount = segmentCount;
@@ -167,8 +172,10 @@ public class ThanhGiongRibbonCape : MonoBehaviour
 
     private void Update()
     {
+        if (ribbonLeft == null || lineLeft == null) Awake();
         float dt = Time.deltaTime;
-        if (dt <= 0f || dt > 0.1f) dt = 0.02f;
+        if (dt <= 0f) return;
+        dt = Mathf.Min(dt, .05f);
 
         Vector3 currentAnchorPos = GetAnchorWorldPos(0);
         movementVelocity = (currentAnchorPos - lastAnchorPos) / dt;

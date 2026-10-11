@@ -149,7 +149,10 @@ public class ThanhGiongProjectTests
     public void CombatContracts_ArePresent()
     {
         Type enemy = GameType("ThanhGiongEnemy");
-        Assert.NotNull(enemy.GetMethod("TakeDamage", new[] { typeof(float), typeof(float), typeof(Vector3) }));
+        // The combat API now includes impact strength and heavy-hit flags, both optional.
+        var damage = enemy.GetMethod("TakeDamage", new[] { typeof(float), typeof(float), typeof(Vector3), typeof(float), typeof(bool) });
+        Assert.NotNull(damage);
+        Assert.IsTrue(damage.GetParameters()[3].IsOptional && damage.GetParameters()[4].IsOptional);
         Assert.NotNull(enemy.GetField("stuckDuration"));
         Assert.NotNull(enemy.GetField("vulnerabilityMultiplier"));
         Assert.NotNull(enemy.GetField("surroundRadius"));

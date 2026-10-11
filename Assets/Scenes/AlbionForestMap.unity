@@ -42504,6 +42504,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5355307142342421562, guid: cf795aacdb77761439b1d5c323035442, type: 3}
+      propertyPath: ribbonAnchor
+      value: 
+      objectReference: {fileID: 2140080419}
     - target: {fileID: 8855110041868722221, guid: cf795aacdb77761439b1d5c323035442, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -42511,7 +42515,7 @@ PrefabInstance:
     - target: {fileID: 8855110041868722221, guid: cf795aacdb77761439b1d5c323035442, type: 3}
       propertyPath: anchorTransform
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2140080419}
     - target: {fileID: 8872943192485607845, guid: cf795aacdb77761439b1d5c323035442, type: 3}
       propertyPath: m_LocalScale.x
       value: 1

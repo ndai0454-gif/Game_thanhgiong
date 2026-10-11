@@ -1,9 +1,18 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ThanhGiongCampaignVFX : MonoBehaviour
 {
     private Material lineMaterial;
+    private readonly List<GameObject> transientEffects = new List<GameObject>();
+    private GameObject Track(GameObject effect) { transientEffects.Add(effect); return effect; }
+    public void ClearTransientEffects()
+    {
+        StopAllCoroutines();
+        foreach (var effect in transientEffects) if (effect != null) Destroy(effect);
+        transientEffects.Clear();
+    }
 
     private void Awake()
     {
@@ -59,7 +68,7 @@ public class ThanhGiongCampaignVFX : MonoBehaviour
 
     private IEnumerator DropFireSpark(Vector3 from, Vector3 to)
     {
-        GameObject spark = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        GameObject spark = Track(GameObject.CreatePrimitive(PrimitiveType.Sphere));
         spark.name = "FireDrop_LangChay";
         spark.transform.position = from;
         spark.transform.localScale = Vector3.one * 0.75f;
@@ -107,7 +116,7 @@ public class ThanhGiongCampaignVFX : MonoBehaviour
 
     private IEnumerator CalligraphyStroke(Vector3 origin, Vector3 forward, float range)
     {
-        GameObject go = new GameObject("Calligraphy Brush Stroke");
+        GameObject go = Track(new GameObject("Calligraphy Brush Stroke"));
         LineRenderer line = go.AddComponent<LineRenderer>();
         line.sharedMaterial = lineMaterial;
         line.positionCount = 24;
@@ -139,7 +148,7 @@ public class ThanhGiongCampaignVFX : MonoBehaviour
 
     private IEnumerator DongSonSunBurst(Vector3 center, int rays, float length, Color color, float duration)
     {
-        GameObject go = new GameObject("Dong Son Sun Rays");
+        GameObject go = Track(new GameObject("Dong Son Sun Rays"));
         go.transform.position = center;
         LineRenderer[] lines = new LineRenderer[rays];
         for (int i = 0; i < rays; i++)
@@ -178,7 +187,7 @@ public class ThanhGiongCampaignVFX : MonoBehaviour
 
     private IEnumerator Ring(Vector3 position, float start, float end, Color color, float duration)
     {
-        GameObject go = new GameObject("Dong Son Brush Ring");
+        GameObject go = Track(new GameObject("Dong Son Brush Ring"));
         LineRenderer line = go.AddComponent<LineRenderer>();
         line.sharedMaterial = lineMaterial;
         line.useWorldSpace = false;
@@ -207,7 +216,7 @@ public class ThanhGiongCampaignVFX : MonoBehaviour
 
     private IEnumerator FireLine(Vector3 origin, Vector3 forward, float length)
     {
-        GameObject go = new GameObject("Hoa Tuyen Core");
+        GameObject go = Track(new GameObject("Hoa Tuyen Core"));
         LineRenderer line = go.AddComponent<LineRenderer>();
         line.sharedMaterial = lineMaterial;
         line.positionCount = 2;
