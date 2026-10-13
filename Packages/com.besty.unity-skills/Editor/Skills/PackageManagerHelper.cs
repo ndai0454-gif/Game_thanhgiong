@@ -458,6 +458,7 @@ namespace UnitySkills
         {
             if (SessionState.GetBool(SessionKeyTestableChecked, false))
                 return;
+            return;
 
             SessionState.SetBool(SessionKeyTestableChecked, true);
 

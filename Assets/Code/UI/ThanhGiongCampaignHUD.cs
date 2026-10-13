@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 // Compact red/bronze Kenney HUD. Scaled game time keeps popup durations frozen during pause.
@@ -19,11 +19,11 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
     public static float CanvasScale(Rect safeArea) => Mathf.Max(.1f,Mathf.Min(safeArea.width/1280f,safeArea.height/720f));
     private static readonly string[] ChapterScenes = {
         "LangGiongTienTuyen", "KinhThanhRenThep", "PhaoDaiNgamQuanAn", "ThungLungVuotSong",
-        "TranTuyenNuiSoc", "DinhSocHoaThanh", "AlbionForestMap"
+        "TranTuyenNuiSoc", "DinhSocHoaThanh"
     };
     private static readonly string[] ChapterLabels = {
         "1 · LÀNG PHÙ ĐỔNG", "2 · KINH THÀNH RÈN THÉP", "3 · PHÁO ĐÀI QUÂN ÂN", "4 · THUNG LŨNG VƯỢT SÔNG",
-        "5 · TRẬN TUYẾN NÚI SÓC", "6 · ĐỈNH SÓC HÓA THÁNH", "RỪNG ALBION · THỬ NGHIỆM"
+        "5 · TRẬN TUYẾN NÚI SÓC", "6 · ĐỈNH SÓC HÓA THÁNH"
     };
     private string pauseNotice = string.Empty;
     private float missionUntil, controlsUntil, nextBossCheck, regionUntil;
@@ -133,7 +133,7 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
 
     private void UpdatePauseNavigation()
     {
-        const int choices=13;
+        int choices = 6 + ChapterScenes.Length;
         if(Input.GetKeyDown(KeyCode.DownArrow))PauseSelection=(PauseSelection+1)%choices;
         if(Input.GetKeyDown(KeyCode.UpArrow))PauseSelection=(PauseSelection+choices-1)%choices;
         float step=Input.GetKeyDown(KeyCode.RightArrow)?.05f:Input.GetKeyDown(KeyCode.LeftArrow)?-.05f:0;
@@ -174,7 +174,7 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
 
     private void OnGUI()
     {
-        if (campaign == null) return;
+        if (campaign == null || (ThanhGiongTrailerDirector.Instance != null && ThanhGiongTrailerDirector.Instance.IsPlayingTrailer)) return;
         EnsureStyles();
         Matrix4x4 oldMatrix = GUI.matrix;
         Color oldColor = GUI.color;
@@ -218,7 +218,7 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
             Box(guide, true);
             GUI.Label(new Rect(guide.x + 24, guide.y + 20, 512, 40), paused ? "TẠM DỪNG" : "BINH PHÁP PHÙ ĐỔNG", title);
             string help=paused ? "WASD đi · Shift phi ngựa · Space nhảy · C/Alt né\nChuột đánh · 1–5 chọn hạt · Q gieo / đội nón\nR về điểm dừng chân khi gục ngã · F1 trợ giúp\nMenu: ↑↓ chọn · ←→ âm lượng · Enter xác nhận" :
-                "WASD: di chuyển · Shift: phi ngựa · Space: nhảy · C / Alt: lăn né\nChuột trái: chém gươm / quét tre / ném đá\n1–5: chọn hạt (1: Quang Căn / Lumen bẫy ánh sáng giữ chân, 2: Tre, 3: Sen, 4: Lửa, 5: Gió) · Q: gieo hạt\nE: nhặt lương thực, nhổ tre, vác đá · F: phun lửa khi hỏa khí đầy\nE → Q → E → F: trang bị xuất quân · E → Q → E: cởi giáp, tháo nón, hóa thánh\nNé vòng đỏ của tướng giặc; phản công khi đao mắc kẹt.\nR: về điểm dừng chân khi gục ngã · Tab: nhiệm vụ · F1: trợ giúp";
+                "WASD: di chuyển · Shift: phi ngựa · Space: nhảy · C / Alt: lăn né\nChuột trái: chém gươm / quét tre / ném đá\n1 Lumen: trói, phá khiên · 2 Tre: gai làm chậm · 3 Sen: hồi máu, hộ thể dưới chân\n4 Lửa: thiêu, lộ giáp · 5 Gió: ngắt đòn, đẩy lùi · Q: gieo hạt\nE: nhặt lương thực, nhổ tre, vác đá · F: Hỏa Tuyến phá đội hình\nE → Q → E → F: trang bị xuất quân · E → Q → E: cởi giáp, tháo nón, hóa thánh\nNé vòng đỏ của tướng giặc; phản công khi đao mắc kẹt.\nR: về điểm dừng chân khi gục ngã · Tab: nhiệm vụ · F1: trợ giúp";
             GUI.Label(new Rect(guide.x+24,guide.y+(paused?66:76),512,paused?82:246),help,body);
             if (paused) DrawPauseButtons(guide);
         }
@@ -229,22 +229,24 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
 
     private void DrawSeedBar(float w,float h)
     {
-        float x=(w-320)/2, y=h-76;
+        float x=(w-420)/2, y=h-91;
         string[] names={"LUMEN", "TRE", "SEN", "LỬA", "GIÓ"};
         Color previous=GUI.color;
         for(int i=0;i<5;i++) {
             bool selected=(int)seeds.SelectedSeed==i;
             GUI.color=selected?Color.white:new Color(1,1,1,seeds.ReadyFor(i)?.72f:.40f);
-            Rect slot=new Rect(x+4+i*64,y,56,32);Box(slot);
+            Rect slot=new Rect(x+4+i*84,y,76,34);Box(slot);
             GUI.color=selected?Gold:new Color(Paper.r,Paper.g,Paper.b,.75f);
-            GUI.Label(new Rect(slot.x+2,slot.y+2,52,28),$"{i+1} {names[i]}",tile);
-            if(seeds.CooldownFor(i)>0)ThinBar(new Rect(slot.x+5,slot.yMax-4,46,2),Mathf.Clamp01(seeds.CooldownFor(i)/10),Muted);
-            if(selected)GUI.DrawTexture(new Rect(slot.x+8,slot.yMax-2,40,1),Texture2D.whiteTexture);
+            GUI.Label(new Rect(slot.x+2,slot.y+2,72,28),$"{i+1} {names[i]}",tile);
+            if(seeds.CooldownFor(i)>0)ThinBar(new Rect(slot.x+5,slot.yMax-4,66,2),Mathf.Clamp01(seeds.CooldownFor(i)/11),Muted);
+            if(selected)GUI.DrawTexture(new Rect(slot.x+8,slot.yMax-2,60,1),Texture2D.whiteTexture);
         }
         GUI.color=previous;
         string cooldown=seeds.CooldownRemaining>0?$"{seeds.CooldownRemaining:0.0}s":"Q gieo";
-        string[] effects={"Bẫy ánh sáng Lumen (Giữ chân)", "Mầm tre xanh (Sát thương)", "Sen phục hồi (Trị thương)", "Hạt than hồng (Thiêu đốt)", "Hạt gió cuốn (Đẩy lùi)"};
-        GUI.Label(new Rect(x,y+35,320,18),$"{effects[(int)seeds.SelectedSeed]} · {seeds.Mana:0}/{seeds.MaxMana:0} · giá {seeds.ManaCost:0} · {seeds.ChargesRemaining} hạt · {cooldown}",small);
+        string[] effects={"Trói chân + phá khiên: đánh mục tiêu phát sáng", "Gai tre gây thương + làm chậm đường tiến", "Gieo dưới chân: hồi máu + giảm 32% sát thương", "Thiêu đốt + mở giáp cho đòn kế tiếp", "Ngắt đòn báo hiệu + đẩy lùi vòng vây"};
+        GUI.Label(new Rect(x,y+38,420,18),effects[(int)seeds.SelectedSeed],small);
+        string ward=campaign.LotusWardRemaining>0?$" · Hộ thể {campaign.LotusWardRemaining:0.0}s":"";
+        GUI.Label(new Rect(x,y+57,420,18),$"Linh lực {seeds.Mana:0}/{seeds.MaxMana:0} · giá {seeds.ManaCost:0} · {seeds.ChargesRemaining} hạt · {cooldown}{ward}",small);
     }
 
     private void DrawVitals(float h)
@@ -280,7 +282,8 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
     {
         bool wasEnabled = GUI.enabled;
         GUI.enabled = !ThanhGiongSceneTransition.IsTransitioning;
-        if (GUI.Button(new Rect(guide.x + 24, guide.y + 158, 512, 32), "TIẾP TỤC  [ESC]", button)) TogglePause();
+        if (GUI.Button(new Rect(guide.x + 24, guide.y + 158, 250, 32), "TIẾP TỤC  [ESC]", button)) TogglePause();
+        if (GUI.Button(new Rect(guide.x + 286, guide.y + 158, 250, 32), "🎬 TRAILER DEMO [F10]", button)) { TogglePause(); ThanhGiongTrailerDirector.Instance?.PlayTrailer(false); }
         if (GUI.Button(new Rect(guide.x + 24, guide.y + 200, 250, 32), "VỀ ĐIỂM DỪNG CHÂN", button)) RestartCheckpoint();
         if (GUI.Button(new Rect(guide.x + 286, guide.y + 200, 250, 32), "CHƠI LẠI TOÀN MÀN", button)) RestartCurrentMap();
         GUI.Label(new Rect(guide.x+24,guide.y+251,512,22),"ÂM THANH",caption);

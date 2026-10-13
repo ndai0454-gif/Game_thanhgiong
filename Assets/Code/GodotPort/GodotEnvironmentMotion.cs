@@ -15,7 +15,7 @@ public sealed class GodotEnvironmentMotion : MonoBehaviour {
   Shader foliageShader=Shader.Find("ThanhGiong/StylizedFoliageWind");
   foreach(Renderer renderer in GetComponentsInChildren<Renderer>(true)){
    string path=Path(renderer.transform).ToLowerInvariant();
-   if(renderer is SkinnedMeshRenderer || renderer is ParticleSystemRenderer || renderer is LineRenderer || renderer.GetComponent<TextMesh>())continue;
+   if(path.Contains("meshy") || renderer is SkinnedMeshRenderer || renderer is ParticleSystemRenderer || renderer is LineRenderer || renderer.GetComponent<TextMesh>())continue;
    int kind=path.Contains("datlang")?1:path.Contains("duongdatuon")||path.Contains("sandat")||path.Contains("sanchien")||path.Contains("baichien")?2:path.Contains("triangularcloth")||path.Contains("goldclothedging")?4:path.Contains("dongsong")?5:path.Contains("culms")||path.Contains("leaves")||path.Contains("tree_default")||path.Contains("grass_large")||path.Contains("plant_bush")||path.Contains("crops_wheat")?3:0;
    bool culm=renderer.transform.name.StartsWith("Culms"),leaf=renderer.transform.name.StartsWith("Leaves");
    if(culm)kind=6;else if(leaf)kind=7;

@@ -27,8 +27,8 @@ public class ThanhGiongCampaignController : MonoBehaviour
     public float hurtInvulnerabilitySeconds = .42f;
     [Header("Hard Mode Pressure")]
     [Tooltip("Áp lực tổng thể tăng dần trong Màn 3 sau mỗi kẻ địch bị hạ.")]
-    [Range(1f, 2f)] public float battlePressureScale = 1.35f;
-    [Range(0f, 1f)] public float startingBattlePressure = .18f;
+    [Range(1f, 2f)] public float battlePressureScale = 1.45f;
+    [Range(0f, 1f)] public float startingBattlePressure = .24f;
     [Tooltip("Màn bắt đầu khi scene được mở trực tiếp.")]
     public Chapter startingChapter = Chapter.Prologue;
 
@@ -44,7 +44,12 @@ public class ThanhGiongCampaignController : MonoBehaviour
     public bool IsBattleActive => CurrentChapter == Chapter.Battle && !IsDead && !isTransitioning;
     public float FoodProgress => CurrentChapter == Chapter.Prologue ? Mathf.Clamp01(Food / (foodPerGrowth * 3f)) : 1f;
     public float Heat01 => Heat / maxHeat;
-    public float BattlePressure01 => CurrentChapter == Chapter.Battle ? Mathf.Clamp01(startingBattlePressure + (Kills / Mathf.Max(1f, victoryKills)) * (1f - startingBattlePressure)) : 0f;
+    public float BattlePressure01 => CurrentChapter == Chapter.Battle
+        ? Mathf.Clamp01(Mathf.Max(.24f, startingBattlePressure) +
+            (Kills / Mathf.Max(1f, victoryKills)) * (1f - Mathf.Max(.24f, startingBattlePressure)) * .78f +
+            Mathf.Clamp01((Time.time - battleStartedAt) / 180f) * .22f)
+        : 0f;
+    public float LotusWardRemaining => Mathf.Max(0f, lotusWardUntil - Time.time);
     public string CenterMessage { get; private set; }
     public ThanhGiongImprovisedWeapon CarriedWeapon { get; private set; }
     public int EquipmentStep => qteIndex;
@@ -93,7 +98,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
     public float GetEnemySpeedScale(bool boss)
     {
         float pressure = BattlePressure01;
-        float endScale = boss ? battlePressureScale + .06f : battlePressureScale;
+        float endScale = boss ? Mathf.Max(1.45f, battlePressureScale) + .06f : Mathf.Max(1.45f, battlePressureScale);
         return Mathf.Lerp(1.05f, endScale, pressure);
     }
 
@@ -153,6 +158,8 @@ public class ThanhGiongCampaignController : MonoBehaviour
     private readonly Dictionary<ThanhGiongEnemy, float> chargeHits = new Dictionary<ThanhGiongEnemy, float>();
     private Vector3 originalScale;
     private float nextAttackTime;
+    private float battleStartedAt;
+    private float lotusWardUntil;
     private int comboBeat;
     private float comboUntil;
     private Coroutine pendingStrike;
@@ -264,6 +271,8 @@ public class ThanhGiongCampaignController : MonoBehaviour
                 break;
 
             case Chapter.Battle:
+                battleStartedAt = Time.time;
+                lotusWardUntil = 0f;
                 GrowthPhase = 3;
                 ApplyGrowthScale();
                 battleSpawn = transform.position;
@@ -629,14 +638,14 @@ public class ThanhGiongCampaignController : MonoBehaviour
     private MeleeProfile GetMeleeProfile(bool bamboo)
     {
         if (!bamboo)
-            return new MeleeProfile(false, 25f, 3.25f, 2.05f, .16f, .38f, .32f, 6f, .74f, -.08f);
+            return new MeleeProfile(false, 22f, 3.05f, 2.05f, .12f, .43f, .35f, 5f, .68f, -.08f);
 
         return CurrentBambooVariant switch
         {
-            BambooVariant.SwiftYoung => new MeleeProfile(true, 34f, 5.1f, 0f, .82f, .54f, .46f, 8f, 1.05f, -1f),
-            BambooVariant.HeavyRoot => new MeleeProfile(true, 56f, 6.25f, 0f, 1.32f, .96f, .70f, 9f, 1.55f, -1f),
-            BambooVariant.FireBamboo => new MeleeProfile(true, 45f, 5.75f, 0f, 1.05f, .74f, .58f, 16f, 1.32f, -1f),
-            _ => new MeleeProfile(true, 43f, 5.6f, 0f, 1.10f, .78f, .58f, 10f, 1.26f, -1f)
+            BambooVariant.SwiftYoung => new MeleeProfile(true, 24f, 4.8f, 0f, .34f, .55f, .46f, 7f, .9f, -1f),
+            BambooVariant.HeavyRoot => new MeleeProfile(true, 36f, 5.15f, 0f, .65f, 1.05f, .72f, 8f, 1.25f, -1f),
+            BambooVariant.FireBamboo => new MeleeProfile(true, 30f, 4.7f, 0f, .42f, .82f, .59f, 12f, 1.05f, -1f),
+            _ => new MeleeProfile(true, 27f, 4.6f, 0f, .46f, .82f, .59f, 8f, 1.0f, -1f)
         };
     }
 
@@ -646,7 +655,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
         float comboFactor = beat == 3 ? 1.22f : beat == 2 ? 1.08f : 1f;
         float speedFactor = 1f + Mathf.Clamp01((movement != null ? movement.PlanarSpeed : 0f) / Mathf.Max(1f, movement != null ? movement.runSpeed : 7f)) * (profile.Bamboo ? .18f : .12f);
         float distanceFactor = Mathf.Lerp(1f, MinDamageFalloff, Mathf.Clamp01(distance / Mathf.Max(radius, .01f)));
-        float bossFactor = enemy != null && enemy.isBoss ? .86f : 1f;
+        float bossFactor = enemy != null && enemy.isBoss ? .76f : 1f;
         return Mathf.Max(1f, profile.BaseDamage * growthFactor * comboFactor * speedFactor * distanceFactor * bossFactor);
     }
 
@@ -666,7 +675,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
         float speedFactor = Mathf.Clamp01((speed - 4.5f) / 5.5f);
         float growthFactor = 1f + GrowthPhase * .16f;
         float bossFactor = enemy != null && enemy.isBoss ? .62f : 1f;
-        return Mathf.Lerp(10f, 24f, speedFactor) * growthFactor * bossFactor;
+        return Mathf.Lerp(8f, 17f, speedFactor) * growthFactor * bossFactor;
     }
 
     private void TryPickUpImprovisedWeapon()
@@ -775,12 +784,14 @@ public class ThanhGiongCampaignController : MonoBehaviour
 
         Vector3 center = transform.position + transform.forward * (length * .5f);
         int count = Physics.OverlapBoxNonAlloc(center, new Vector3(2.5f, 2.5f, length * .5f), hits, transform.rotation, ~0, QueryTriggerInteraction.Ignore);
+        struckEnemies.Clear();
         for (int i = 0; i < count; i++)
         {
             ThanhGiongEnemy enemy = hits[i].GetComponentInParent<ThanhGiongEnemy>();
-            if (enemy != null) enemy.TakeDamage(1000f, 2.5f, transform.position);
+            if (enemy == null || !struckEnemies.Add(enemy) || enemy.HealthRatio <= 0f) continue;
+            enemy.TakeDamage(enemy.isBoss ? 26f : 46f, enemy.isBoss ? .28f : .75f, transform.position);
         }
-        ShowMessage("HỎA TUYẾN · THIÊU RỤI ĐỒN TRẠI GIẶC (LÀNG CHÁY)!", 2.2f);
+        ShowMessage("HỎA TUYẾN · PHÁ ĐỘI HÌNH GIẶC, TƯỚNG VẪN CẦN PHẢN CÔNG!", 2.2f);
     }
 
     public void NotifyEnemyDefeated(ThanhGiongEnemy enemy)
@@ -810,7 +821,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
     public bool DamagePlayer(float amount, Vector3 source = default)
     {
         if (!IsBattleActive || Time.timeScale <= 0 || amount <= 0 || Time.time < hurtUntil || movement.IsDodgeInvulnerable) return false;
-        Health = Mathf.Max(0, Health - amount);
+        Health = Mathf.Max(0, Health - amount * (LotusWardRemaining > 0f ? .68f : 1f));
         hurtUntil = Time.time + Mathf.Max(0, hurtInvulnerabilitySeconds);
         audioFx?.PlayCue("hurt");
         combatFeedback?.PlayImpact(transform, false, true);
@@ -833,6 +844,11 @@ public class ThanhGiongCampaignController : MonoBehaviour
         return Health > previous;
     }
 
+    public void ApplyLotusWard(float seconds)
+    {
+        if (seconds > 0f && !IsDead) lotusWardUntil = Mathf.Max(lotusWardUntil, Time.time + seconds);
+    }
+
     [System.Serializable]
     public sealed class CheckpointState
     {
@@ -852,6 +868,8 @@ public class ThanhGiongCampaignController : MonoBehaviour
         StopAllCoroutines(); clearMessageRoutine = null; pendingStrike=null;comboBeat=0;comboUntil=0;
         isTransitioning = false; hurtUntil = 0; nextAttackTime = 0; chargeHits.Clear();
         CurrentChapter = state.chapter; CurrentWeapon = state.weapon;
+        battleStartedAt = Time.time;
+        lotusWardUntil = 0f;
         if (CurrentWeapon != Weapon.Bamboo) CurrentBambooVariant = BambooVariant.Standard;
         Food = state.food; Heat = state.heat; Health = Mathf.Clamp(state.health, 1, maxHealth);
         GrowthPhase = state.growth; Kills = state.kills; qteIndex = state.qte; bambooQte = state.bamboo;
@@ -883,6 +901,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
         if (CurrentChapter != Chapter.Battle || isTransitioning) return;
         StopAllCoroutines(); clearMessageRoutine = null; pendingStrike=null;comboBeat=0;comboUntil=0;
         Health = maxHealth; hurtUntil = 0; nextAttackTime = 0;
+        battleStartedAt = Time.time; lotusWardUntil = 0f;
         Kills = 0; qteIndex = 0; bambooQte = 0;
         chargeHits.Clear();
         CurrentWeapon = Weapon.IronSword; CurrentBambooVariant = BambooVariant.Standard; Heat = maxHeat * .5f;
@@ -1045,6 +1064,8 @@ public class ThanhGiongCampaignController : MonoBehaviour
     private void BeginBattle()
     {
         CurrentChapter = Chapter.Battle;
+        battleStartedAt = Time.time;
+        lotusWardUntil = 0f;
         battleSpawn = transform.position;
         battleSpawnRotation = transform.rotation;
         GrowthPhase = 3;
@@ -1079,7 +1100,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
     private void ApplyGrowthScale()
     {
         // Dynamic scale from boy (0.42) to huge titan (1.45)
-        float[] scales = { 0.42f, 0.72f, 1.05f, 1.45f };
+        float[] scales = { 0.90f, 1.08f, 1.26f, 1.45f };
         float scale = scales[GrowthPhase];
         transform.localScale = originalScale * scale;
 

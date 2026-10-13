@@ -28,7 +28,7 @@ public sealed class LegendSeedSkills : MonoBehaviour
     public bool IsPlantingContext => campaign != null && !campaign.IsDead && !campaign.EquipmentBusy &&
         (campaign.CurrentChapter == ThanhGiongCampaignController.Chapter.Prologue || campaign.IsBattleActive);
     public static readonly string[] Names = { "QUANG CĂN (LUMEN)", "MẦM TRE", "SEN HỒI PHỤC", "HẠT LỬA", "HẠT GIÓ" };
-    static readonly float[] Costs = { 20, 30, 25, 35, 20 }, Cooldowns = { 6, 8, 9, 10, 6 };
+    static readonly float[] Costs = { 20, 30, 25, 35, 20 }, Cooldowns = { 8, 9, 11, 10, 8 };
     static readonly Color[] Colors = { new Color(1,.83f,.34f), new Color(.48f,.74f,.27f), new Color(.86f,.59f,.78f), new Color(1,.34f,.13f), new Color(.50f,.84f,.93f) };
     readonly float[] cooldowns = new float[5]; readonly int[] charges = new int[5];
     readonly RaycastHit[] groundHits = new RaycastHit[32]; readonly Collider[] overlaps = new Collider[64];
@@ -46,7 +46,7 @@ public sealed class LegendSeedSkills : MonoBehaviour
         if (campaign != null && !campaign.IsDead) Mana=Mathf.Min(maxMana,Mana+manaPerSecond*Time.deltaTime);
         if (IsPlantingContext) {
             for(int i=0;i<5;i++) if(Input.GetKeyDown((KeyCode)((int)KeyCode.Alpha1+i))) SelectSeed(i);
-            if(Input.GetKeyDown(KeyCode.Q)) TryPlantAt(transform.position+transform.forward*3f);
+            if(Input.GetKeyDown(KeyCode.Q)) TryPlantAt(SelectedSeed==Seed.Lotus?transform.position:transform.position+transform.forward*3f);
         }
         for(int i=plants.Count-1;i>=0;i--) {
             Plant p=plants[i];
@@ -79,8 +79,14 @@ public sealed class LegendSeedSkills : MonoBehaviour
         if(Mathf.Abs(grounded.y-transform.position.y)>1.8f||!ClearPlacementLine(grounded))return Fail("Vị trí bị che khuất hoặc quá cao.");
         if(plants.Count>=12) return Fail("Đang có quá nhiều hạt đang nở.");
         Mana-=Costs[seed]; charges[seed]--; cooldowns[seed]=Time.time+Cooldowns[seed]; PlantedCount++;
-        Plant p=new Plant {seed=SelectedSeed,position=grounded,created=Time.time,expires=Time.time+(SelectedSeed==Seed.Ember?4:8),nextPulse=Time.time,pulseAt=Time.time};
+        float duration = SelectedSeed switch { Seed.Lumen => 6f, Seed.Bamboo => 7f, Seed.Lotus => 6f, Seed.Ember => 5f, _ => 3f };
+        Plant p=new Plant {seed=SelectedSeed,position=grounded,created=Time.time,expires=Time.time+duration,nextPulse=Time.time,pulseAt=Time.time};
         p.visual=BuildVisual(p); plants.Add(p); audioFx?.PlaySeed(seed);
+        if (SelectedSeed == Seed.Lotus && (transform.position-grounded).sqrMagnitude < 3.3f*3.3f)
+        {
+            campaign.HealPlayer(18f);
+            campaign.ApplyLotusWard(3.5f);
+        }
         LastFailure=string.Empty; return true;
     }
     bool Fail(string message) { LastFailure=message; campaign?.ShowMessage(message,1.6f); return false; }
@@ -107,22 +113,23 @@ public sealed class LegendSeedSkills : MonoBehaviour
     {
         LastPulseAffected=0;
         if(campaign==null||campaign.IsDead) return;
-        float radius=p.seed==Seed.Wind?3.5f:2.6f;
-        if(p.seed==Seed.Lotus) { if((transform.position-p.position).sqrMagnitude<radius*radius) { campaign.HealPlayer(3); LastPulseAffected=1; p.pulseAt=Time.time; } return; }
+        float radius=RadiusFor(p.seed);
+        if(p.seed==Seed.Lotus) { if((transform.position-p.position).sqrMagnitude<radius*radius) { campaign.HealPlayer(3f); campaign.ApplyLotusWard(1.1f); LastPulseAffected=1; p.pulseAt=Time.time; } return; }
         if(!campaign.IsBattleActive) return;
         int count=Physics.OverlapSphereNonAlloc(p.position+Vector3.up*.6f,radius,overlaps,~0,QueryTriggerInteraction.Ignore);pulseHits.Clear();
         for(int i=0;i<count;i++) {
             var enemy=overlaps[i].GetComponentInParent<ThanhGiongEnemy>();
             if(enemy==null||!enemy.gameObject.activeInHierarchy||enemy.HealthRatio<=0||!pulseHits.Add(enemy))continue;
             bool affected=false;
-            if(p.seed==Seed.Lumen) { if(p.rooted.Add(enemy)) { enemy.ApplyRoot(enemy.isBoss?1:4); affected=true; var feedback = GetComponent<GodotCombatFeedback>(); if (feedback != null) feedback.PlayImpact(enemy.transform, false); } }
-            else if(p.seed==Seed.Bamboo) { enemy.TakeDamage(6,.2f,p.position); affected=true; }
-            else if(p.seed==Seed.Ember) { enemy.TakeDamage(10,0,p.position); affected=true; }
-            else if(p.seed==Seed.Wind && p.rooted.Add(enemy)) { enemy.TakeDamage(8,.8f,p.position); affected=true; }
+            if(p.seed==Seed.Lumen) { if(p.rooted.Add(enemy)) { enemy.ApplyRoot(enemy.isBoss?.85f:2.6f); enemy.ApplyExposure(4f,enemy.isBoss?1.12f:1.25f); affected=true; var feedback = GetComponent<GodotCombatFeedback>(); if (feedback != null) feedback.PlayImpact(enemy.transform, false); } }
+            else if(p.seed==Seed.Bamboo) { enemy.TakeDamage(5f,.05f,p.position); enemy.ApplySlow(.75f,enemy.isBoss?.8f:.55f); affected=true; }
+            else if(p.seed==Seed.Ember) { enemy.TakeDamage(8f,0f,p.position); enemy.ApplyExposure(2.8f,enemy.isBoss?1.1f:1.18f); affected=true; }
+            else if(p.seed==Seed.Wind && p.rooted.Add(enemy)) { enemy.TakeDamage(10f,.15f,p.position); enemy.ApplyWindGust(p.position,enemy.isBoss?3f:9f,enemy.isBoss?.5f:1.25f); affected=true; }
             if(affected)LastPulseAffected++;
         }
         if(LastPulseAffected>0)p.pulseAt=Time.time;
     }
+    static float RadiusFor(Seed seed) => seed==Seed.Wind?3.5f:seed==Seed.Lotus?3.3f:2.6f;
     GameObject BuildVisual(Plant p)
     {
         if(root==null)root=new GameObject("Legend Seed Effects");
@@ -131,7 +138,8 @@ public sealed class LegendSeedSkills : MonoBehaviour
         Material material=new Material(shader);material.SetColor("_BaseColor",Colors[(int)p.seed]);material.SetColor("_Color",Colors[(int)p.seed]);materials.Add(material);p.material=material;
         var ring=visual.AddComponent<LineRenderer>();ring.sharedMaterial=material;ring.useWorldSpace=false;ring.loop=true;ring.positionCount=32;ring.widthMultiplier=.06f;ring.shadowCastingMode=ShadowCastingMode.Off;
         p.ring=ring;
-        for(int i=0;i<32;i++){float a=i*Mathf.PI*2/32;ring.SetPosition(i,new Vector3(Mathf.Cos(a)*2.4f,.02f,Mathf.Sin(a)*2.4f));}
+        float visualRadius=RadiusFor(p.seed);
+        for(int i=0;i<32;i++){float a=i*Mathf.PI*2/32;ring.SetPosition(i,new Vector3(Mathf.Cos(a)*visualRadius,.02f,Mathf.Sin(a)*visualRadius));}
         int petals=p.seed==Seed.Bamboo?5:6;
         for(int i=0;i<petals;i++) {
             var piece=GameObject.CreatePrimitive(p.seed==Seed.Bamboo?PrimitiveType.Cylinder:PrimitiveType.Sphere);piece.transform.SetParent(visual.transform,false);Collider collider=piece.GetComponent<Collider>();collider.enabled=false;Destroy(collider);

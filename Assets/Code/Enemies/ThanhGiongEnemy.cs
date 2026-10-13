@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(CapsuleCollider))]
@@ -50,16 +50,39 @@ public class ThanhGiongEnemy : MonoBehaviour
     public float separationRadius = 1.0f;
     public float separationStrength = 1.25f;
 
-    public EnemyState CurrentState { get; private set; } = EnemyState.Idle;
+    private EnemyState currentState = EnemyState.Idle;
+    public EnemyState CurrentState
+    {
+        get => currentState;
+        private set
+        {
+            if (currentState == value) return;
+            BeginAnimationState(value, DefaultAnimationDuration(value),
+                value == EnemyState.Slamming ? (isBoss ? .22f : resolvedRole == EnemyRole.Archer ? .12f : .04f) : 0f);
+        }
+    }
+    private float animationStateStarted;
+    private float animationStateDuration = 1f;
+    private float animationContactTime;
+    /// <summary>Actual gameplay state clock; clips never decide damage or movement.</summary>
+    public float AnimationStateDuration => animationStateDuration;
+    public float AnimationStatePhase => Mathf.Clamp01((Time.time - animationStateStarted) / animationStateDuration);
+    public float AnimationContactPhase => Mathf.Clamp01(animationContactTime / animationStateDuration);
     public bool IsStuckInGround => CurrentState == EnemyState.StuckInGround;
     public bool IsStunned => Time.time < stunnedUntil || CurrentState == EnemyState.Stunned;
     public bool IsRooted => Time.time < rootedUntil;
+    public bool IsExposed => Time.time < exposedUntil;
+    public bool IsSlowed => Time.time < slowedUntil;
     public float HealthRatio => Mathf.Clamp01(health / maxHealth);
     public Rigidbody Body => rb;
 
     private float health;
     private float stunnedUntil;
     private float rootedUntil;
+    private float exposedUntil;
+    private float exposureMultiplier = 1f;
+    private float slowedUntil;
+    private float slowFactor = 1f;
     private Transform target;
     private Transform focusTarget;
     private ThanhGiongCampaignController campaign;
@@ -70,6 +93,7 @@ public class ThanhGiongEnemy : MonoBehaviour
     private Rigidbody rb;
     private CapsuleCollider col;
     private ThanhGiongRagdollPhysics ragdoll;
+    private ThanhGiongEnemyAnimationDriver animationDriver;
 
     private float nextHeavyAttackTime;
     private float nextMinionAttackTime;
@@ -143,8 +167,8 @@ public class ThanhGiongEnemy : MonoBehaviour
         ragdoll = GetComponent<ThanhGiongRagdollPhysics>();
         if (ragdoll == null) ragdoll = gameObject.AddComponent<ThanhGiongRagdollPhysics>();
 
-        ThanhGiongEnemyAnimationDriver animationDriver = GetComponent<ThanhGiongEnemyAnimationDriver>();
-        if (animationDriver == null) gameObject.AddComponent<ThanhGiongEnemyAnimationDriver>();
+        animationDriver = GetComponent<ThanhGiongEnemyAnimationDriver>();
+        if (animationDriver == null) animationDriver = gameObject.AddComponent<ThanhGiongEnemyAnimationDriver>();
 
         // Cache or create visual pivot for procedural combat telegraphing & struggle shaking
         CacheVisualPivot();
@@ -185,7 +209,8 @@ public class ThanhGiongEnemy : MonoBehaviour
         health = maxHealth;
         stunnedUntil = 0f;
         rootedUntil = 0f;
-        CurrentState = EnemyState.Idle;
+        exposedUntil = 0f; exposureMultiplier = 1f; slowedUntil = 0f; slowFactor = 1f;
+        BeginAnimationState(EnemyState.Idle, 1f);
         nextHeavyAttackTime = Time.time + Random.Range(1.5f, 3.0f);
         nextMinionAttackTime = Time.time + Random.Range(0.5f, 1.5f);
         nextRangedAttackTime = Time.time + Random.Range(1.1f, 2.2f);
@@ -237,6 +262,7 @@ public class ThanhGiongEnemy : MonoBehaviour
         if (col != null) col.enabled = true;
         stateTimer = 0; flinchTimer = 0; enemyGaitTime = 0;
         visualSpeedBlend = 0f; visualSpeedBlendVel = 0f; attackPoseBlend = 0f; stuckPoseBlend = 0f; stunnedPoseBlend = 0f;
+        exposedUntil = 0f; exposureMultiplier = 1f; slowedUntil = 0f; slowFactor = 1f;
         visualPoseVelocity = Vector3.zero; visualScaleVelocity = Vector3.zero;
         foreach (ParticleSystem particles in GetComponentsInChildren<ParticleSystem>(true)) {
             var main = particles.main; main.playOnAwake = false;
@@ -257,6 +283,25 @@ public class ThanhGiongEnemy : MonoBehaviour
     private void AnimateEnemyProcedural()
     {
         if (visualModel == null || visualModel == transform || CurrentState == EnemyState.Dead) return;
+
+        // Authored skeletal motion supplies the actual gait and weapon poses. Keep
+        // only a small steering response so the old whole-body tilts do not double it.
+        if (animationDriver != null && animationDriver.UsesActionForge)
+        {
+            float secondaryDt = Mathf.Max(Time.deltaTime, .0001f);
+            float yawRate = Mathf.DeltaAngle(previousYaw, transform.eulerAngles.y) / secondaryDt;
+            previousYaw = transform.eulerAngles.y;
+            float bank = CurrentState == EnemyState.Chasing ? Mathf.Clamp(-yawRate * .012f, -1.5f, 1.5f) : 0f;
+            currentBankAngle = Mathf.Lerp(currentBankAngle, bank, 1f - Mathf.Exp(-9f * secondaryDt));
+            visualModel.localPosition = Vector3.SmoothDamp(visualModel.localPosition, visualBaseLocalPos,
+                ref visualPoseVelocity, .06f, 12f, secondaryDt);
+            visualModel.localRotation = Quaternion.Slerp(visualModel.localRotation,
+                visualBaseLocalRot * Quaternion.Euler(0f, 0f, currentBankAngle), 1f - Mathf.Exp(-20f * secondaryDt));
+            visualModel.localScale = Vector3.SmoothDamp(visualModel.localScale, visualBaseScale,
+                ref visualScaleVelocity, .07f, 10f, secondaryDt);
+            flinchTimer = Mathf.Max(0f, flinchTimer - secondaryDt);
+            return;
+        }
 
         float dt = Mathf.Max(Time.deltaTime, 0.0001f);
         Vector3 planarVelocity = rb != null ? new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z) : Vector3.zero;
@@ -554,11 +599,12 @@ public class ThanhGiongEnemy : MonoBehaviour
         }
 
         Vector3 direction = delta.normalized;
+        bool usingNavPath = TryGetNavDirection(desiredSlot, ref direction);
         direction = ApplyEnemySeparation(direction);
 
-        // Physical obstacle & companion avoidance ray/spherecast
+        // Physical obstacle & companion avoidance ray/spherecast (fallback when the NavMesh route is not in use)
         Vector3 rayOrigin = rb.position + Vector3.up * 0.7f;
-        if (Physics.SphereCast(rayOrigin, 0.45f, direction, out RaycastHit hit, 1.6f, ~0, QueryTriggerInteraction.Ignore))
+        if (!usingNavPath && Physics.SphereCast(rayOrigin, 0.45f, direction, out RaycastHit hit, 1.6f, ~0, QueryTriggerInteraction.Ignore))
         {
             if (hit.transform != target && !hit.transform.IsChildOf(target))
             {
@@ -576,7 +622,7 @@ public class ThanhGiongEnemy : MonoBehaviour
         // Apply physical velocity
         float speedScale = campaign != null ? campaign.GetEnemySpeedScale(isBoss) : 1f;
         float catchUpMultiplier = attackSqrDist > engageDistance * engageDistance ? 1.32f : 1f;
-        Vector3 targetVelocity = direction * moveSpeed * speedScale * RoleSpeedMultiplier() * catchUpMultiplier;
+        Vector3 targetVelocity = direction * moveSpeed * speedScale * RoleSpeedMultiplier() * catchUpMultiplier * (IsSlowed ? slowFactor : 1f);
         SmoothVelocity(targetVelocity);
 
         if (direction.sqrMagnitude > 0.001f)
@@ -584,6 +630,49 @@ public class ThanhGiongEnemy : MonoBehaviour
             Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
             rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, 8f * Time.fixedDeltaTime));
         }
+    }
+
+    // ---- NavMesh path following (planner only; the Rigidbody still drives the motion) ----
+    private UnityEngine.AI.NavMeshPath navPath;
+    private float nextRepathTime;
+    private int navCorner;
+    private bool navPathValid;
+
+    private bool TryGetNavDirection(Vector3 goal, ref Vector3 direction)
+    {
+        Vector3 pos = rb.position;
+        if (!UnityEngine.AI.NavMesh.SamplePosition(pos, out UnityEngine.AI.NavMeshHit from, 2.5f, UnityEngine.AI.NavMesh.AllAreas)) { navPathValid = false; return false; }
+        if (!UnityEngine.AI.NavMesh.SamplePosition(goal, out UnityEngine.AI.NavMeshHit to, 3.5f, UnityEngine.AI.NavMesh.AllAreas)) { navPathValid = false; return false; }
+
+        // Clear straight line on the mesh: walk directly (keeps formation feel, no zig-zag).
+        if (!UnityEngine.AI.NavMesh.Raycast(from.position, to.position, out UnityEngine.AI.NavMeshHit blocked, UnityEngine.AI.NavMesh.AllAreas))
+        {
+            navPathValid = false;
+            Vector3 straight = to.position - from.position; straight.y = 0f;
+            if (straight.sqrMagnitude > .01f) direction = straight.normalized;
+            return true;
+        }
+
+        if (navPath == null) navPath = new UnityEngine.AI.NavMeshPath();
+        if (!navPathValid || Time.time >= nextRepathTime)
+        {
+            nextRepathTime = Time.time + Random.Range(.3f, .5f);
+            navPathValid = UnityEngine.AI.NavMesh.CalculatePath(from.position, to.position, UnityEngine.AI.NavMesh.AllAreas, navPath) && navPath.corners.Length > 1;
+            navCorner = 1;
+        }
+        if (!navPathValid) return false;
+
+        Vector3[] corners = navPath.corners;
+        while (navCorner < corners.Length - 1)
+        {
+            Vector3 flat = corners[navCorner] - pos; flat.y = 0f;
+            if (flat.sqrMagnitude > .55f * .55f) break;
+            navCorner++;
+        }
+        Vector3 step = corners[Mathf.Min(navCorner, corners.Length - 1)] - pos; step.y = 0f;
+        if (step.sqrMagnitude < .0004f) return false;
+        direction = step.normalized;
+        return true;
     }
 
     private void ResolveIronHorseTarget()
@@ -675,6 +764,29 @@ public class ThanhGiongEnemy : MonoBehaviour
 
     #region Understory Vulnerability & Heavy Slam Coroutines
 
+    private float DefaultAnimationDuration(EnemyState state)
+    {
+        switch (state)
+        {
+            case EnemyState.TelegraphingAttack: return isBoss ? telegraphDuration : resolvedRole == EnemyRole.Archer ? .42f : .26f;
+            case EnemyState.Slamming: return isBoss ? .62f : .4f;
+            case EnemyState.StuckInGround: return Mathf.Max(.001f, stateTimer > 0f ? stateTimer : stuckDuration);
+            case EnemyState.Recovering: return isBoss ? .45f : .18f;
+            case EnemyState.Stunned: return Mathf.Max(.05f, stunnedUntil - Time.time);
+            default: return 1f;
+        }
+    }
+
+    private void BeginAnimationState(EnemyState state, float duration, float contactTime = 0f)
+    {
+        currentState = state;
+        animationStateStarted = Time.time;
+        animationStateDuration = Mathf.Max(.001f, duration);
+        animationContactTime = Mathf.Clamp(contactTime, 0f, animationStateDuration);
+    }
+
+    private bool UsesAuthoredAnimation => animationDriver != null && animationDriver.UsesActionForge;
+
     private IEnumerator PerformHeavySlamTelegraph()
     {
         CurrentState = EnemyState.TelegraphingAttack;
@@ -695,6 +807,7 @@ public class ThanhGiongEnemy : MonoBehaviour
         float effectiveTelegraph = Mathf.Max(.34f, telegraphDuration * Mathf.Lerp(1f, .78f, pressure) * Mathf.Lerp(1f, .82f, Mathf.Clamp01(phase / 2f)));
         float effectiveSlamRadius = slamRadius * Mathf.Lerp(1f, 1.14f, pressure) * Mathf.Lerp(1f, 1.18f, Mathf.Clamp01(phase / 2f));
         float effectiveStuckDuration = Mathf.Max(.45f, stuckDuration * Mathf.Lerp(1f, .74f, pressure) * Mathf.Lerp(1f, .78f, Mathf.Clamp01(phase / 2f)));
+        BeginAnimationState(EnemyState.TelegraphingAttack, effectiveTelegraph);
 
         SpawnWarningRing(slamTargetPos, effectiveSlamRadius);
 
@@ -712,7 +825,7 @@ public class ThanhGiongEnemy : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = elapsed / effectiveTelegraph;
 
-            if (visualModel != null && visualModel != transform)
+            if (!UsesAuthoredAnimation && visualModel != null && visualModel != transform)
             {
                 visualModel.localPosition = visualBaseLocalPos + Vector3.up * (Mathf.Sin(t * Mathf.PI * 0.5f) * 0.45f);
                 visualModel.localRotation = visualBaseLocalRot * Quaternion.Euler(-25f * t, 0f, 0f);
@@ -722,11 +835,11 @@ public class ThanhGiongEnemy : MonoBehaviour
         }
 
         // Phase: Slamming down
-        CurrentState = EnemyState.Slamming;
+        BeginAnimationState(EnemyState.Slamming, .62f, .22f);
         DestroyWarningRing();
 
         // Smash down violently forward
-        if (visualModel != null && visualModel != transform)
+        if (!UsesAuthoredAnimation && visualModel != null && visualModel != transform)
         {
             visualModel.localPosition = visualBaseLocalPos;
             visualModel.localRotation = visualBaseLocalRot * Quaternion.Euler(42f, 0f, 0f);
@@ -772,7 +885,7 @@ public class ThanhGiongEnemy : MonoBehaviour
         else
         {
             // PLAYER DODGED! WEAPON GETS STUCK IN THE GROUND (Understory mudLodge)!
-            CurrentState = EnemyState.StuckInGround;
+            BeginAnimationState(EnemyState.StuckInGround, effectiveStuckDuration);
             stateTimer = effectiveStuckDuration;
             SpawnStuckBladeMarker(slamTargetPos);
 
@@ -801,6 +914,15 @@ public class ThanhGiongEnemy : MonoBehaviour
         }
     }
 
+    private void FaceFocusTarget(float turnSpeed)
+    {
+        Transform f = focusTarget != null ? focusTarget : target;
+        if (f == null || rb == null) return;
+        Vector3 d = f.position - rb.position; d.y = 0f;
+        if (d.sqrMagnitude < .0004f) return;
+        rb.MoveRotation(Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(d.normalized, Vector3.up), turnSpeed * Time.fixedDeltaTime));
+    }
+
     private IEnumerator PerformMinionThrust()
     {
         float cooldownScale = (campaign != null ? campaign.GetEnemyCooldownScale(false) : 1f) * RoleCooldownMultiplier();
@@ -812,26 +934,44 @@ public class ThanhGiongEnemy : MonoBehaviour
         if (rb != null) SmoothVelocity(Vector3.zero);
         Vector3 origPos = visualModel != null ? visualModel.localPosition : Vector3.zero;
 
-        // Draw the weapon back during the warning, then strike on the damage frame.
-        if (visualModel != null && visualModel != transform)
+        // Wind-up: keep facing the target while drawing the weapon back and leaning away.
+        float windup = Mathf.Lerp(0.26f, 0.17f, pressure);
+        BeginAnimationState(EnemyState.TelegraphingAttack, windup);
+        for (float t = 0f; t < windup; t += Time.fixedDeltaTime)
         {
-            visualModel.localPosition = origPos - Vector3.forward * 0.12f;
-            visualModel.localRotation = visualBaseLocalRot * Quaternion.Euler(-12f, 0f, 0f);
+            FaceFocusTarget(14f);
+            if (!UsesAuthoredAnimation && visualModel != null && visualModel != transform)
+            {
+                float k = Mathf.SmoothStep(0f, 1f, t / windup);
+                visualModel.localPosition = Vector3.Lerp(origPos, origPos - Vector3.forward * 0.16f, k);
+                visualModel.localRotation = visualBaseLocalRot * Quaternion.Euler(Mathf.Lerp(0f, -14f, k), 0f, 0f);
+            }
+            yield return new WaitForFixedUpdate();
+            if (health <= 0f || Time.time < stunnedUntil) yield break;
         }
-
-        yield return new WaitForSeconds(Mathf.Lerp(0.20f, 0.14f, pressure));
-        if (health <= 0f || Time.time < stunnedUntil) yield break;
-        CurrentState = EnemyState.Slamming;
-        if (visualModel != null && visualModel != transform)
+        BeginAnimationState(EnemyState.Slamming, .4f, .04f);
+        // Strike: short committed lunge forward, body pitched into the thrust.
+        if (!UsesAuthoredAnimation && visualModel != null && visualModel != transform)
         {
-            visualModel.localPosition = origPos + Vector3.forward * 0.26f;
-            visualModel.localRotation = visualBaseLocalRot * Quaternion.Euler(14f, 0f, 0f);
+            visualModel.localPosition = origPos + Vector3.forward * 0.28f;
+            visualModel.localRotation = visualBaseLocalRot * Quaternion.Euler(16f, 0f, 0f);
         }
-        yield return new WaitForSeconds(.10f);
-        if (health <= 0f || Time.time < stunnedUntil) yield break;
-        if (health > 0f && Time.time >= stunnedUntil && target != null && campaign != null &&
-            campaign.IsBattleActive && Vector3.Distance(target.position, transform.position) < 3f * rangeScale)
-            campaign.DamagePlayer(8f * damageScale, transform.position);
+        bool damageDone = false;
+        for (float t = 0f; t < .12f; t += Time.fixedDeltaTime)
+        {
+            Vector3 toFocus = (focusTarget != null ? focusTarget.position : target.position) - rb.position; toFocus.y = 0f;
+            if (toFocus.magnitude > 1.15f)
+                rb.MovePosition(rb.position + transform.forward * (6.5f * Time.fixedDeltaTime));
+            if (!damageDone && t >= .04f)
+            {
+                damageDone = true;
+                if (health > 0f && target != null && campaign != null && campaign.IsBattleActive &&
+                    Vector3.Distance(target.position, transform.position) < 3f * rangeScale)
+                    campaign.DamagePlayer(8f * damageScale, transform.position);
+            }
+            yield return new WaitForFixedUpdate();
+            if (health <= 0f || Time.time < stunnedUntil) yield break;
+        }
         yield return new WaitForSeconds(.28f);
         if (health <= 0f || Time.time < stunnedUntil) yield break;
         CurrentState = EnemyState.Recovering;
@@ -853,12 +993,18 @@ public class ThanhGiongEnemy : MonoBehaviour
         Vector3 aim = focusTarget != null ? focusTarget.position + Vector3.up * .9f : origin + transform.forward * archerRange;
         Vector3 faceDir = aim - transform.position;
         faceDir.y = 0f;
-        if (faceDir.sqrMagnitude > .01f) transform.rotation = Quaternion.LookRotation(faceDir.normalized, Vector3.up);
+        if (faceDir.sqrMagnitude > .01f && rb != null) rb.MoveRotation(Quaternion.LookRotation(faceDir.normalized, Vector3.up));
         SpawnRangedTracer(origin, aim, new Color(1f, .74f, .18f, .95f), .34f);
 
-        yield return new WaitForSeconds(Mathf.Lerp(.34f, .22f, pressure));
-        if (health <= 0f || Time.time < stunnedUntil) yield break;
-        CurrentState = EnemyState.Slamming;
+        float draw = Mathf.Lerp(.42f, .28f, pressure);
+        BeginAnimationState(EnemyState.TelegraphingAttack, draw);
+        for (float t = 0f; t < draw; t += Time.fixedDeltaTime)
+        {
+            FaceFocusTarget(10f);
+            yield return new WaitForFixedUpdate();
+            if (health <= 0f || Time.time < stunnedUntil) yield break;
+        }
+        BeginAnimationState(EnemyState.Slamming, .4f, .12f);
         yield return new WaitForSeconds(.12f);
         if (health <= 0f || Time.time < stunnedUntil) yield break;
         if (health > 0f && Time.time >= stunnedUntil && target != null && campaign != null && campaign.IsBattleActive)
@@ -1084,6 +1230,38 @@ public class ThanhGiongEnemy : MonoBehaviour
         if (rb != null && !rb.isKinematic) rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
     }
 
+    public void ApplyExposure(float seconds, float damageMultiplier)
+    {
+        if (seconds <= 0f || health <= 0f) return;
+        if (!IsExposed) exposureMultiplier = 1f;
+        exposedUntil = Mathf.Max(exposedUntil, Time.time + seconds);
+        exposureMultiplier = Mathf.Max(exposureMultiplier, damageMultiplier);
+    }
+
+    public void ApplySlow(float seconds, float movementMultiplier)
+    {
+        if (seconds <= 0f || health <= 0f) return;
+        if (!IsSlowed) slowFactor = 1f;
+        slowedUntil = Mathf.Max(slowedUntil, Time.time + seconds);
+        slowFactor = Mathf.Min(slowFactor, Mathf.Clamp(movementMultiplier, .3f, 1f));
+    }
+
+    public void ApplyWindGust(Vector3 source, float force, float stunSeconds)
+    {
+        if (health <= 0f || !gameObject.activeInHierarchy) return;
+        StopAllCoroutines();
+        DestroyWarningRing();
+        DestroyStuckBladeMarker();
+        ResetVisualPose();
+        stunnedUntil = Mathf.Max(stunnedUntil, Time.time + stunSeconds);
+        CurrentState = EnemyState.Stunned;
+        Vector3 away = transform.position - source;
+        away.y = 0f;
+        if (away.sqrMagnitude < .01f) away = transform.forward;
+        if (rb != null && !rb.isKinematic)
+            rb.AddForce(away.normalized * force + Vector3.up * (isBoss ? .15f : .7f), ForceMode.Impulse);
+    }
+
     public void RestoreCheckpoint(ThanhGiongCampaignController owner, Transform player, Vector3 position, Quaternion rotation, float savedHealth, bool alive)
     {
         ResetForBattle(owner, player);
@@ -1092,10 +1270,13 @@ public class ThanhGiongEnemy : MonoBehaviour
         health = Mathf.Clamp(savedHealth, 0, maxHealth);
         stunnedUntil = 0f;
         rootedUntil = 0f;
+        exposedUntil = 0f; exposureMultiplier = 1f; slowedUntil = 0f; slowFactor = 1f;
         flinchTimer = 0f;
         CurrentState = alive && health > 0 ? EnemyState.Chasing : EnemyState.Dead;
         gameObject.SetActive(alive && health > 0);
     }
+
+    public void TakeDamage(float amount, float stunSeconds, Vector3 hitSource) => TakeDamage(amount, stunSeconds, hitSource, 1f, false);
 
     public void TakeDamage(float amount, float stunSeconds = 0f, Vector3 hitSource = default, float impactScale = 1f, bool heavyImpact = false)
     {
@@ -1103,7 +1284,8 @@ public class ThanhGiongEnemy : MonoBehaviour
 
         float actualDamage = Mathf.Max(0f, amount);
         if (!isBoss && resolvedRole == EnemyRole.ShieldBearer)
-            actualDamage *= heavyImpact ? .85f : .68f;
+            actualDamage *= IsExposed ? .95f : heavyImpact ? .85f : .68f;
+        if (IsExposed) actualDamage *= exposureMultiplier;
 
         // VULNERABILITY WINDOW: Multiply damage by 2.0x if struck while weapon is stuck in ground!
         if (CurrentState == EnemyState.StuckInGround)
@@ -1111,7 +1293,7 @@ public class ThanhGiongEnemy : MonoBehaviour
             actualDamage *= vulnerabilityMultiplier;
             SpawnCritSparks(transform.position + Vector3.up * 1.5f);
             IsometricCameraFollow.Instance?.Shake(0.55f, 0.4f);
-            campaign?.ShowMessage($"★ CHÍ MẠNG SƠ HỞ! -{Mathf.RoundToInt(actualDamage)} MÁU (x2 SÁT THƯƠNG) ★", 1.2f);
+            campaign?.ShowMessage($"★ CHÍ MẠNG SƠ HỞ! -{Mathf.RoundToInt(actualDamage)} MÁU (x{vulnerabilityMultiplier:0.0} SÁT THƯƠNG) ★", 1.2f);
         }
 
         health -= actualDamage;

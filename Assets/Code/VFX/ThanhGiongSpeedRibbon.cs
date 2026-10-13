@@ -5,8 +5,8 @@ public class ThanhGiongSpeedRibbon : MonoBehaviour
 {
     public Transform motionSource;
     public Transform ribbonAnchor;
-    public float activationSpeed = 6.2f;
-    public float fullSpeed = 8.5f;
+    public float activationSpeed = 1.2f;
+    public float fullSpeed = 6.0f;
 
     private TrailRenderer silk;
     private TrailRenderer swordLight;

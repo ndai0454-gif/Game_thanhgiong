@@ -83,51 +83,60 @@ public class ThanhGiongProjectTests
                 Component horse = scene.GetRootGameObjects()
                     .SelectMany(root => root.GetComponentsInChildren(horseType, true).Cast<Component>())
                     .First();
-                Transform horseRig = horse.transform.Find("Visual/IronHorse_Rig");
+                Transform horseRig = horse.transform.Find("Visual/IronHorse_Rig") ?? horse.transform.Find("Visual/MountedGiong/Mount/IronHorse");
                 Transform combatFocus = horse.transform.Find("CombatFocus_IronHorse");
-                Transform riderSeat = horseRig != null
-                    ? horseRig.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == "RiderSeat")
-                    : null;
-                Transform heroRig = riderSeat != null ? riderSeat.Find("ThanhGiong_Rig") : null;
-                Assert.NotNull(horseRig, $"{scene.name}: ngựa chưa được tách thành IronHorse_Rig");
+                Assert.NotNull(horseRig, $"{scene.name}: ngựa chưa được tách thành IronHorse_Rig hoặc MountedGiong");
                 Assert.NotNull(combatFocus, $"{scene.name}: thiếu điểm target riêng trên nhân vật cưỡi ngựa");
-                Assert.NotNull(heroRig, $"{scene.name}: Gióng chưa được tách thành ThanhGiong_Rig");
-                Assert.Greater(horseRig.GetComponentsInChildren<Renderer>(true).Length, 0);
-                Component modularHorse = horseRig.GetComponent(GameType("HorseController"));
-                Assert.NotNull(modularHorse, $"{scene.name}: chưa tích hợp KayKit_Horse_Modular");
-                GameObject horseSource = PrefabUtility.GetCorrespondingObjectFromSource(horseRig.gameObject);
-                Assert.NotNull(horseSource, $"{scene.name}: ngựa không còn liên kết prefab nguồn");
-                Assert.AreEqual("KayKit_IronHorse_ThanhGiong", horseSource.name);
-                Assert.GreaterOrEqual(horseRig.GetComponentsInChildren<ParticleSystem>(true).Length, 3,
-                    $"{scene.name}: Ngựa Sắt thiếu Aura, HoofDust hoặc FireBreath VFX");
-                Animator horseAnimator = horseRig.GetComponent<Animator>();
-                Assert.NotNull(horseAnimator, $"{scene.name}: ngựa modular thiếu Animator");
-                Assert.AreEqual("Horse_Controller", horseAnimator.runtimeAnimatorController?.name);
-                Animator heroAnimator = heroRig.GetComponentInChildren<Animator>(true);
-                Assert.NotNull(heroAnimator, $"{scene.name}: Gióng thiếu Animator riêng");
-                Assert.NotNull(heroAnimator.runtimeAnimatorController, $"{scene.name}: Gióng thiếu Animator Controller");
-                GameObject heroSource = PrefabUtility.GetCorrespondingObjectFromSource(heroRig.gameObject);
-                Assert.NotNull(heroSource, $"{scene.name}: Gióng không còn liên kết prefab nguồn");
-                Assert.AreEqual("KayKit_ThanhGiong_Hero", heroSource.name);
-                Assert.NotNull(heroRig.GetComponent(GameType("ThanhGiongCharacterController")),
-                    $"{scene.name}: Gióng modular thiếu controller riêng");
-                Assert.AreEqual("ThanhGiong_Hero", heroAnimator.runtimeAnimatorController.name);
-                Assert.AreEqual("RiderSeat", heroRig.parent.name,
-                    $"{scene.name}: Gióng chưa được gắn vào RiderSeat");
-                Assert.Less(new Vector2(heroRig.localPosition.x, heroRig.localPosition.z).magnitude, .15f,
-                    $"{scene.name}: Gióng lệch khỏi tâm RiderSeat");
-                Assert.That(horseRig.localScale.x, Is.InRange(1.05f, 1.15f),
-                    $"{scene.name}: Ngựa không còn đúng tỷ lệ với ô map");
-                Assert.That(heroRig.lossyScale.x, Is.InRange(.68f, .76f),
-                    $"{scene.name}: Gióng không còn cân bằng với quân địch/map");
-                Assert.GreaterOrEqual(heroRig.GetComponentsInChildren<ParticleSystem>(true).Length, 2,
-                    $"{scene.name}: Gióng thiếu Bamboo Aura hoặc Bamboo Impact VFX");
-                Assert.NotNull(horse.GetComponent(GameType("ThanhGiongSpeedRibbon")),
-                    $"{scene.name}: thiếu vệt tốc độ Knight");
-                Assert.NotNull(horse.GetComponent(GameType("ThanhGiongRibbonCape")),
-                    $"{scene.name}: thiếu dải lụa đỏ Knight");
-                foreach (string fieldName in new[] { "frontLeftLeg", "frontRightLeg", "rearLeftLeg", "rearRightLeg" })
-                    Assert.NotNull(horseType.GetField(fieldName)?.GetValue(horse), $"{scene.name}: thiếu {fieldName}");
+                Assert.Greater(horseRig.GetComponentsInChildren<Renderer>(true).Length, 0, $"{scene.name}: thiếu Renderer");
+                Assert.NotNull(horse.GetComponent(GameType("ThanhGiongSpeedRibbon")), $"{scene.name}: thiếu vệt tốc độ Knight");
+                Assert.NotNull(horse.GetComponent(GameType("ThanhGiongRibbonCape")), $"{scene.name}: thiếu dải lụa đỏ Knight");
+
+                var godotMotion = horse.GetComponent(GameType("GodotMountedMotion"));
+                if (godotMotion != null)
+                {
+                    Transform heroRig = horse.transform.Find("Visual/MountedGiong/Mount/ThanhGiong");
+                    Assert.NotNull(heroRig, $"{scene.name}: Gióng chưa được tách thành MountedGiong/Mount/ThanhGiong");
+                    Assert.Greater(heroRig.GetComponentsInChildren<Renderer>(true).Length, 0, $"{scene.name}: thiếu Renderer trên Gióng");
+                }
+                else
+                {
+                    Transform riderSeat = horseRig != null
+                        ? horseRig.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == "RiderSeat")
+                        : null;
+                    Transform heroRig = riderSeat != null ? riderSeat.Find("ThanhGiong_Rig") : null;
+                    Assert.NotNull(heroRig, $"{scene.name}: Gióng chưa được tách thành ThanhGiong_Rig");
+                    Component modularHorse = horseRig.GetComponent(GameType("HorseController"));
+                    Assert.NotNull(modularHorse, $"{scene.name}: chưa tích hợp KayKit_Horse_Modular");
+                    GameObject horseSource = PrefabUtility.GetCorrespondingObjectFromSource(horseRig.gameObject);
+                    Assert.NotNull(horseSource, $"{scene.name}: ngựa không còn liên kết prefab nguồn");
+                    Assert.AreEqual("KayKit_IronHorse_ThanhGiong", horseSource.name);
+                    Assert.GreaterOrEqual(horseRig.GetComponentsInChildren<ParticleSystem>(true).Length, 3,
+                        $"{scene.name}: Ngựa Sắt thiếu Aura, HoofDust hoặc FireBreath VFX");
+                    Animator horseAnimator = horseRig.GetComponent<Animator>();
+                    Assert.NotNull(horseAnimator, $"{scene.name}: ngựa modular thiếu Animator");
+                    Assert.AreEqual("Horse_Controller", horseAnimator.runtimeAnimatorController?.name);
+                    Animator heroAnimator = heroRig.GetComponentInChildren<Animator>(true);
+                    Assert.NotNull(heroAnimator, $"{scene.name}: Gióng thiếu Animator riêng");
+                    Assert.NotNull(heroAnimator.runtimeAnimatorController, $"{scene.name}: Gióng thiếu Animator Controller");
+                    GameObject heroSource = PrefabUtility.GetCorrespondingObjectFromSource(heroRig.gameObject);
+                    Assert.NotNull(heroSource, $"{scene.name}: Gióng không còn liên kết prefab nguồn");
+                    Assert.AreEqual("KayKit_ThanhGiong_Hero", heroSource.name);
+                    Assert.NotNull(heroRig.GetComponent(GameType("ThanhGiongCharacterController")),
+                        $"{scene.name}: Gióng modular thiếu controller riêng");
+                    Assert.AreEqual("ThanhGiong_Hero", heroAnimator.runtimeAnimatorController.name);
+                    Assert.AreEqual("RiderSeat", heroRig.parent.name,
+                        $"{scene.name}: Gióng chưa được gắn vào RiderSeat");
+                    Assert.Less(new Vector2(heroRig.localPosition.x, heroRig.localPosition.z).magnitude, .15f,
+                        $"{scene.name}: Gióng lệch khỏi tâm RiderSeat");
+                    Assert.That(horseRig.localScale.x, Is.InRange(1.05f, 1.15f),
+                        $"{scene.name}: Ngựa không còn đúng tỷ lệ với ô map");
+                    Assert.That(heroRig.lossyScale.x, Is.InRange(.68f, .76f),
+                        $"{scene.name}: Gióng không còn cân bằng với quân địch/map");
+                    Assert.GreaterOrEqual(heroRig.GetComponentsInChildren<ParticleSystem>(true).Length, 2,
+                        $"{scene.name}: Gióng thiếu Bamboo Aura hoặc Bamboo Impact VFX");
+                    foreach (string fieldName in new[] { "frontLeftLeg", "frontRightLeg", "rearLeftLeg", "rearRightLeg" })
+                        Assert.NotNull(horseType.GetField(fieldName)?.GetValue(horse), $"{scene.name}: thiếu {fieldName}");
+                }
             });
         }
     }
