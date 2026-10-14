@@ -20,7 +20,7 @@ public sealed class LegendCheckpoint : MonoBehaviour
     sealed class Beacon {public string label;public Vector3 position;public bool inside;}
     [Serializable] sealed class Snapshot {public int version=1;public string scene,label;public Vector3 position;public Quaternion rotation;public ThanhGiongCampaignController.CheckpointState campaign;public LegendSeedSkills.State seeds;public List<EnemyState> enemies=new List<EnemyState>();public List<CollectibleState> items=new List<CollectibleState>();}
     [Serializable] sealed class EnemyState {public string path;public Vector3 position;public Quaternion rotation;public float health;public bool alive;}
-    [Serializable] sealed class CollectibleState {public string path;public bool active;}
+    [Serializable] sealed class CollectibleState {public string path,namePath;public bool active;}
     IEnumerator Start()
     {
         campaign=GetComponent<ThanhGiongCampaignController>();skills=GetComponent<LegendSeedSkills>();
@@ -67,7 +67,7 @@ public sealed class LegendCheckpoint : MonoBehaviour
         if(campaign==null||campaign.IsDead||campaign.EquipmentBusy||ThanhGiongSceneTransition.IsTransitioning)return false;
         saved=new Snapshot {scene=SceneManager.GetActiveScene().name,label=label,position=transform.position,rotation=transform.rotation,campaign=campaign.CaptureCheckpointState(),seeds=skills!=null?skills.CaptureState():null};
         foreach(ThanhGiongEnemy enemy in FindObjectsByType<ThanhGiongEnemy>(FindObjectsInactive.Include))saved.enemies.Add(new EnemyState {path=Path(enemy.transform),position=enemy.transform.position,rotation=enemy.transform.rotation,health=enemy.HealthRatio*enemy.maxHealth,alive=enemy.gameObject.activeInHierarchy&&enemy.HealthRatio>0});
-        foreach(ThanhGiongCollectible item in FindObjectsByType<ThanhGiongCollectible>(FindObjectsInactive.Include))saved.items.Add(new CollectibleState {path=Path(item.transform),active=item.gameObject.activeSelf});
+        foreach(ThanhGiongCollectible item in FindObjectsByType<ThanhGiongCollectible>(FindObjectsInactive.Include))saved.items.Add(new CollectibleState {path=Path(item.transform),namePath=NamedPath(item.transform),active=item.gameObject.activeSelf});
         PlayerPrefs.SetString(Prefix+saved.scene,JsonUtility.ToJson(saved));PlayerPrefs.Save();
         campaign.ShowMessage("ĐIỂM DỪNG CHÂN · "+label,2f);GetComponent<ThanhGiongCampaignAudio>()?.PlayCue("arrival",.4f);return true;
     }
@@ -82,11 +82,29 @@ public sealed class LegendCheckpoint : MonoBehaviour
             if(enemy==null||restoredEnemies.Contains(enemy))enemy=FindNearestEnemy(sceneEnemies,restoredEnemies,state.position);
             if(enemy!=null){enemy.RestoreCheckpoint(campaign,transform,state.position,state.rotation,state.health,state.alive);restoredEnemies.Add(enemy);}
         }
-        foreach(CollectibleState state in saved.items){Transform node=Resolve(state.path);if(node!=null)node.gameObject.SetActive(state.active);}
+        foreach(CollectibleState state in saved.items)
+        {
+            Transform node=string.IsNullOrEmpty(state.namePath)?Resolve(state.path):ResolveNamed(state.namePath);
+            if(node==null||node.GetComponent<ThanhGiongCollectible>()==null)continue;
+            // Old saves used sibling indices. Newly inserted scene objects can occupy
+            // an old index; do not apply that unrelated old state to new supply groves.
+            if(string.IsNullOrEmpty(state.namePath)&&node.root.name=="COMBAT - BAMBOO RESUPPLY")continue;
+            node.gameObject.SetActive(state.active);
+        }
         foreach(Beacon beacon in beacons)beacon.inside=(transform.position-beacon.position).sqrMagnitude<activationRadius*activationRadius;
         return true;
     }
     public static void ForgetScene(string scene){PlayerPrefs.DeleteKey(Prefix+scene);PlayerPrefs.Save();}
+    static string NamedPath(Transform node)
+    {
+        string path=node.name;while(node.parent!=null){node=node.parent;path=node.name+"/"+path;}return path;
+    }
+    static Transform ResolveNamed(string path)
+    {
+        string[] parts=path.Split('/');Transform node=null;
+        foreach(GameObject root in SceneManager.GetActiveScene().GetRootGameObjects())if(root.name==parts[0]){node=root.transform;break;}
+        for(int i=1;i<parts.Length&&node!=null;i++)node=node.Find(parts[i]);return node;
+    }
     static string Path(Transform node)
     {
         string path=node.GetSiblingIndex().ToString();while(node.parent!=null){node=node.parent;path=node.GetSiblingIndex()+"/"+path;}return path;

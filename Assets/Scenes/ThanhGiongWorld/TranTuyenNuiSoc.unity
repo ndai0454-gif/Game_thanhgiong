@@ -345,6 +345,79 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1700055112742281655, guid: d966f6b3e0e8d694fa2434e8d31d0757, type: 3}
   m_PrefabInstance: {fileID: 32852227}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &51486101
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 51486102}
+  - component: {fileID: 51486104}
+  - component: {fileID: 51486103}
+  m_Layer: 0
+  m_Name: "Kh\xF3m Tre Ti\u1EBFp Chi\u1EBFn 2"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &51486102
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 51486101}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 14, y: 0, z: -26}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 267699385}
+  m_Father: {fileID: 1401515517}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &51486103
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 51486101}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.35
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &51486104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 51486101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
+  kind: 4
+  displayName: "B\u1EE5i Tre Ng\xE0 Ti\u1EBFp Chi\u1EBFn"
+  foodValue: 0
+  spinSpeed: 0
+  visualRoot: {fileID: 267699385}
+  labelText: {fileID: 0}
 --- !u!1 &57649073
 GameObject:
   m_ObjectHideFlags: 0
@@ -391,7 +464,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
   kind: 4
   displayName: "L\u01B0\u01A1ng Th\u1EF1c"
@@ -468,7 +541,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
   kind: 4
   displayName: "L\u01B0\u01A1ng Th\u1EF1c"
@@ -697,7 +770,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -712,7 +785,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &78221660
 MonoBehaviour:
@@ -724,7 +797,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 180
   moveSpeed: 1.8
@@ -835,7 +908,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 2694040316618380698}
   sourceAsset: Assets/Prefabs/Enemies/KayKitKnightBoss/KayKit_Knight_Boss_Visual.prefab
@@ -966,7 +1039,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -981,7 +1054,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &86901502
 MonoBehaviour:
@@ -993,7 +1066,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -1104,7 +1177,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 2379930573473665408}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -1259,7 +1332,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2840fdfe40668240851f75a34ef4c47, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendCheckpointBeacon
   checkpointName: "\u0110\u01B0\u1EDDng ti\u1EC1n tuy\u1EBFn"
 --- !u!1 &123963116
@@ -1541,7 +1614,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83d6a198281e9504f8875df67545ea7c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotEnvironmentMotion
 --- !u!1001 &182973057
 PrefabInstance:
@@ -4933,7 +5006,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83d6a198281e9504f8875df67545ea7c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotEnvironmentMotion
 --- !u!1 &200123793
 GameObject:
@@ -5578,7 +5651,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -5593,7 +5666,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &248008856
 MonoBehaviour:
@@ -5605,7 +5678,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -5716,7 +5789,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 6078418202899707705}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -5945,6 +6018,80 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
   m_PrefabInstance: {fileID: 264725712}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &267699384
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 51486102}
+    m_Modifications:
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000051379204
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.83388585
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.551937
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068419364391058540, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_Name
+      value: MeshyVisual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+--- !u!4 &267699385 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+  m_PrefabInstance: {fileID: 267699384}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &287162416
 GameObject:
   m_ObjectHideFlags: 0
@@ -6139,7 +6286,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: da938ab650b115d4ab55c361a71d05c7, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendAtmosphere
   chapterIndex: 0
   terrainRoot: {fileID: 0}
@@ -6154,7 +6301,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5944f38831138ee49b83845f9c6dce4a, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendWorldPresentation
   player: {fileID: 960717769}
   labelDistance: 9
@@ -6168,7 +6315,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
   m_IsGlobal: 1
   priority: 20
@@ -6201,7 +6348,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2764cef631a05d54ea73bdd27ecef8a3, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendLandscapePresentation
   chapterIndex: 4
   hero: {fileID: 960717769}
@@ -6630,7 +6777,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -6645,7 +6792,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &377231838
 MonoBehaviour:
@@ -6657,7 +6804,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -6768,7 +6915,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 8673984933545944309}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -6967,7 +7114,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79b01badededa314081908b7c34f168c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiong.Environment.MeshyPropVfxAnimator
   effectKind: 4
   propLight: {fileID: 1076011921}
@@ -7098,7 +7245,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -7113,7 +7260,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &427651169
 MonoBehaviour:
@@ -7125,7 +7272,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -7236,7 +7383,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 3335501085078177196}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -7444,6 +7591,79 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1484559893361898919, guid: dd5b421f86627004e93b28cb3a212d3b, type: 3}
   m_PrefabInstance: {fileID: 463835248}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &466368311
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 466368312}
+  - component: {fileID: 466368314}
+  - component: {fileID: 466368313}
+  m_Layer: 0
+  m_Name: "Kh\xF3m Tre Ti\u1EBFp Chi\u1EBFn 1"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &466368312
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466368311}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -14, y: 0, z: -26}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1782301126}
+  m_Father: {fileID: 1401515517}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &466368313
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466368311}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.35
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &466368314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466368311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
+  kind: 4
+  displayName: "B\u1EE5i Tre Ng\xE0 Ti\u1EBFp Chi\u1EBFn"
+  foodValue: 0
+  spinSpeed: 0
+  visualRoot: {fileID: 1782301126}
+  labelText: {fileID: 0}
 --- !u!1 &474989721
 GameObject:
   m_ObjectHideFlags: 0
@@ -7568,7 +7788,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83d6a198281e9504f8875df67545ea7c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotEnvironmentMotion
 --- !u!1 &484473827
 GameObject:
@@ -7620,7 +7840,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -7635,7 +7855,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &484473831
 MonoBehaviour:
@@ -7647,7 +7867,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -7758,7 +7978,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 1844481958970221402}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -7982,7 +8202,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 049bde5fe590e99458fbf07c29774740, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::IsometricCameraFollow
   target: {fileID: 960717769}
   offset: {x: -16, y: 19, z: -16}
@@ -8089,7 +8309,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
   m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2
@@ -8311,6 +8531,80 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 520586804}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &522143405
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1484265392}
+    m_Modifications:
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000056028366
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.6946583
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7193399
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068419364391058540, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_Name
+      value: MeshyVisual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+--- !u!4 &522143406 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+  m_PrefabInstance: {fileID: 522143405}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &532809351
 GameObject:
   m_ObjectHideFlags: 0
@@ -11186,7 +11480,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ed88568a3a0d7448a5c28d4a6051be6, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCampaignHUD
   campaign: {fileID: 960717772}
   panelFrame: {fileID: 2800000, guid: 0d4388ba47826964ab9daafdafd1c72d, type: 3}
@@ -11255,7 +11549,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83d6a198281e9504f8875df67545ea7c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotEnvironmentMotion
 --- !u!1 &621230747
 GameObject:
@@ -11307,7 +11601,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -11322,7 +11616,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &621230751
 MonoBehaviour:
@@ -11334,7 +11628,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -11445,7 +11739,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 3711540555190641534}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -13948,7 +14242,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -13963,7 +14257,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &675656569
 MonoBehaviour:
@@ -13975,7 +14269,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -14086,7 +14380,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 6620735309046459944}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -14143,7 +14437,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -14158,7 +14452,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &691811741
 MonoBehaviour:
@@ -14170,7 +14464,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -14281,7 +14575,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 1039788730241600656}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -16794,7 +17088,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79b01badededa314081908b7c34f168c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiong.Environment.MeshyPropVfxAnimator
   effectKind: 4
   propLight: {fileID: 1174304565}
@@ -17106,7 +17400,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -17121,7 +17415,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &777986537
 MonoBehaviour:
@@ -17133,7 +17427,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -17244,7 +17538,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 8102865294564300877}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -17368,7 +17662,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
   m_SerializedVersion: 0
   m_AgentTypeID: 0
@@ -17563,7 +17857,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -17578,7 +17872,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &844733980
 MonoBehaviour:
@@ -17590,7 +17884,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -17701,7 +17995,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 6435075682478664337}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -18607,7 +18901,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ff3c54c87e60edf4d98dc64df8fd0602, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCampaignAudio
   musicGain: 0.11
   ambienceGain: 0.5
@@ -18622,7 +18916,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ca6fde01d85d6441be64a0c63dcdf2f, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCampaignController
   battleRoot: {fileID: 1090136228}
   bambooRoot: {fileID: 2113718573}
@@ -18648,7 +18942,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 139c74871db2394449b58070065ecbb4, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotCombatFeedback
 --- !u!114 &960717774
 MonoBehaviour:
@@ -18660,7 +18954,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0953c1a7d34bdd143b7747cbefc33941, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotMountedMotion
   visual: {fileID: 1849713735}
   mirrorX: 1
@@ -18678,7 +18972,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a00bd950ce41486408ffd99ed9607117, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendAudioMix
 --- !u!114 &960717776
 MonoBehaviour:
@@ -18690,7 +18984,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e05ba03dcd9c9874d85085dc343fcaa6, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendCheckpoint
   activationRadius: 2.2
 --- !u!114 &960717777
@@ -18703,7 +18997,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed36b9e85d0055344aaf67c925190b14, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendSeedSkills
   maxMana: 100
   manaPerSecond: 4
@@ -18719,7 +19013,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa8b0a9a6ff06414cb064388cb764e5b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendActorArt
 --- !u!114 &960717779
 MonoBehaviour:
@@ -18731,7 +19025,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2182023d161fe844f8c1624c337fdcdf, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::MeshyHeroVisualDriver
   meshyRoot: {fileID: 1272127164}
   meshyMount: {fileID: 1272127165}
@@ -19068,7 +19362,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c7142521ce1934b47a076736e1afe924, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCampaignVFX
 --- !u!4 &994590258
 Transform:
@@ -20147,7 +20441,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
   kind: 4
   displayName: "L\u01B0\u01A1ng Th\u1EF1c"
@@ -20254,7 +20548,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79b01badededa314081908b7c34f168c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiong.Environment.MeshyPropVfxAnimator
   effectKind: 4
   propLight: {fileID: 1634625334}
@@ -20269,6 +20563,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1849713735}
     m_Modifications:
+    - target: {fileID: 97192176319862711, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.038000822
+      objectReference: {fileID: 0}
+    - target: {fileID: 566283096440020564, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.028000355
+      objectReference: {fileID: 0}
     - target: {fileID: 735825631753835529, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.95371693
@@ -20300,6 +20602,14 @@ PrefabInstance:
     - target: {fileID: 799733866251786720, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1899409918871869970, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.16000058
+      objectReference: {fileID: 0}
+    - target: {fileID: 3016523252426722794, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.40999967
       objectReference: {fileID: 0}
     - target: {fileID: 3176711593903110942, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -20320,6 +20630,14 @@ PrefabInstance:
     - target: {fileID: 3729040290713103095, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_Name
       value: Meshy_Mounted_ThanhGiong
+      objectReference: {fileID: 0}
+    - target: {fileID: 3813984562568533403, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.05000007
+      objectReference: {fileID: 0}
+    - target: {fileID: 4033433992524014019, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.6799991
       objectReference: {fileID: 0}
     - target: {fileID: 4330485298486129303, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -20389,6 +20707,14 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5432037930590294746, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.07999927
+      objectReference: {fileID: 0}
+    - target: {fileID: 5575502643057911621, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.15900117
+      objectReference: {fileID: 0}
     - target: {fileID: 7123039591855817960, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.23227295
@@ -20404,6 +20730,18 @@ PrefabInstance:
     - target: {fileID: 7123039591855817960, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0.13655518
+      objectReference: {fileID: 0}
+    - target: {fileID: 7538107315331885772, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.539999
+      objectReference: {fileID: 0}
+    - target: {fileID: 7953302552528061881, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.13000137
+      objectReference: {fileID: 0}
+    - target: {fileID: 8500775534726588295, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.039999634
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -22992,6 +23330,80 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1484559893361898919, guid: dd5b421f86627004e93b28cb3a212d3b, type: 3}
   m_PrefabInstance: {fileID: 1329921069}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1368749613
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1895877684}
+    m_Modifications:
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000051379204
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.976296
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.21643972
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068419364391058540, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_Name
+      value: MeshyVisual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+--- !u!4 &1368749614 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+  m_PrefabInstance: {fileID: 1368749613}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1380340953
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23119,6 +23531,43 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 84, y: 6, z: 0.5}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1401515516
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1401515517}
+  m_Layer: 0
+  m_Name: COMBAT - BAMBOO RESUPPLY
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1401515517
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1401515516}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 466368312}
+  - {fileID: 51486102}
+  - {fileID: 1946658419}
+  - {fileID: 1819922573}
+  - {fileID: 1484265392}
+  - {fileID: 1895877684}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1430455263
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23220,7 +23669,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e744c97e97b0dd343bfe48690036a0d7, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::KayKitMapGuide
   mapTitle: "TR\u1EACN TUY\u1EBEN N\xDAI S\xD3C"
   description: "Chi\u1EBFn tr\u01B0\u1EDDng m\u1EDF v\u1EDBi ph\xE1o \u0111\xE0i \u0111\u1ECF, r\u1EEBng ch\xE1y v\xE0 qu\u1EA3ng tr\u01B0\u1EDDng boss."
@@ -23603,6 +24052,79 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3065963852389935305, guid: 9bdbec331effacf43a4cca881be8a52a, type: 3}
   m_PrefabInstance: {fileID: 1475459238}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1484265391
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1484265392}
+  - component: {fileID: 1484265394}
+  - component: {fileID: 1484265393}
+  m_Layer: 0
+  m_Name: "Kh\xF3m Tre Ti\u1EBFp Chi\u1EBFn 5"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1484265392
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1484265391}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5, y: 0, z: -35}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 522143406}
+  m_Father: {fileID: 1401515517}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &1484265393
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1484265391}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.35
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &1484265394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1484265391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
+  kind: 4
+  displayName: "B\u1EE5i Tre Ng\xE0 Ti\u1EBFp Chi\u1EBFn"
+  foodValue: 0
+  spinSpeed: 0
+  visualRoot: {fileID: 522143406}
+  labelText: {fileID: 0}
 --- !u!1 &1495955611
 GameObject:
   m_ObjectHideFlags: 0
@@ -23713,7 +24235,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83d6a198281e9504f8875df67545ea7c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotEnvironmentMotion
 --- !u!1 &1512656235
 GameObject:
@@ -23875,7 +24397,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
   kind: 4
   displayName: "L\u01B0\u01A1ng Th\u1EF1c"
@@ -27495,7 +28017,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -27510,7 +28032,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &1744482133
 MonoBehaviour:
@@ -27522,7 +28044,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -27633,7 +28155,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 4808018714805935099}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -27690,7 +28212,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -27705,7 +28227,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &1755050332
 MonoBehaviour:
@@ -27717,7 +28239,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -27828,7 +28350,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 6587456462058246443}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -30133,6 +30655,80 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!1001 &1782301125
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 466368312}
+    m_Modifications:
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000056028366
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068419364391058540, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_Name
+      value: MeshyVisual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+--- !u!4 &1782301126 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+  m_PrefabInstance: {fileID: 1782301125}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1789140388
 GameObject:
   m_ObjectHideFlags: 0
@@ -30247,6 +30843,79 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1789140388}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1819922572
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1819922573}
+  - component: {fileID: 1819922575}
+  - component: {fileID: 1819922574}
+  m_Layer: 0
+  m_Name: "Kh\xF3m Tre Ti\u1EBFp Chi\u1EBFn 4"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1819922573
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1819922572}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 14, y: 0, z: -15}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1901664837}
+  m_Father: {fileID: 1401515517}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &1819922574
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1819922572}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.35
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &1819922575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1819922572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
+  kind: 4
+  displayName: "B\u1EE5i Tre Ng\xE0 Ti\u1EBFp Chi\u1EBFn"
+  foodValue: 0
+  spinSpeed: 0
+  visualRoot: {fileID: 1901664837}
+  labelText: {fileID: 0}
 --- !u!1 &1834866094
 GameObject:
   m_ObjectHideFlags: 0
@@ -30557,6 +31226,79 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1870043910}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1895877683
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1895877684}
+  - component: {fileID: 1895877686}
+  - component: {fileID: 1895877685}
+  m_Layer: 0
+  m_Name: "Kh\xF3m Tre Ti\u1EBFp Chi\u1EBFn 6"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1895877684
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1895877683}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5, y: 0, z: -35}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1368749614}
+  m_Father: {fileID: 1401515517}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &1895877685
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1895877683}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.35
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &1895877686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1895877683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
+  kind: 4
+  displayName: "B\u1EE5i Tre Ng\xE0 Ti\u1EBFp Chi\u1EBFn"
+  foodValue: 0
+  spinSpeed: 0
+  visualRoot: {fileID: 1368749614}
+  labelText: {fileID: 0}
 --- !u!1 &1899315005
 GameObject:
   m_ObjectHideFlags: 0
@@ -30599,7 +31341,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2840fdfe40668240851f75a34ef4c47, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendCheckpointBeacon
   checkpointName: "B\u1EBFn h\xE0nh qu\xE2n"
 --- !u!1001 &1900976572
@@ -30675,6 +31417,80 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 1484559893361898919, guid: dd5b421f86627004e93b28cb3a212d3b, type: 3}
   m_PrefabInstance: {fileID: 1900976572}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1901664836
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1819922573}
+    m_Modifications:
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000051379204
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.18223548
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.9832549
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068419364391058540, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_Name
+      value: MeshyVisual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+--- !u!4 &1901664837 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+  m_PrefabInstance: {fileID: 1901664836}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1910737153
 GameObject:
@@ -30779,7 +31595,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -30794,7 +31610,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &1912804904
 MonoBehaviour:
@@ -30806,7 +31622,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -30917,13 +31733,160 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 1568994356240591828}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
   placeholders:
   - {fileID: 1912804905}
   - {fileID: 979923810}
+--- !u!1 &1946658418
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1946658419}
+  - component: {fileID: 1946658421}
+  - component: {fileID: 1946658420}
+  m_Layer: 0
+  m_Name: "Kh\xF3m Tre Ti\u1EBFp Chi\u1EBFn 3"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1946658419
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1946658418}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -14, y: 0, z: -15}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1965744175}
+  m_Father: {fileID: 1401515517}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &1946658420
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1946658418}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.35
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &1946658421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1946658418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
+  kind: 4
+  displayName: "B\u1EE5i Tre Ng\xE0 Ti\u1EBFp Chi\u1EBFn"
+  foodValue: 0
+  spinSpeed: 0
+  visualRoot: {fileID: 1965744175}
+  labelText: {fileID: 0}
+--- !u!1001 &1965744174
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1946658419}
+    m_Modifications:
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000056028366
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.39073122
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.92050487
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068419364391058540, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_Name
+      value: MeshyVisual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+--- !u!4 &1965744175 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+  m_PrefabInstance: {fileID: 1965744174}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1965942375
 GameObject:
   m_ObjectHideFlags: 0
@@ -31095,7 +32058,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -31110,7 +32073,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &1975145390
 MonoBehaviour:
@@ -31122,7 +32085,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -31233,7 +32196,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 6147222133905118050}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -60100,3 +61063,4 @@ SceneRoots:
   - {fileID: 311141088}
   - {fileID: 792774587}
   - {fileID: 358217598}
+  - {fileID: 1401515517}

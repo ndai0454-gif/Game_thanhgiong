@@ -1,9 +1,11 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ThanhGiongCampaignVFX : MonoBehaviour
 {
     private Material lineMaterial;
+    private readonly List<GameObject> spearDebris = new List<GameObject>();
 
     private void Awake()
     {
@@ -38,11 +40,111 @@ public class ThanhGiongCampaignVFX : MonoBehaviour
 
     public void PlaySwordBreak(Transform target)
     {
+        if (target == null) return;
+        // Keep the legacy method/object names so existing scenes and callers still work.
+        Transform weapon = null;
+        foreach (Transform child in target.GetComponentsInChildren<Transform>(true))
+        {
+            if (child.name != "Weapon_IronSword") continue;
+            if (weapon == null || child.gameObject.activeInHierarchy) weapon = child;
+            if (child.gameObject.activeInHierarchy) break;
+        }
+        Vector3 origin = weapon != null ? weapon.position : target.position + Vector3.up * 1.6f;
         IsometricCameraFollow.Instance?.Shake(0.7f, 1.1f);
+        StartCoroutine(SpearBreakFragments(target, weapon, origin));
         for (int i = 0; i < 9; i++)
         {
-            StartCoroutine(Ring(target.position + Vector3.up * (0.8f + i * .12f), .2f, 1.5f + i * .22f, new Color(.7f, .85f, 1f, .9f), .28f + i * .03f));
+            StartCoroutine(Ring(origin + Vector3.up * (i * .06f), .2f, 1.5f + i * .22f, new Color(.7f, .85f, 1f, .9f), .28f + i * .03f));
         }
+    }
+
+    private IEnumerator SpearBreakFragments(Transform target, Transform weapon, Vector3 origin)
+    {
+        const int count = 5;
+        const float lifetime = 2.1f;
+        GameObject debris = new GameObject("BrokenSpear_Fragments");
+        spearDebris.Add(debris);
+        // A delayed destroy also covers an interrupted coroutine or disabled effect host.
+        Destroy(debris, lifetime + .15f);
+        Transform[] pieces = new Transform[count];
+        Vector3[] velocities = new Vector3[count];
+        Vector3[] spins = new Vector3[count];
+        Vector3[] scales = new Vector3[count];
+        Renderer source = null;
+        Renderer spearhead = null;
+        if (weapon != null)
+            foreach (Renderer renderer in weapon.GetComponentsInChildren<Renderer>(true))
+            {
+                if (!renderer.enabled || renderer is TrailRenderer || renderer is LineRenderer) continue;
+                if (source == null || renderer.name == "Iron Spear Shaft") source = renderer;
+                if (renderer.name == "Iron Spearhead") spearhead = renderer;
+            }
+        Material sourceMaterial = source != null && source.sharedMaterial != null ? source.sharedMaterial : lineMaterial;
+        MeshFilter headMesh = spearhead != null ? spearhead.GetComponent<MeshFilter>() : null;
+        Quaternion rotation = weapon != null ? weapon.rotation : target.rotation;
+        Vector3 shaftAxis = rotation * Vector3.up;
+        Vector3 right = target.right;
+        Vector3 forward = target.forward;
+        float floorY = target.position.y + .08f;
+        float length = source != null ? Mathf.Clamp(source.bounds.size.magnitude, 1.2f, 3.6f) : 2f;
+        for (int i = 0; i < count; i++)
+        {
+            bool tip = i == count - 1;
+            GameObject fragment;
+            if (tip && headMesh != null && headMesh.sharedMesh != null)
+            {
+                fragment = new GameObject("SpearHead_Fragment", typeof(MeshFilter), typeof(MeshRenderer));
+                fragment.GetComponent<MeshFilter>().sharedMesh = headMesh.sharedMesh;
+            }
+            else fragment = GameObject.CreatePrimitive(tip ? PrimitiveType.Cube : PrimitiveType.Cylinder);
+            fragment.name = tip ? "SpearHead_Fragment" : "SpearShaft_Fragment_" + i;
+            fragment.transform.SetParent(debris.transform, false);
+            fragment.transform.position = origin + shaftAxis * (i * length / count);
+            fragment.transform.rotation = rotation;
+            fragment.transform.localScale = tip
+                ? (headMesh != null ? headMesh.transform.lossyScale : new Vector3(.15f, .28f, .055f))
+                : new Vector3(.075f, length / (count * 2f), .075f);
+            if (tip && spearhead != null) fragment.transform.position = spearhead.transform.position;
+            Collider collider = fragment.GetComponent<Collider>();
+            if (collider != null) { collider.enabled = false; Destroy(collider); }
+            fragment.GetComponent<Renderer>().sharedMaterial = tip && spearhead != null ? spearhead.sharedMaterial : sourceMaterial;
+            pieces[i] = fragment.transform;
+            scales[i] = fragment.transform.localScale;
+            float fan = (i - (count - 1) * .5f) * .65f;
+            velocities[i] = forward * (1.4f + i * .25f) + right * fan + Vector3.up * (2.1f + i * .23f);
+            spins[i] = new Vector3(210f + i * 55f, 110f - i * 45f, 80f + i * 60f);
+        }
+        float elapsed = 0f;
+        while (elapsed < lifetime && debris != null)
+        {
+            float dt = Time.deltaTime;
+            elapsed += dt;
+            float shrink = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(lifetime - .45f, lifetime, elapsed));
+            for (int i = 0; i < count; i++)
+            {
+                velocities[i] += Vector3.down * (9.81f * dt);
+                Vector3 position = pieces[i].position + velocities[i] * dt;
+                if (position.y < floorY)
+                {
+                    position.y = floorY;
+                    velocities[i] = new Vector3(velocities[i].x * .68f, Mathf.Abs(velocities[i].y) * .24f, velocities[i].z * .68f);
+                    spins[i] *= .65f;
+                }
+                pieces[i].position = position;
+                pieces[i].Rotate(spins[i] * dt, Space.World);
+                pieces[i].localScale = scales[i] * shrink;
+            }
+            yield return null;
+        }
+        spearDebris.Remove(debris);
+        if (debris != null) Destroy(debris);
+    }
+
+    private void OnDisable()
+    {
+        foreach (GameObject debris in spearDebris)
+            if (debris != null) Destroy(debris);
+        spearDebris.Clear();
     }
 
     public void PlayFoodBurst(Vector3 pos, Color color)

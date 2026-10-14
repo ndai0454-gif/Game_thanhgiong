@@ -13,6 +13,16 @@ public sealed class GodotCombatFeedback : MonoBehaviour
     private sealed class Flash { public MaterialPropertyBlock original; public float time; public Color color; }
     public int ImpactCount { get; private set; }
     public int DebrisCount => debrisCount;
+    public int BloodBurstCount { get; private set; }
+    public int ActiveBloodDropletCount { get; private set; }
+    public int ActiveBloodBurstCount => bloodRoots.Count;
+    public string LastBloodTargetName { get; private set; }
+    public Vector3 LastBloodOrigin { get; private set; }
+    private const int MaxBloodDroplets = 96;
+    private const int DropletsPerBurst = 16;
+    private readonly List<GameObject> bloodRoots = new List<GameObject>();
+    private readonly Dictionary<Transform, float> bloodCooldowns = new Dictionary<Transform, float>();
+    private readonly List<Transform> expiredBloodTargets = new List<Transform>();
 
     private void Awake()
     {
@@ -94,6 +104,103 @@ public sealed class GodotCombatFeedback : MonoBehaviour
         Debris(target.position + Vector3.up * 1.25f, color, bamboo, 7);
     }
 
+    // Called only after an enemy actually takes mounted contact damage. Keeping this
+    // separate from player hurt feedback prevents red spray on the rider or horse.
+    public bool PlayMountedImpact(Transform target, Vector3 source, Vector3 travelDirection, float intensity = 1f)
+    {
+        if (!isActiveAndEnabled || target == null || target.root == transform.root || effectMaterial == null) return false;
+        ThanhGiongEnemy enemy = target.GetComponentInParent<ThanhGiongEnemy>();
+        if (enemy == null) return false;
+        Transform enemyRoot = enemy.transform;
+        if (bloodCooldowns.TryGetValue(enemyRoot, out float nextBurst) && Time.time < nextBurst) return false;
+        if (ActiveBloodDropletCount + DropletsPerBurst > MaxBloodDroplets) return false;
+
+        expiredBloodTargets.Clear();
+        foreach (var entry in bloodCooldowns)
+            if (entry.Key == null || Time.time >= entry.Value) expiredBloodTargets.Add(entry.Key);
+        foreach (Transform expiredTarget in expiredBloodTargets) bloodCooldowns.Remove(expiredTarget);
+        bloodCooldowns[enemyRoot] = Time.time + .18f;
+
+        Vector3 direction = Vector3.ProjectOnPlane(travelDirection, Vector3.up).normalized;
+        if (direction.sqrMagnitude < .01f) direction = Vector3.ProjectOnPlane(enemyRoot.position - source, Vector3.up).normalized;
+        if (direction.sqrMagnitude < .01f) direction = transform.forward;
+        Vector3 origin = enemyRoot.position + Vector3.up * .9f;
+        Collider body = enemy.GetComponent<Collider>();
+        if (body != null && body.enabled) origin = body.bounds.center;
+        origin -= direction * .16f;
+        BloodBurstCount++;
+        ImpactCount++;
+        LastBloodTargetName = enemyRoot.name;
+        LastBloodOrigin = origin;
+        StartCoroutine(BloodSpray(origin, direction, enemyRoot.position.y + .035f, Mathf.Clamp(intensity, .75f, 1.6f)));
+        return true;
+    }
+
+    private IEnumerator BloodSpray(Vector3 origin, Vector3 direction, float groundY, float intensity)
+    {
+        // World-space ownership is deliberate: the spray stays at the collision
+        // when the horse moves on, and never inherits the horse's scale or bob.
+        GameObject root = new GameObject("Godot Mounted Blood Spray");
+        bloodRoots.Add(root);
+        Transform[] drops = new Transform[DropletsPerBurst];
+        Renderer[] renderers = new Renderer[DropletsPerBurst];
+        Vector3[] velocities = new Vector3[DropletsPerBurst];
+        Vector3[] sizes = new Vector3[DropletsPerBurst];
+        Color[] colors = new Color[DropletsPerBurst];
+        Vector3 right = Vector3.Cross(Vector3.up, direction);
+        MaterialPropertyBlock block = new MaterialPropertyBlock();
+        for (int i = 0; i < DropletsPerBurst; i++)
+        {
+            GameObject drop = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            drop.name = "Blood Droplet";
+            drop.transform.SetParent(root.transform, false);
+            drop.transform.position = origin;
+            Collider collider = drop.GetComponent<Collider>();
+            collider.enabled = false;
+            Destroy(collider);
+            drops[i] = drop.transform;
+            renderers[i] = drop.GetComponent<Renderer>();
+            renderers[i].sharedMaterial = effectMaterial;
+            renderers[i].shadowCastingMode = ShadowCastingMode.Off;
+            renderers[i].receiveShadows = false;
+            velocities[i] = (direction * Random.Range(1.2f, 3.5f) + right * Random.Range(-2.2f, 2.2f) + Vector3.up * Random.Range(1.1f, 3.1f)) * intensity;
+            float width = Random.Range(.065f, .13f);
+            sizes[i] = new Vector3(width, width, width * Random.Range(1.5f, 2.8f));
+            colors[i] = i % 3 == 0 ? new Color(.62f, .025f, .035f) : new Color(.95f, .055f, .065f);
+            block.SetColor("_Color", colors[i]); block.SetColor("_BaseColor", colors[i]);
+            renderers[i].SetPropertyBlock(block);
+            drops[i].localScale = sizes[i];
+        }
+        ActiveBloodDropletCount += DropletsPerBurst;
+        const float life = .95f;
+        float age = 0;
+        while (age < life)
+        {
+            age += Time.deltaTime;
+            float opacity = 1f - Mathf.InverseLerp(.55f, life, age);
+            for (int i = 0; i < DropletsPerBurst; i++)
+            {
+                if (drops[i] == null) continue;
+                float fallTime = (velocities[i].y + Mathf.Sqrt(velocities[i].y * velocities[i].y + 19.6f * Mathf.Max(0f, origin.y - groundY))) / 9.8f;
+                float flightAge = Mathf.Min(age, fallTime);
+                Vector3 position = origin + velocities[i] * flightAge + Vector3.down * (4.9f * flightAge * flightAge);
+                bool grounded = age >= fallTime;
+                position.y = Mathf.Max(groundY, position.y);
+                drops[i].position = position;
+                Vector3 velocity = velocities[i] + Vector3.down * (9.8f * age);
+                drops[i].rotation = grounded ? Quaternion.identity : Quaternion.LookRotation(velocity.normalized);
+                drops[i].localScale = grounded ? new Vector3(sizes[i].x * 2.2f, .016f, sizes[i].x * 2.2f) : sizes[i];
+                Color color = colors[i]; color.a = opacity;
+                block.SetColor("_Color", color); block.SetColor("_BaseColor", color);
+                renderers[i].SetPropertyBlock(block);
+            }
+            yield return null;
+        }
+        bloodRoots.Remove(root);
+        if (root != null) Destroy(root);
+        ActiveBloodDropletCount -= DropletsPerBurst;
+    }
+
     private void Debris(Vector3 position, Color color, bool leaf, int count, float life = 0, float size = 1)
     {
         if (effectMaterial == null) return;
@@ -132,6 +239,9 @@ public sealed class GodotCombatFeedback : MonoBehaviour
     {
         foreach (var entry in flashes) if (entry.Key != null) entry.Key.SetPropertyBlock(entry.Value.original);
         flashes.Clear(); StopAllCoroutines();
+        foreach (GameObject root in bloodRoots) if (root != null) Destroy(root);
+        bloodRoots.Clear(); bloodCooldowns.Clear(); expiredBloodTargets.Clear();
+        ActiveBloodDropletCount = 0;
         foreach (Transform child in transform) if (child.name.StartsWith("Godot ")) Destroy(child.gameObject);
         debrisCount = 0;
     }

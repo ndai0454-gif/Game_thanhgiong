@@ -2682,6 +2682,79 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8495685038228664985, guid: aa17a5420db35d34fb5c10eb76d6840a, type: 3}
   m_PrefabInstance: {fileID: 42053422}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &51486101
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 51486102}
+  - component: {fileID: 51486104}
+  - component: {fileID: 51486103}
+  m_Layer: 0
+  m_Name: "Kh\xF3m Tre Ti\u1EBFp Chi\u1EBFn 2"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &51486102
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 51486101}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -18, y: 0, z: -38}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 267699385}
+  m_Father: {fileID: 1401515517}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &51486103
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 51486101}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.35
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &51486104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 51486101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
+  kind: 4
+  displayName: "B\u1EE5i Tre Ng\xE0 Ti\u1EBFp Chi\u1EBFn"
+  foodValue: 0
+  spinSpeed: 0
+  visualRoot: {fileID: 267699385}
+  labelText: {fileID: 0}
 --- !u!1 &78221656
 GameObject:
   m_ObjectHideFlags: 0
@@ -2732,7 +2805,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -2747,7 +2820,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &78221660
 MonoBehaviour:
@@ -2759,7 +2832,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -2870,7 +2943,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 860147467094265725}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -2927,7 +3000,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -2942,7 +3015,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &86901502
 MonoBehaviour:
@@ -2954,7 +3027,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -3065,7 +3138,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 3605303710578019588}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -3287,7 +3360,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e744c97e97b0dd343bfe48690036a0d7, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::KayKitMapGuide
   mapTitle: "THUNG L\u0168NG V\u01AF\u1EE2T S\xD4NG"
   description: "Hai \u0111\u1EA1o qu\xE2n tranh ch\u1EA5p c\u1EA7u \u0111\xE1; l\u1EC1u tr\u1EA1i v\xE0 m\xE1y b\u1EAFn \u0111\xE1 t\u1EA1o tuy\u1EBFn bao v\xE2y."
@@ -3460,7 +3533,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83d6a198281e9504f8875df67545ea7c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotEnvironmentMotion
 --- !u!1 &175700231
 GameObject:
@@ -4446,7 +4519,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83d6a198281e9504f8875df67545ea7c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotEnvironmentMotion
 --- !u!1 &200123793
 GameObject:
@@ -4475,7 +4548,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c7142521ce1934b47a076736e1afe924, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCampaignVFX
 --- !u!4 &200123795
 Transform:
@@ -4534,7 +4607,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2840fdfe40668240851f75a34ef4c47, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendCheckpointBeacon
   checkpointName: "\u0110\u01B0\u1EDDng ti\u1EC1n tuy\u1EBFn"
 --- !u!1 &210873118
@@ -4918,6 +4991,80 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7613037402975626664, guid: 611f1adcb4191394c9726396108deeca, type: 3}
   m_PrefabInstance: {fileID: 237959796}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &267699384
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 51486102}
+    m_Modifications:
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000051379204
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.83388585
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.551937
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068419364391058540, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_Name
+      value: MeshyVisual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+--- !u!4 &267699385 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+  m_PrefabInstance: {fileID: 267699384}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &274315333
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5038,7 +5185,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
   kind: 4
   displayName: "L\u01B0\u01A1ng Th\u1EF1c"
@@ -5350,7 +5497,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -5365,7 +5512,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &377231838
 MonoBehaviour:
@@ -5377,7 +5524,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -5488,7 +5635,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 306963594262507615}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -5585,7 +5732,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -5600,7 +5747,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &427651169
 MonoBehaviour:
@@ -5612,7 +5759,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -5723,7 +5870,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 2978558759651106067}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -6005,6 +6152,79 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7613037402975626664, guid: 611f1adcb4191394c9726396108deeca, type: 3}
   m_PrefabInstance: {fileID: 462025255}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &466368311
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 466368312}
+  - component: {fileID: 466368314}
+  - component: {fileID: 466368313}
+  m_Layer: 0
+  m_Name: "Kh\xF3m Tre Ti\u1EBFp Chi\u1EBFn 1"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &466368312
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466368311}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -26, y: 0, z: -38}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1782301126}
+  m_Father: {fileID: 1401515517}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &466368313
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466368311}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.35
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &466368314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466368311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
+  kind: 4
+  displayName: "B\u1EE5i Tre Ng\xE0 Ti\u1EBFp Chi\u1EBFn"
+  foodValue: 0
+  spinSpeed: 0
+  visualRoot: {fileID: 1782301126}
+  labelText: {fileID: 0}
 --- !u!1 &472391091
 GameObject:
   m_ObjectHideFlags: 0
@@ -6049,7 +6269,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83d6a198281e9504f8875df67545ea7c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotEnvironmentMotion
 --- !u!1001 &476025060
 PrefabInstance:
@@ -6143,7 +6363,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83d6a198281e9504f8875df67545ea7c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotEnvironmentMotion
 --- !u!1 &484473827
 GameObject:
@@ -6195,7 +6415,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -6210,7 +6430,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &484473831
 MonoBehaviour:
@@ -6222,7 +6442,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -6333,7 +6553,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 5745272217865468963}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -6559,6 +6779,80 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 520586804}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &522143405
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1484265392}
+    m_Modifications:
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000056028366
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.6946583
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7193399
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068419364391058540, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_Name
+      value: MeshyVisual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+--- !u!4 &522143406 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+  m_PrefabInstance: {fileID: 522143405}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &525652250
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9243,7 +9537,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ed88568a3a0d7448a5c28d4a6051be6, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCampaignHUD
   campaign: {fileID: 960717772}
   panelFrame: {fileID: 2800000, guid: 0d4388ba47826964ab9daafdafd1c72d, type: 3}
@@ -9956,7 +10250,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
   m_SerializedVersion: 0
   m_AgentTypeID: 0
@@ -10023,7 +10317,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: da938ab650b115d4ab55c361a71d05c7, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendAtmosphere
   chapterIndex: 0
   terrainRoot: {fileID: 0}
@@ -10038,7 +10332,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5944f38831138ee49b83845f9c6dce4a, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendWorldPresentation
   player: {fileID: 960717769}
   labelDistance: 9
@@ -10052,7 +10346,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
   m_IsGlobal: 1
   priority: 20
@@ -10085,7 +10379,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2764cef631a05d54ea73bdd27ecef8a3, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendLandscapePresentation
   chapterIndex: 3
   hero: {fileID: 960717769}
@@ -10213,7 +10507,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -10228,7 +10522,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &844733980
 MonoBehaviour:
@@ -10240,7 +10534,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -10351,7 +10645,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 7800921148836598258}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -10592,7 +10886,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ff3c54c87e60edf4d98dc64df8fd0602, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCampaignAudio
   musicGain: 0.11
   ambienceGain: 0.5
@@ -10607,7 +10901,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ca6fde01d85d6441be64a0c63dcdf2f, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCampaignController
   battleRoot: {fileID: 1090136228}
   bambooRoot: {fileID: 2113718573}
@@ -10633,7 +10927,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 139c74871db2394449b58070065ecbb4, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotCombatFeedback
 --- !u!114 &960717774
 MonoBehaviour:
@@ -10645,7 +10939,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0953c1a7d34bdd143b7747cbefc33941, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotMountedMotion
   visual: {fileID: 21228438}
   mirrorX: 1
@@ -10663,7 +10957,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a00bd950ce41486408ffd99ed9607117, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendAudioMix
 --- !u!114 &960717776
 MonoBehaviour:
@@ -10675,7 +10969,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e05ba03dcd9c9874d85085dc343fcaa6, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendCheckpoint
   activationRadius: 2.2
 --- !u!114 &960717777
@@ -10688,7 +10982,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed36b9e85d0055344aaf67c925190b14, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendSeedSkills
   maxMana: 100
   manaPerSecond: 4
@@ -10704,7 +10998,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa8b0a9a6ff06414cb064388cb764e5b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendActorArt
 --- !u!114 &960717779
 MonoBehaviour:
@@ -10716,7 +11010,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2182023d161fe844f8c1624c337fdcdf, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::MeshyHeroVisualDriver
   meshyRoot: {fileID: 1956916532}
   meshyMount: {fileID: 1956916533}
@@ -19188,7 +19482,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2840fdfe40668240851f75a34ef4c47, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendCheckpointBeacon
   checkpointName: "B\u1EBFn h\xE0nh qu\xE2n"
 --- !u!1001 &1232821555
@@ -19765,6 +20059,80 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5567849917413133185, guid: 334aabb0a9c589e44aead45f0d6ace21, type: 3}
   m_PrefabInstance: {fileID: 1329404046}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1368749613
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1895877684}
+    m_Modifications:
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000051379204
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.976296
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.21643972
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068419364391058540, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_Name
+      value: MeshyVisual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+--- !u!4 &1368749614 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+  m_PrefabInstance: {fileID: 1368749613}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1372943951
 GameObject:
   m_ObjectHideFlags: 0
@@ -19923,6 +20291,43 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.2, y: 1.2, z: 14}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1401515516
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1401515517}
+  m_Layer: 0
+  m_Name: COMBAT - BAMBOO RESUPPLY
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1401515517
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1401515516}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 466368312}
+  - {fileID: 51486102}
+  - {fileID: 1946658419}
+  - {fileID: 1819922573}
+  - {fileID: 1484265392}
+  - {fileID: 1895877684}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1425154254
 GameObject:
   m_ObjectHideFlags: 0
@@ -20001,7 +20406,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
   kind: 4
   displayName: "L\u01B0\u01A1ng Th\u1EF1c"
@@ -20170,6 +20575,79 @@ Transform:
   - {fileID: 306963594262507615}
   m_Father: {fileID: 377231835}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1484265391
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1484265392}
+  - component: {fileID: 1484265394}
+  - component: {fileID: 1484265393}
+  m_Layer: 0
+  m_Name: "Kh\xF3m Tre Ti\u1EBFp Chi\u1EBFn 5"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1484265392
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1484265391}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -28, y: 0, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 522143406}
+  m_Father: {fileID: 1401515517}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &1484265393
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1484265391}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.35
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &1484265394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1484265391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
+  kind: 4
+  displayName: "B\u1EE5i Tre Ng\xE0 Ti\u1EBFp Chi\u1EBFn"
+  foodValue: 0
+  spinSpeed: 0
+  visualRoot: {fileID: 522143406}
+  labelText: {fileID: 0}
 --- !u!1001 &1497421235
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20274,7 +20752,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 049bde5fe590e99458fbf07c29774740, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::IsometricCameraFollow
   target: {fileID: 960717769}
   offset: {x: -16, y: 19, z: -16}
@@ -20381,7 +20859,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
   m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2
@@ -20590,7 +21068,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
   kind: 4
   displayName: "L\u01B0\u01A1ng Th\u1EF1c"
@@ -20940,7 +21418,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79b01badededa314081908b7c34f168c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiong.Environment.MeshyPropVfxAnimator
   effectKind: 4
   propLight: {fileID: 1965289368}
@@ -21271,7 +21749,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
   kind: 4
   displayName: "L\u01B0\u01A1ng Th\u1EF1c"
@@ -21420,7 +21898,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79b01badededa314081908b7c34f168c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiong.Environment.MeshyPropVfxAnimator
   effectKind: 4
   propLight: {fileID: 1503002514}
@@ -21477,7 +21955,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -21492,7 +21970,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &1744482133
 MonoBehaviour:
@@ -21504,7 +21982,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -21615,7 +22093,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 8968545366982974149}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -21848,13 +22326,87 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79b01badededa314081908b7c34f168c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiong.Environment.MeshyPropVfxAnimator
   effectKind: 4
   propLight: {fileID: 21780074}
   animatedMeshRoot: {fileID: 175700232}
   baseLightIntensity: 1.4
   phaseOffset: 0
+--- !u!1001 &1782301125
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 466368312}
+    m_Modifications:
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000056028366
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068419364391058540, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_Name
+      value: MeshyVisual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+--- !u!4 &1782301126 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+  m_PrefabInstance: {fileID: 1782301125}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1789140388
 GameObject:
   m_ObjectHideFlags: 0
@@ -22043,6 +22595,79 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
   m_PrefabInstance: {fileID: 1794841479}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1819922572
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1819922573}
+  - component: {fileID: 1819922575}
+  - component: {fileID: 1819922574}
+  m_Layer: 0
+  m_Name: "Kh\xF3m Tre Ti\u1EBFp Chi\u1EBFn 4"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1819922573
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1819922572}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -19, y: 0, z: -16}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1901664837}
+  m_Father: {fileID: 1401515517}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &1819922574
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1819922572}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.35
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &1819922575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1819922572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
+  kind: 4
+  displayName: "B\u1EE5i Tre Ng\xE0 Ti\u1EBFp Chi\u1EBFn"
+  foodValue: 0
+  spinSpeed: 0
+  visualRoot: {fileID: 1901664837}
+  labelText: {fileID: 0}
 --- !u!1001 &1841415727
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24529,6 +25154,153 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!1 &1895877683
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1895877684}
+  - component: {fileID: 1895877686}
+  - component: {fileID: 1895877685}
+  m_Layer: 0
+  m_Name: "Kh\xF3m Tre Ti\u1EBFp Chi\u1EBFn 6"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1895877684
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1895877683}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -20, y: 0, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1368749614}
+  m_Father: {fileID: 1401515517}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &1895877685
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1895877683}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.35
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &1895877686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1895877683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
+  kind: 4
+  displayName: "B\u1EE5i Tre Ng\xE0 Ti\u1EBFp Chi\u1EBFn"
+  foodValue: 0
+  spinSpeed: 0
+  visualRoot: {fileID: 1368749614}
+  labelText: {fileID: 0}
+--- !u!1001 &1901664836
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1819922573}
+    m_Modifications:
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000051379204
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.18223548
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.9832549
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068419364391058540, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_Name
+      value: MeshyVisual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+--- !u!4 &1901664837 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+  m_PrefabInstance: {fileID: 1901664836}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1910737153
 GameObject:
   m_ObjectHideFlags: 0
@@ -24632,7 +25404,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -24647,7 +25419,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &1912804904
 MonoBehaviour:
@@ -24659,7 +25431,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 55
   moveSpeed: 2.35
@@ -24770,7 +25542,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 1886345699168466399}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -24821,8 +25593,81 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83d6a198281e9504f8875df67545ea7c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotEnvironmentMotion
+--- !u!1 &1946658418
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1946658419}
+  - component: {fileID: 1946658421}
+  - component: {fileID: 1946658420}
+  m_Layer: 0
+  m_Name: "Kh\xF3m Tre Ti\u1EBFp Chi\u1EBFn 3"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1946658419
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1946658418}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -29, y: 0, z: -16}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1965744175}
+  m_Father: {fileID: 1401515517}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &1946658420
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1946658418}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.35
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &1946658421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1946658418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
+  kind: 4
+  displayName: "B\u1EE5i Tre Ng\xE0 Ti\u1EBFp Chi\u1EBFn"
+  foodValue: 0
+  spinSpeed: 0
+  visualRoot: {fileID: 1965744175}
+  labelText: {fileID: 0}
 --- !u!1 &1954780045
 GameObject:
   m_ObjectHideFlags: 0
@@ -24928,6 +25773,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 21228438}
     m_Modifications:
+    - target: {fileID: 97192176319862711, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.0029992908
+      objectReference: {fileID: 0}
+    - target: {fileID: 97192176319862711, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.038000822
+      objectReference: {fileID: 0}
+    - target: {fileID: 566283096440020564, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.013000771
+      objectReference: {fileID: 0}
+    - target: {fileID: 566283096440020564, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.028000355
+      objectReference: {fileID: 0}
     - target: {fileID: 735825631753835529, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.95371693
@@ -24959,6 +25820,22 @@ PrefabInstance:
     - target: {fileID: 799733866251786720, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1899409918871869970, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.0070001036
+      objectReference: {fileID: 0}
+    - target: {fileID: 1899409918871869970, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.16000058
+      objectReference: {fileID: 0}
+    - target: {fileID: 3016523252426722794, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.20999962
+      objectReference: {fileID: 0}
+    - target: {fileID: 3016523252426722794, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.40999967
       objectReference: {fileID: 0}
     - target: {fileID: 3176711593903110942, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -24979,6 +25856,18 @@ PrefabInstance:
     - target: {fileID: 3729040290713103095, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_Name
       value: Meshy_Mounted_ThanhGiong
+      objectReference: {fileID: 0}
+    - target: {fileID: 3813984562568533403, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.05000007
+      objectReference: {fileID: 0}
+    - target: {fileID: 4033433992524014019, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.15999956
+      objectReference: {fileID: 0}
+    - target: {fileID: 4033433992524014019, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.6799991
       objectReference: {fileID: 0}
     - target: {fileID: 4330485298486129303, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -25048,6 +25937,22 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4856102626164289785, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.15999956
+      objectReference: {fileID: 0}
+    - target: {fileID: 5432037930590294746, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.07999927
+      objectReference: {fileID: 0}
+    - target: {fileID: 5575502643057911621, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.010000423
+      objectReference: {fileID: 0}
+    - target: {fileID: 5575502643057911621, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.15900117
+      objectReference: {fileID: 0}
     - target: {fileID: 7123039591855817960, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.23227295
@@ -25063,6 +25968,22 @@ PrefabInstance:
     - target: {fileID: 7123039591855817960, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0.13655518
+      objectReference: {fileID: 0}
+    - target: {fileID: 7538107315331885772, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.20000024
+      objectReference: {fileID: 0}
+    - target: {fileID: 7538107315331885772, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.539999
+      objectReference: {fileID: 0}
+    - target: {fileID: 7953302552528061881, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.13000137
+      objectReference: {fileID: 0}
+    - target: {fileID: 8500775534726588295, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.039999634
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -25196,6 +26117,80 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!1001 &1965744174
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1946658419}
+    m_Modifications:
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000056028366
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.39073122
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.92050487
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068419364391058540, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_Name
+      value: MeshyVisual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+--- !u!4 &1965744175 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+  m_PrefabInstance: {fileID: 1965744174}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1978449422
 GameObject:
   m_ObjectHideFlags: 0
@@ -42957,3 +43952,4 @@ SceneRoots:
   - {fileID: 801544483}
   - {fileID: 792774587}
   - {fileID: 598694749}
+  - {fileID: 1401515517}

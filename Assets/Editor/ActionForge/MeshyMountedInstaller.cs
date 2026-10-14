@@ -205,6 +205,7 @@ namespace ThanhGiong.EditorTools
             skin.sharedMesh = mesh; skin.sharedMaterials = sourceRenderer.sharedMaterials;
             skin.bones = bones.ToArray(); skin.rootBone = body; skin.updateWhenOffscreen = true;
             skin.localBounds = new Bounds(new Vector3(0,1f,0),new Vector3(2.5f,3.2f,3.8f));
+            HorseSkinRepair.Repair(skin);
             UnityEngine.Object.DestroyImmediate(model);
         }
 
