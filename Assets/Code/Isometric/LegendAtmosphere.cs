@@ -135,7 +135,7 @@ public sealed class LegendAtmosphere : MonoBehaviour {
   Vector3 focus=player.position+Vector3.up*1.4f;
   Ray ray=camera.ScreenPointToRay(camera.WorldToScreenPoint(focus));
   float heroDepth=Vector3.Dot(focus-ray.origin,ray.direction);
-  foreach(var fader in foreground){if(!fader.renderer)continue;float target=1;Bounds bounds=fader.renderer.bounds;
+  foreach(var fader in foreground){if(!fader.renderer)continue;float target=1;Bounds bounds=fader.renderer.bounds;bounds.Expand(2f);
    if(bounds.IntersectRay(ray,out float hit)&&hit<heroDepth-1.5f)target=.26f;
    fader.visibility=Mathf.MoveTowards(fader.visibility,target,.40f);
    if(fader.visibility>.995f){fader.renderer.SetPropertyBlock(fader.original);continue;}

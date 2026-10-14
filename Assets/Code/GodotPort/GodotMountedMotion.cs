@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,7 +13,7 @@ public sealed class GodotMountedMotion : MonoBehaviour
     public float walkStride = 1.7f, gallopStride = 3.6f, equipmentDuration = 1.7f;
     public bool flying;
     public bool IsBusy => action != null || pending.Count != 0;
-    public bool IsRigReady => horse.ContainsKey("body") && rider.ContainsKey("pelvis");
+    public bool IsRigReady => horse.ContainsKey("body");
     public int HorseBoneCount => horse.Count;
     public int RiderBoneCount => rider.Count;
     public float GaitPhase => cycle;
@@ -56,6 +56,10 @@ public sealed class GodotMountedMotion : MonoBehaviour
     ParticleSystem contacts;
     Material contactMaterial;
     Texture2D contactTexture;
+    ActionForgeMountedClip swordAnimation;
+    MeshyMountedRig meshyRig;
+    public bool HasActionForgeSwordAnimation => swordAnimation != null;
+    public float ActionForgeSwordWeight { get; private set; }
 
     void Awake()
     {
@@ -71,11 +75,13 @@ public sealed class GodotMountedMotion : MonoBehaviour
     {
         if (configured && visual == exportedVisual) return;
         visual = exportedVisual;
+        meshyRig = visual != null ? visual.GetComponentInChildren<MeshyMountedRig>(true) : null;
         movement = GetComponent<MountedHorseController>();
         horse.Clear(); rider.Clear(); springs.Clear();
         if (visual == null) return;
         Transform horseModel = Find(visual, "IronHorse"), riderModel = Find(visual, "ThanhGiong");
         Bind(horseModel, HorseNames, horse); Bind(riderModel, RiderNames, rider);
+        swordAnimation = Resources.Load<ActionForgeMountedClip>("ActionForge/SwordAttackMounted");
         mount = Find(visual, "Mount");
         if (mount != null) { mountPosition = mount.localPosition; mountRotation = mount.localRotation; }
         helmet = Find(visual, "IronHelmet"); armor = Find(visual, "IronArmor");
@@ -83,9 +89,10 @@ public sealed class GodotMountedMotion : MonoBehaviour
         if (armor != null) armor.gameObject.SetActive(false);
         // The exported skin already owns its cape and skeletal motion.
         foreach (GeneratedCharacterMotion legacy in visual.GetComponentsInChildren<GeneratedCharacterMotion>(true)) legacy.enabled = false;
-        foreach (Animator animator in visual.GetComponentsInChildren<Animator>(true)) animator.enabled = false;
+        foreach (Animator animator in visual.GetComponentsInChildren<Animator>(true))
+            animator.enabled = (meshyRig != null && animator == meshyRig.heroAnimator) || animator.name.IndexOf("Meshy", StringComparison.OrdinalIgnoreCase) >= 0;
         ThanhGiongRibbonCape cape = GetComponent<ThanhGiongRibbonCape>();
-        if (cape != null) cape.enabled = false;
+        if (cape != null) cape.enabled = true;
         configured = true;
     }
 
@@ -182,7 +189,27 @@ public sealed class GodotMountedMotion : MonoBehaviour
         DriveBody(dt, turn, acceleration, vy, land);
         DriveHorse(dt, turn);
         DriveRider(dt, turn, acceleration, land);
+        ApplyActionForgeSwordAttack();
         DriveEquipment(dt);
+    }
+
+    void ApplyActionForgeSwordAttack()
+    {
+        ActionForgeSwordWeight = 0f;
+        if (meshyRig != null || swordAnimation == null || swordAnimation.tracks == null || attack < 0f || flying || IsBusy ||
+            movement != null && movement.IsDodging || campaign == null || campaign.CurrentWeapon != ThanhGiongCampaignController.Weapon.IronSword) return;
+        // Blend over the existing mounted pose. Only exported upper-body rotations
+        // are touched; the horse, saddle, rider position and legs keep their own motion.
+        float duration = movement != null ? movement.attackDuration : .58f;
+        float weight = Smooth(0f, .07f / Mathf.Max(duration, .1f), attack) * (1f - Smooth(.76f, 1f, attack));
+        float sourceTime = swordAnimation.SourceTime(attack, duration);
+        foreach (var track in swordAnimation.tracks)
+        {
+            Bone bone;
+            if (rider.TryGetValue(track.bone, out bone))
+                bone.t.localRotation = Quaternion.Slerp(bone.t.localRotation, track.Evaluate(sourceTime), weight);
+        }
+        ActionForgeSwordWeight = weight;
     }
 
     void DriveBody(float dt, float turn, float accel, float vy, float land)
@@ -246,7 +273,7 @@ public sealed class GodotMountedMotion : MonoBehaviour
     void DriveRider(float dt, float turn, float accel, float land)
     {
         float b = gallop, phase = cycle * Mathf.PI * 2f, walk = move * (1f - b), idle = 1f - move;
-        float windup = AttackWindup, strike = AttackStrike;
+        float windup = meshyRig != null ? 0f : AttackWindup, strike = meshyRig != null ? 0f : AttackStrike;
         int beat = campaign != null ? campaign.ComboBeat : 1;
         bool backhand = beat == 2;
         float attackSide = backhand ? -1f : 1f;

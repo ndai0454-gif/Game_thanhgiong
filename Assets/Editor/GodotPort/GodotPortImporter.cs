@@ -65,7 +65,8 @@ public static class GodotPortImporter {
   Vector3 p=old?old.localPosition:Vector3.zero,s=old?old.localScale:Vector3.one;Quaternion r=old?old.localRotation:Quaternion.identity;
   if(old&&old!=campaign.transform)UnityEngine.Object.DestroyImmediate(old.gameObject);
   var wrapper=new GameObject("Visual");wrapper.transform.SetParent(campaign.transform,false);wrapper.transform.localPosition=p;wrapper.transform.localRotation=r;wrapper.transform.localScale=s;
-  var model=(GameObject)PrefabUtility.InstantiatePrefab(Asset("MountedGiong"));model.transform.SetParent(wrapper.transform,false);model.transform.localRotation=Quaternion.Euler(0,180,0);
+  var meshy=AssetDatabase.LoadAssetAtPath<GameObject>(ThanhGiong.EditorTools.MeshyMountedInstaller.PrefabPath);
+  var model=(GameObject)PrefabUtility.InstantiatePrefab(meshy?meshy:Asset("MountedGiong"));model.transform.SetParent(wrapper.transform,false);model.transform.localRotation=meshy?Quaternion.identity:Quaternion.Euler(0,180,0);
   controller.visual=wrapper.transform;controller.frontLeftLeg=null;controller.frontRightLeg=null;controller.rearLeftLeg=null;controller.rearRightLeg=null;
   var motion=campaign.GetComponent<GodotMountedMotion>();if(!motion)motion=campaign.gameObject.AddComponent<GodotMountedMotion>();motion.visual=wrapper.transform;
   var feedback=campaign.GetComponent<GodotCombatFeedback>();if(!feedback)campaign.gameObject.AddComponent<GodotCombatFeedback>();

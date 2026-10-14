@@ -174,7 +174,7 @@ public class ThanhGiongRibbonCape : MonoBehaviour
         movementVelocity = (currentAnchorPos - lastAnchorPos) / dt;
         lastAnchorPos = currentAnchorPos;
 
-        bool isSprinting = Input.GetKey(KeyCode.LeftShift) && movementVelocity.sqrMagnitude > 4f;
+        bool isSprinting = movementVelocity.sqrMagnitude > 2.2f;
         float currentLength = isSprinting ? segmentLength * sprintStretchFactor : segmentLength;
 
         // Verlet physics simulation for both ribbons

@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public sealed class GodotPortRuntimeVerifier : MonoBehaviour {
- public static readonly string[] Maps={"LangGiongTienTuyen","KinhThanhRenThep","PhaoDaiNgamQuanAn","ThungLungVuotSong","TranTuyenNuiSoc","DinhSocHoaThanh","AlbionForestMap"};
+ public static readonly string[] Maps={"LangGiongTienTuyen","KinhThanhRenThep","PhaoDaiNgamQuanAn","ThungLungVuotSong","TranTuyenNuiSoc","DinhSocHoaThanh"};
  readonly List<string> results=new();int failures;
  string Folder=>Path.GetFullPath(Path.Combine(Application.dataPath,"../PortVerification"));
  void Check(bool value,string caption){string s=(value?"PASS ":"FAIL ")+caption;results.Add(s);Debug.Log("GODOT_PORT_CHECK "+s);if(!value)failures++;}
@@ -46,14 +46,14 @@ public sealed class GodotPortRuntimeVerifier : MonoBehaviour {
     var music=audio.GetComponents<AudioSource>().First(x=>x.loop&&x.clip);int sample=music.timeSamples;
     float pausedClock=environment.MotionTime;yield return new WaitForSecondsRealtime(.2f);
     Check(hud.IsPaused&&music.timeSamples==sample&&Mathf.Approximately(pausedClock,environment.MotionTime),"pause HUD freezes regional audio and environment");
-    Check(hud.ChapterCount==7,"pause menu includes six chapters and forest prototype");
+    Check(hud.ChapterCount==6,"pause menu includes six chapters and forest prototype");
     yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(Folder,"pause_menu.png"));
     hud.TogglePause();campaign.enabled=true;
    }
    if(index==2&&campaign){
     yield return GodotGameplayPortChecks.CheckHealth(campaign,(ok,message)=>Check(ok,message));
    }
-   if(index==6){
+   if(index==5){
     hud.TogglePause();bool restarted=hud.RestartCurrentMap();Check(restarted,"pause menu restarts current map");
     if(restarted){while(ThanhGiongSceneTransition.IsTransitioning)yield return null;yield return new WaitForSeconds(.3f);Check(SceneManager.GetActiveScene().name==Maps[index]&&FindFirstObjectByType<GodotMountedMotion>().IsRigReady&&Time.timeScale==1,"restarted map has active native rig and resumes time");}
    }

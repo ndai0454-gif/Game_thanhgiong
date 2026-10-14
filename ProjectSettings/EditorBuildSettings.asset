@@ -23,8 +23,5 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ThanhGiongWorld/DinhSocHoaThanh.unity
     guid: 8edb0ecc9c0ab9b4ca68d80a6d3a666d
-  - enabled: 1
-    path: Assets/Scenes/AlbionForestMap.unity
-    guid: 1dafa5b7a7e8e1d419602cf9c1392c92
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}

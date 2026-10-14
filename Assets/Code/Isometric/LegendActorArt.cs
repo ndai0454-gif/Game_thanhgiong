@@ -12,6 +12,7 @@ public sealed class LegendActorArt : MonoBehaviour
         var movement=GetComponent<MountedHorseController>();Transform visual=movement&&movement.visual?movement.visual:transform.Find("Visual");if(!visual)return;
         foreach(var renderer in visual.GetComponentsInChildren<Renderer>(true)) {
             if(renderer is ParticleSystemRenderer||renderer is LineRenderer||renderer.GetComponent<TextMesh>())continue;
+            if(IsMeshyRenderer(renderer))continue;
             var source=renderer.sharedMaterials;var replacement=new Material[source.Length];
             for(int i=0;i<source.Length;i++){
                 var old=source[i];if(!old)continue;
@@ -24,6 +25,14 @@ public sealed class LegendActorArt : MonoBehaviour
             }
             renderer.sharedMaterials=replacement;
         }
+    }
+    static bool IsMeshyRenderer(Renderer r)
+    {
+        if (r == null) return false;
+        if (r.sharedMaterial != null && r.sharedMaterial.name.IndexOf("meshy", System.StringComparison.OrdinalIgnoreCase) >= 0) return true;
+        for (Transform t = r.transform; t != null; t = t.parent)
+            if (t.name.IndexOf("meshy", System.StringComparison.OrdinalIgnoreCase) >= 0) return true;
+        return false;
     }
     void OnDestroy(){foreach(var material in generated)if(material)Destroy(material);}
 }

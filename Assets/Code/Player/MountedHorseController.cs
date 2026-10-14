@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -64,6 +64,7 @@ public class MountedHorseController : MonoBehaviour
     private Animator mountedAnimator;
     private ThanhGiong.Mounts.HorseController modularHorse;
     private ThanhGiong.Characters.ThanhGiongCharacterController modularHero;
+    private MeshyMountedRig meshyRig;
     private GeneratedCharacterMotion[] generatedMotions;
     private Transform bambooWeapon;
     private bool animatorHasSpeed;
@@ -116,6 +117,10 @@ public class MountedHorseController : MonoBehaviour
         visualBaseRotation = visual.localRotation;
         visualBaseScale = visual.localScale;
         previousYaw = transform.eulerAngles.y;
+        if (frontLeftLeg == null) frontLeftLeg = transform.Find("Visual/MountedGiong/Mount/IronHorse/model/body/fl_upper");
+        if (frontRightLeg == null) frontRightLeg = transform.Find("Visual/MountedGiong/Mount/IronHorse/model/body/fr_upper");
+        if (rearLeftLeg == null) rearLeftLeg = transform.Find("Visual/MountedGiong/Mount/IronHorse/model/body/rl_upper");
+        if (rearRightLeg == null) rearRightLeg = transform.Find("Visual/MountedGiong/Mount/IronHorse/model/body/rr_upper");
         legs = new[] { frontLeftLeg, frontRightLeg, rearLeftLeg, rearRightLeg };
         legBaseRotations = new Quaternion[legs.Length];
         for (int i = 0; i < legs.Length; i++)
@@ -123,6 +128,7 @@ public class MountedHorseController : MonoBehaviour
 
         modularHorse = GetComponentInChildren<ThanhGiong.Mounts.HorseController>(true);
         modularHero = GetComponentInChildren<ThanhGiong.Characters.ThanhGiongCharacterController>(true);
+        meshyRig = GetComponentInChildren<MeshyMountedRig>(true);
         generatedMotions = GetComponentsInChildren<GeneratedCharacterMotion>(true);
         foreach (Transform child in GetComponentsInChildren<Transform>(true))
             if (child.name == "Weapon_GoldenBamboo") { bambooWeapon = child; break; }
@@ -453,7 +459,8 @@ public class MountedHorseController : MonoBehaviour
                 if (motion != null && motion.kind == GeneratedCharacterMotion.CharacterKind.ThanhGiong)
                     motion.TriggerAttack(attackDuration);
         if (campaignController == null) attackSlash = StartCoroutine(ShowAttackSlash());
-        if (modularHero != null) modularHero.TriggerBambooAttack();
+        if (meshyRig != null) meshyRig.PlayAttack(attackDuration, campaignController != null && campaignController.CurrentWeapon == ThanhGiongCampaignController.Weapon.Bamboo, campaignController != null ? campaignController.ComboBeat : 1);
+        else if (modularHero != null) modularHero.TriggerBambooAttack();
         else if (mountedAnimator != null && animatorHasAttack) mountedAnimator.SetTrigger(AttackHash);
         modularHorse?.TriggerRearing();
     }

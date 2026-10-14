@@ -35,6 +35,7 @@ Shader "ThanhGiong/StylizedFoliageWind"
         [Header(Rendering)]
         [Toggle(_ALPHATEST_ON)] _AlphaClip("Alpha Clip (Cutout)", Float) = 0
         _Cutoff("Alpha Cutoff Threshold", Range(0, 1)) = 0.5
+        _Visibility("Foreground dither visibility", Range(0, 1)) = 1
         [Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull Mode", Float) = 0
     }
 
@@ -91,6 +92,7 @@ Shader "ThanhGiong/StylizedFoliageWind"
                 float _WindHeightThreshold;
                 float _MotionTime;
                 float _Cutoff;
+                float _Visibility;
             CBUFFER_END
 
             struct Attributes
@@ -165,6 +167,7 @@ Shader "ThanhGiong/StylizedFoliageWind"
 
             half4 frag(Varyings input) : SV_Target
             {
+                clip(_Visibility - frac(sin(dot(floor(input.positionCS.xy), float2(127.1, 311.7))) * 43758.5453));
                 half4 texColor = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv) * _BaseColor;
 
                 #if defined(_ALPHATEST_ON)
@@ -263,6 +266,7 @@ Shader "ThanhGiong/StylizedFoliageWind"
                 float _WindHeightThreshold;
                 float _MotionTime;
                 float _Cutoff;
+                float _Visibility;
             CBUFFER_END
 
             struct AttributesShadow

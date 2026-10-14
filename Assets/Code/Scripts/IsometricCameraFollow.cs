@@ -33,7 +33,40 @@ public class IsometricCameraFollow : MonoBehaviour
     bool isOverview, initialized;
     Vector3 overviewPosition, overviewLookAt;
 
-    void Awake() { Instance = this; view = GetComponent<Camera>(); ApplyProjection(); }
+    void Awake()
+    {
+        Instance = this;
+        view = GetComponent<Camera>();
+        EnsureTarget();
+        ApplyProjection();
+        if (target != null) SnapToTarget();
+    }
+
+    void EnsureTarget()
+    {
+        if (target == null)
+        {
+            var hero = FindAnyObjectByType<MountedHorseController>();
+            if (hero != null) target = hero.transform;
+            else
+            {
+                var adv = FindAnyObjectByType<AdventurerController>();
+                if (adv != null) target = adv.transform;
+            }
+        }
+    }
+
+#if UNITY_EDITOR
+    void OnValidate()
+    {
+        if (!Application.isPlaying)
+        {
+            EnsureTarget();
+            if (target != null) SnapToTarget();
+        }
+    }
+#endif
+
     void OnDestroy() { if (Instance == this) Instance = null; }
     float ShotSize => currentShot == Shot.Combat ? combatSize : currentShot == Shot.Vista ? vistaSize : currentShot == Shot.Boss ? bossSize : currentShot == Shot.Close ? closeSize : exploreSize;
     Quaternion IsometricRotation => Quaternion.Euler(isometricPitch, isometricYaw, 0f);
@@ -42,8 +75,8 @@ public class IsometricCameraFollow : MonoBehaviour
     {
         if (view == null) view = GetComponent<Camera>();
         if (view == null) return;
-        view.orthographic = useOrthographicIsometric;
-        view.fieldOfView = fieldOfView;
+        if (view.orthographic != useOrthographicIsometric) view.orthographic = useOrthographicIsometric;
+        if (!Mathf.Approximately(view.fieldOfView, fieldOfView)) view.fieldOfView = fieldOfView;
         if (!initialized) view.orthographicSize = Mathf.Max(1f, ShotSize);
     }
 
