@@ -60,7 +60,7 @@ public static class ThanhGiongFoodUpgrade
             {
                 case ThanhGiongCollectible.Kind.Rice:
                     objName = "Lương thực - Cơm Gạo (7 Nong Cơm)";
-                    labelText = "🌾 7 NONG CƠM GẠO (+35)";
+                    labelText = "7 NONG CƠM GẠO  +35";
                     auraColor = new Color(1.0f, 0.88f, 0.25f);
                     item.displayName = "7 Nong Cơm Gạo";
                     BuildRiceAssembly(visual.transform, sackPrefab, platePrefab, matRice);
@@ -68,7 +68,7 @@ public static class ThanhGiongFoodUpgrade
 
                 case ThanhGiongCollectible.Kind.Eggplant:
                     objName = "Lương thực - Cà Pháo (3 Nong Cà)";
-                    labelText = "🍆 3 NONG CÀ PHÁO (+35)";
+                    labelText = "3 NONG CÀ PHÁO  +35";
                     auraColor = new Color(0.35f, 0.95f, 0.55f);
                     item.displayName = "3 Nong Cà Pháo";
                     BuildEggplantAssembly(visual.transform, cratePrefab, matCaPhao, matStem);
@@ -76,7 +76,7 @@ public static class ThanhGiongFoodUpgrade
 
                 case ThanhGiongCollectible.Kind.Firewood:
                     objName = "Lương thực - Bó Củi Nhóm Lửa";
-                    labelText = "🪵 BÓ CỦI NHÓM LỬA (+35)";
+                    labelText = "BÓ CỦI NHÓM LỬA  +35";
                     auraColor = new Color(1.0f, 0.62f, 0.15f);
                     item.displayName = "Bó Củi Nhóm Lửa";
                     BuildFirewoodAssembly(visual.transform, lumberPrefab);
@@ -84,7 +84,7 @@ public static class ThanhGiongFoodUpgrade
 
                 case ThanhGiongCollectible.Kind.Meat:
                     objName = "Lương thực - Mâm Thịt Khao Quân";
-                    labelText = "🥩 MÂM THỊT KHAO QUÂN (+35)";
+                    labelText = "MÂM THỊT KHAO QUÂN  +35";
                     auraColor = new Color(1.0f, 0.32f, 0.25f);
                     item.displayName = "Mâm Thịt Khao Quân";
                     BuildMeatAssembly(visual.transform, stoolPrefab, meatPrefab);

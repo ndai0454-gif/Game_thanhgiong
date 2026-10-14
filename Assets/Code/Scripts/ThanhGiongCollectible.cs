@@ -72,7 +72,6 @@ public class ThanhGiongCollectible : MonoBehaviour
         // Bamboo requires three deliberate E presses; proximity must not consume a pull.
         if (kind == Kind.Bamboo || collected) return;
         ThanhGiongCampaignController campaign = other.GetComponentInParent<ThanhGiongCampaignController>();
-        if (campaign == null) campaign = FindAnyObjectByType<ThanhGiongCampaignController>();
         if (campaign == null || !campaign.TryCollect(this)) return;
         MarkCollected();
         gameObject.SetActive(false);

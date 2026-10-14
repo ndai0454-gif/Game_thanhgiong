@@ -157,12 +157,15 @@ public class ThanhGiongCampaignController : MonoBehaviour
     private readonly HashSet<ThanhGiongEnemy> struckEnemies = new HashSet<ThanhGiongEnemy>();
     private readonly Dictionary<ThanhGiongEnemy, float> chargeHits = new Dictionary<ThanhGiongEnemy, float>();
     private Vector3 originalScale;
+    private Transform growthVisual;
+    private Vector3 originalGrowthVisualScale;
     private float nextAttackTime;
     private float battleStartedAt;
     private float lotusWardUntil;
     private int comboBeat;
     private float comboUntil;
     private Coroutine pendingStrike;
+    private Coroutine growthScaleRoutine;
     public int ComboBeat => comboBeat;
     public bool AttackPending => pendingStrike != null;
     private int qteIndex;
@@ -182,6 +185,14 @@ public class ThanhGiongCampaignController : MonoBehaviour
         combatFeedback = GetComponent<GodotCombatFeedback>();
         if (combatFeedback == null) combatFeedback = gameObject.AddComponent<GodotCombatFeedback>();
         originalScale = transform.localScale;
+        growthVisual = transform;
+        foreach (Transform child in GetComponentsInChildren<Transform>(true))
+        {
+            if (child.name != "ThanhGiong_Hero_Meshy") continue;
+            growthVisual = child;
+            break;
+        }
+        originalGrowthVisualScale = growthVisual.localScale;
         Health = maxHealth;
         battleSpawn = transform.position;
         battleSpawnRotation = transform.rotation;
@@ -263,7 +274,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
 
             case Chapter.Preparation:
                 GrowthPhase = 3;
-                ApplyGrowthScale();
+                ApplyGrowthScale(true);
                 CurrentWeapon = Weapon.None;
                 if (battleRoot != null) battleRoot.SetActive(false);
                 if (bambooRoot != null) bambooRoot.SetActive(false);
@@ -324,7 +335,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
             if (phase > GrowthPhase)
             {
                 GrowthPhase = phase;
-                ApplyGrowthScale();
+                ApplyGrowthScale(true);
                 vfx?.PlayGrowth(transform);
                 audioFx?.PlayGrowth();
 
@@ -879,7 +890,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
     public bool RestoreCheckpointState(CheckpointState state, Vector3 position, Quaternion rotation)
     {
         if (state == null || EquipmentBusy || ThanhGiongSceneTransition.IsTransitioning) return false;
-        StopAllCoroutines(); clearMessageRoutine = null; pendingStrike=null;comboBeat=0;comboUntil=0;
+        StopAllCoroutines(); clearMessageRoutine = null; pendingStrike=null; growthScaleRoutine=null; comboBeat=0;comboUntil=0;
         isTransitioning = false; hurtUntil = 0; nextAttackTime = 0; chargeHits.Clear();
         CurrentChapter = state.chapter; CurrentWeapon = state.weapon;
         battleStartedAt = Time.time;
@@ -1111,16 +1122,53 @@ public class ThanhGiongCampaignController : MonoBehaviour
         ShowMessage("BƯỚC VÀO MÀN 4: HÓA THÁNH VỀ TRỜI!\n[NHẤN 'E': CỞI MẢNH GIÁP ĐẦU TIÊN ĐẶT LÊN ĐỈNH NÚI SÓC]", 4f);
     }
 
-    private void ApplyGrowthScale()
+    private void ApplyGrowthScale(bool animate = false)
     {
-        // Dynamic scale from boy (0.42) to huge titan (1.45)
+        // Four readable growth stages, animated when food advances the prologue.
         float[] scales = { 0.90f, 1.08f, 1.26f, 1.45f };
         float scale = scales[GrowthPhase];
-        transform.localScale = originalScale * scale;
+        Transform scaleTarget = growthVisual != null ? growthVisual : transform;
+        Vector3 baseScale = scaleTarget == transform ? originalScale : originalGrowthVisualScale;
+        Vector3 targetScale = baseScale * scale;
+
+        // The horse, controller and collision body keep their authored size. Only Giong grows.
+        if (scaleTarget != transform) transform.localScale = originalScale;
+
+        if (growthScaleRoutine != null)
+        {
+            StopCoroutine(growthScaleRoutine);
+            growthScaleRoutine = null;
+        }
+
+        if (animate && isActiveAndEnabled && Application.isPlaying)
+            growthScaleRoutine = StartCoroutine(AnimateGrowthScale(targetScale));
+        else
+            scaleTarget.localScale = targetScale;
 
         // Dynamic speed based on scale
         movement.walkSpeed = Mathf.Lerp(3.8f, 6.2f, GrowthPhase / 3f);
         movement.runSpeed = Mathf.Lerp(6.2f, 11.5f, GrowthPhase / 3f);
+    }
+
+    private IEnumerator AnimateGrowthScale(Vector3 targetScale)
+    {
+        Transform scaleTarget = growthVisual != null ? growthVisual : transform;
+        Vector3 startScale = scaleTarget.localScale;
+        const float duration = .75f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            float eased = Mathf.SmoothStep(0f, 1f, t);
+            float heroicPulse = 1f + Mathf.Sin(t * Mathf.PI) * .06f;
+            scaleTarget.localScale = Vector3.LerpUnclamped(startScale, targetScale, eased) * heroicPulse;
+            yield return null;
+        }
+
+        scaleTarget.localScale = targetScale;
+        growthScaleRoutine = null;
     }
 
     public void ShowMessage(string message, float duration)
