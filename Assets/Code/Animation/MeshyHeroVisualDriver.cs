@@ -31,25 +31,41 @@ public sealed class MeshyHeroVisualDriver : MonoBehaviour
     private GodotMountedMotion godotMotion;
     private bool wasAttacking;
     private int attackComboIndex;
+    private int attackStateHash;
     private float fallbackPhase;
+    private float riderLean, riderBank, previousYaw, previousSpeed;
+    private Vector3 seatOffset;
     private ThanhGiongCampaignController.Chapter lastChapter = (ThanhGiongCampaignController.Chapter)(-1);
 
     private static readonly int SpeedHash = Animator.StringToHash("Speed");
-    private static readonly int AttackHash = Animator.StringToHash("Attack");
-    private static readonly int BambooAttackHash = Animator.StringToHash("BambooAttack");
-    private static readonly int HeavySlamHash = Animator.StringToHash("HeavySlam");
+    private static readonly int AttackStateHash = Animator.StringToHash("Attack");
+    private static readonly int BambooSweepStateHash = Animator.StringToHash("BambooSweep360");
+    private static readonly int BambooHeavyStateHash = Animator.StringToHash("BambooHeavySlam");
+    private static readonly int LocomotionStateHash = Animator.StringToHash("Locomotion");
     private static readonly int AscensionHash = Animator.StringToHash("Ascension");
 
     private void Awake()
     {
+        previousYaw = transform.eulerAngles.y;
         BindReferences();
+        EnsureMountedCombatPose();
         HideLegacyMeshRenderers();
     }
 
     private void Start()
     {
         BindReferences();
+        EnsureMountedCombatPose();
         HideLegacyMeshRenderers();
+        // Wait until every Awake has initialized the legacy ribbon before OnDisable hides it.
+        foreach (ThanhGiongRibbonCape cape in GetComponentsInChildren<ThanhGiongRibbonCape>(true))
+            cape.enabled = false;
+    }
+
+    private void EnsureMountedCombatPose()
+    {
+        if (meshyRoot != null && meshyRoot.GetComponent<MeshyMountedCombatPose>() == null)
+            meshyRoot.gameObject.AddComponent<MeshyMountedCombatPose>();
     }
 
     public void BindReferences()
@@ -176,24 +192,22 @@ public sealed class MeshyHeroVisualDriver : MonoBehaviour
         if (heroAnimator != null) heroAnimator.speed = 1f;
 
         float planarSpeed = movement != null ? movement.PlanarSpeed : 0f;
-        float normalizedSpeed = Mathf.Clamp01(planarSpeed / 8.5f);
+        float normalizedSpeed = Mathf.Clamp01(planarSpeed / Mathf.Max(movement != null ? movement.runSpeed : 8.5f, .1f));
+        float dt = Time.deltaTime;
+        float yawRate = Mathf.DeltaAngle(previousYaw, transform.eulerAngles.y) / Mathf.Max(dt, .001f);
+        float acceleration = (planarSpeed - previousSpeed) / Mathf.Max(dt, .001f);
+        previousYaw = transform.eulerAngles.y; previousSpeed = planarSpeed;
+        float settle = 1f - Mathf.Exp(-9f * dt);
+        riderLean = Mathf.Lerp(riderLean, normalizedSpeed * 9f + Mathf.Clamp(acceleration * .22f, -4f, 4f), settle);
+        riderBank = Mathf.Lerp(riderBank, Mathf.Clamp(-yawRate * .035f, -7f, 7f) * normalizedSpeed, settle);
 
         if (heroAnimator != null && heroAnimator.runtimeAnimatorController != null)
         {
-            heroAnimator.SetFloat(SpeedHash, normalizedSpeed);
+            // The rider stays seated; horse speed must not blend standing walk/run clips.
+            heroAnimator.SetFloat(SpeedHash, 0f);
         }
 
-        // Ensure all Meshy renderers and weapon stay visible
-        foreach (Renderer r in meshyRoot.GetComponentsInChildren<Renderer>(true))
-        {
-            if (!r.enabled) r.enabled = true;
-            if (r.forceRenderingOff) r.forceRenderingOff = false;
-        }
-
-        if (meshySpear != null && !meshySpear.gameObject.activeSelf)
-        {
-            meshySpear.gameObject.SetActive(true);
-        }
+        // Weapon visibility and replacement meshes belong to the campaign and mounted pose.
 
         fallbackPhase += Time.deltaTime * Mathf.Lerp(1.2f, 4.2f, normalizedSpeed);
         float cycleRadians = ((godotMotion != null && godotMotion.IsRigReady) ? godotMotion.GaitPhase : fallbackPhase) * Mathf.PI * 2f;
@@ -215,11 +229,39 @@ public sealed class MeshyHeroVisualDriver : MonoBehaviour
             }
         }
 
-        bool isAttacking = movement != null && movement.AttackProgress >= 0f && movement.AttackProgress < 0.85f;
+        float attackProgress = movement != null ? movement.AttackProgress : -1f;
+        bool isAttacking = attackProgress >= 0f;
+
+        if (heroAnimator != null && heroAnimator.runtimeAnimatorController != null)
+        {
+            if (isAttacking)
+            {
+                if (!wasAttacking)
+                {
+                    bool useBamboo = campaign != null && campaign.CurrentWeapon == ThanhGiongCampaignController.Weapon.Bamboo;
+                    attackStateHash = useBamboo
+                        ? (attackComboIndex % 2 == 0 ? BambooSweepStateHash : BambooHeavyStateHash)
+                        : AttackStateHash;
+                    attackComboIndex++;
+                }
+                // Sample the complete clip in gameplay attack time, before the saddle and hand constraints.
+                heroAnimator.speed = 0f;
+                heroAnimator.Play(attackStateHash, 0, Mathf.Clamp01(attackProgress));
+                heroAnimator.Update(0f);
+            }
+            else
+            {
+                heroAnimator.speed = 1f;
+                if (wasAttacking) heroAnimator.CrossFade(LocomotionStateHash, .08f, 0);
+            }
+        }
+        wasAttacking = isAttacking;
 
         if (spearTrail != null)
         {
-            spearTrail.emitting = isAttacking || normalizedSpeed > 0.15f;
+            spearTrail.emitting = isAttacking && campaign != null
+                && campaign.CurrentWeapon == ThanhGiongCampaignController.Weapon.Bamboo
+                && meshySpear != null && meshySpear.gameObject.activeInHierarchy;
         }
 
         if (meshyHero != null)
@@ -227,38 +269,22 @@ public sealed class MeshyHeroVisualDriver : MonoBehaviour
             if (!meshyHero.gameObject.activeSelf)
                 meshyHero.gameObject.SetActive(true);
 
-            float bob = Mathf.Sin(cycleRadians) * 0.045f * normalizedSpeed;
+            // The mount already bobs. Absorb a small part of it instead of bouncing twice.
+            float bob = -Mathf.Sin(cycleRadians - .35f) * .018f * normalizedSpeed;
+            seatOffset = Vector3.Lerp(seatOffset, new Vector3(0f, bob, 0f), settle);
             // Seat hero cleanly on the skinned horse saddle
-            meshyHero.localPosition = new Vector3(0f, 0.72f + bob, -0.08f);
+            meshyHero.localPosition = new Vector3(0f, 0.72f, -0.08f) + seatOffset;
 
             ApplySeatedLegPose();
 
             // Add dynamic upper-body gallop lean and combat swing reinforcement
-            if (spineBone != null && normalizedSpeed > 0.05f && !isAttacking)
+            if (spineBone != null && heroAnimator != null && heroAnimator.runtimeAnimatorController != null
+                && !isAttacking)
             {
-                float leanForward = Mathf.Lerp(0f, 12f, normalizedSpeed) + Mathf.Cos(cycleRadians) * 3.5f * normalizedSpeed;
-                spineBone.localRotation *= Quaternion.Euler(leanForward, 0f, 0f);
+                float leanForward = riderLean + Mathf.Cos(cycleRadians) * 1.5f * normalizedSpeed;
+                spineBone.localRotation *= Quaternion.Euler(leanForward, 0f, riderBank);
             }
         }
-
-        // Trigger combat animations when attacking
-        if (isAttacking && !wasAttacking && heroAnimator != null && heroAnimator.runtimeAnimatorController != null)
-        {
-            bool useBamboo = campaign != null && campaign.CurrentWeapon == ThanhGiongCampaignController.Weapon.Bamboo;
-            if (useBamboo)
-            {
-                if (attackComboIndex % 2 == 0)
-                    heroAnimator.SetTrigger(BambooAttackHash);
-                else
-                    heroAnimator.SetTrigger(HeavySlamHash);
-            }
-            else
-            {
-                heroAnimator.SetTrigger(AttackHash);
-            }
-            attackComboIndex++;
-        }
-        wasAttacking = isAttacking;
 
         // Trigger Ascension animation in Chapter 4
         if (campaign != null && campaign.CurrentChapter != lastChapter)

@@ -14,6 +14,7 @@ public class ThanhGiongCollectible : MonoBehaviour
     private Vector3 baseVisualLocalPos;
     private float bobOffset;
     private bool collected;
+    public bool IsCollected => collected;
 
     private void Awake()
     {
@@ -68,6 +69,8 @@ public class ThanhGiongCollectible : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // Bamboo requires three deliberate E presses; proximity must not consume a pull.
+        if (kind == Kind.Bamboo || collected) return;
         ThanhGiongCampaignController campaign = other.GetComponentInParent<ThanhGiongCampaignController>();
         if (campaign == null) campaign = FindAnyObjectByType<ThanhGiongCampaignController>();
         if (campaign == null || !campaign.TryCollect(this)) return;

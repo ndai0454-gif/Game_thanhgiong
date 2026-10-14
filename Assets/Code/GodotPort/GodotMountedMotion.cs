@@ -76,6 +76,8 @@ public sealed class GodotMountedMotion : MonoBehaviour
         if (configured && visual == exportedVisual) return;
         visual = exportedVisual;
         meshyRig = visual != null ? visual.GetComponentInChildren<MeshyMountedRig>(true) : null;
+        bool fbxRider = GetComponent<MeshyHeroVisualDriver>() != null;
+        if (meshyRig != null || fbxRider) mirrorX = false;
         movement = GetComponent<MountedHorseController>();
         horse.Clear(); rider.Clear(); springs.Clear();
         if (visual == null) return;
@@ -92,7 +94,7 @@ public sealed class GodotMountedMotion : MonoBehaviour
         foreach (Animator animator in visual.GetComponentsInChildren<Animator>(true))
             animator.enabled = (meshyRig != null && animator == meshyRig.heroAnimator) || animator.name.IndexOf("Meshy", StringComparison.OrdinalIgnoreCase) >= 0;
         ThanhGiongRibbonCape cape = GetComponent<ThanhGiongRibbonCape>();
-        if (cape != null) cape.enabled = true;
+        if (cape != null) cape.enabled = meshyRig == null && !fbxRider;
         configured = true;
     }
 
@@ -188,7 +190,7 @@ public sealed class GodotMountedMotion : MonoBehaviour
         turn = Mathf.Clamp(turn, -3f, 3f); acceleration = Mathf.Clamp(acceleration, -14f, 14f);
         DriveBody(dt, turn, acceleration, vy, land);
         DriveHorse(dt, turn);
-        DriveRider(dt, turn, acceleration, land);
+        if (rider.ContainsKey("pelvis")) DriveRider(dt, turn, acceleration, land);
         ApplyActionForgeSwordAttack();
         DriveEquipment(dt);
     }
@@ -243,9 +245,11 @@ public sealed class GodotMountedMotion : MonoBehaviour
             contactsPending[i] = cycleTravel > .0001f && (legPhase < legPhases[i] && legPhases[i] > .65f || cycleTravel >= 1f);
             legPhases[i] = legPhase;
             bool front = i < 2; Vector2 wave = LegWave(offset, duty); float lift = wave.y * move;
-            float upper = wave.x * (front ? Mathf.Lerp(20f, 40f, b) : Mathf.Lerp(18f, 34f, b)) * move;
-            float lower = front ? lift * Mathf.Lerp(55f, 95f, b) : -lift * Mathf.Lerp(28f, 45f, b) - 6f * move;
-            float hoof = front ? lift * Mathf.Lerp(35f, 55f, b) - (1f - wave.y) * 6f * move : lift * Mathf.Lerp(40f, 60f, b) + 4f * move;
+            float upper = wave.x * (front ? Mathf.Lerp(14f, 26f, b) : Mathf.Lerp(12f, 22f, b)) * move;
+            float lower = front ? lift * Mathf.Lerp(30f, 46f, b) : -lift * Mathf.Lerp(18f, 28f, b) - 4f * move;
+            // Counter-rotate the front hoof against the knee. Adding both angles
+            // curled the armored foot back through the shin at gallop.
+            float hoof = front ? -lift * Mathf.Lerp(18f, 26f, b) - (1f - wave.y) * 3f * move : lift * Mathf.Lerp(16f, 24f, b) + 3f * move;
             if (!front) upper += 4f * move;
             upper = Mathf.Lerp(upper, front ? -48f : 32f, air); lower = Mathf.Lerp(lower, front ? 100f : -22f, air); hoof = Mathf.Lerp(hoof, front ? 45f : 25f, air);
             if (Rear > 0f)

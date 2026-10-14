@@ -693,6 +693,7 @@ namespace ThanhGiong.EditorTools
             smr.rootBone = body;
             smr.sharedMaterial = horseMat;
             smr.updateWhenOffscreen = true;
+            HorseSkinRepair.Repair(smr);
 
             // Attach Hoof Fire VFX to all 4 hooves + Dragon Fire Breath to head
             AttachHoofFireVfx(flH);

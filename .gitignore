@@ -46,7 +46,12 @@ My project/
 Game_thanhgiong/
 PortVerification/
 IsometricVerification/
+CombatBambooVerification/
+HorseRepairVerification/
+MountedCombatVerification/
 Assets/Temp/
 Assets/Temp.meta
 Assets/UnitySkillsTests_Temp/
 Assets/UnitySkillsTests_Temp.meta
+Assets/_Recovery/
+Assets/_Recovery.meta

@@ -494,7 +494,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 5691798954602603895}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -939,6 +939,80 @@ Transform:
   - {fileID: 5794804891261558354}
   m_Father: {fileID: 942130734}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &170998586
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2093801935}
+    m_Modifications:
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000056028366
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.6946583
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7193399
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068419364391058540, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_Name
+      value: MeshyVisual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+--- !u!4 &170998587 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+  m_PrefabInstance: {fileID: 170998586}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &185523915
 GameObject:
   m_ObjectHideFlags: 0
@@ -1156,7 +1230,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 6795137486081699591}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -2204,7 +2278,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83d6a198281e9504f8875df67545ea7c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotEnvironmentMotion
 --- !u!1 &198370669
 GameObject:
@@ -5300,7 +5374,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
@@ -5435,7 +5509,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2840fdfe40668240851f75a34ef4c47, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendCheckpointBeacon
   checkpointName: "\u0110\u01B0\u1EDDng ti\u1EC1n tuy\u1EBFn"
 --- !u!1 &446431610
@@ -5713,6 +5787,43 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7613037402975626664, guid: 611f1adcb4191394c9726396108deeca, type: 3}
   m_PrefabInstance: {fileID: 462025255}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &473611062
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 473611063}
+  m_Layer: 0
+  m_Name: COMBAT - BAMBOO RESUPPLY
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &473611063
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 473611062}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 994646004}
+  - {fileID: 546324671}
+  - {fileID: 835268982}
+  - {fileID: 2019808837}
+  - {fileID: 2093801935}
+  - {fileID: 603346894}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &476025060
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5805,7 +5916,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83d6a198281e9504f8875df67545ea7c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotEnvironmentMotion
 --- !u!1 &479013645
 GameObject:
@@ -8381,6 +8492,79 @@ Transform:
   - {fileID: 3533383543958898424}
   m_Father: {fileID: 911958051}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &546324670
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 546324671}
+  - component: {fileID: 546324673}
+  - component: {fileID: 546324672}
+  m_Layer: 0
+  m_Name: "Kh\xF3m Tre Ti\u1EBFp Chi\u1EBFn 2"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &546324671
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 546324670}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -14, y: 0, z: 17}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 995923771}
+  m_Father: {fileID: 473611063}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &546324672
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 546324670}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.35
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &546324673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 546324670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
+  kind: 4
+  displayName: "B\u1EE5i Tre Ng\xE0 Ti\u1EBFp Chi\u1EBFn"
+  foodValue: 0
+  spinSpeed: 0
+  visualRoot: {fileID: 995923771}
+  labelText: {fileID: 0}
 --- !u!1001 &550569719
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10948,7 +11132,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 3029281742068375044}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -11209,6 +11393,79 @@ Material:
     - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
+--- !u!1 &603346893
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 603346894}
+  - component: {fileID: 603346896}
+  - component: {fileID: 603346895}
+  m_Layer: 0
+  m_Name: "Kh\xF3m Tre Ti\u1EBFp Chi\u1EBFn 6"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &603346894
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603346893}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 7.4142137, y: 0, z: -5.5857863}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2085585017}
+  m_Father: {fileID: 473611063}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &603346895
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603346893}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.35
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &603346896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603346893}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
+  kind: 4
+  displayName: "B\u1EE5i Tre Ng\xE0 Ti\u1EBFp Chi\u1EBFn"
+  foodValue: 0
+  spinSpeed: 0
+  visualRoot: {fileID: 2085585017}
+  labelText: {fileID: 0}
 --- !u!1001 &613168226
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11479,7 +11736,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 5077152652244558473}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -11731,7 +11988,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 599559365812250384}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -12195,7 +12452,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 7901757291049854906}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -12373,7 +12630,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 6103773515785341261}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -12433,7 +12690,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
   kind: 4
   displayName: "L\u01B0\u01A1ng Th\u1EF1c"
@@ -12543,6 +12800,79 @@ Transform:
   - {fileID: 1086066139}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &835268981
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 835268982}
+  - component: {fileID: 835268984}
+  - component: {fileID: 835268983}
+  m_Layer: 0
+  m_Name: "Kh\xF3m Tre Ti\u1EBFp Chi\u1EBFn 3"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &835268982
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835268981}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 16, y: 0, z: 5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 999328881}
+  m_Father: {fileID: 473611063}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &835268983
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835268981}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.35
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &835268984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835268981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
+  kind: 4
+  displayName: "B\u1EE5i Tre Ng\xE0 Ti\u1EBFp Chi\u1EBFn"
+  foodValue: 0
+  spinSpeed: 0
+  visualRoot: {fileID: 999328881}
+  labelText: {fileID: 0}
 --- !u!1001 &859745636
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12707,7 +13037,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 9207830254963863440}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -12771,7 +13101,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a19dd6641eeeda49868bfb15e5b693d, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemyAnimationDriver
   speedBlendTime: 0.2
   stateBlendTime: 0.1
@@ -12786,7 +13116,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 602f3bfcdde679c4f877923f58ff5957, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongGoldenDissolve
 --- !u!114 &863904822
 MonoBehaviour:
@@ -12798,7 +13128,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf834f0d96cee5f42be23f5d8be0d3dd, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongEnemy
   maxHealth: 480
   moveSpeed: 3
@@ -12909,7 +13239,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 729983654016318489}
   sourceAsset: Assets/Prefabs/Enemies/KayKitKnightBoss/KayKit_Knight_Boss_Visual.prefab
@@ -12955,7 +13285,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c7142521ce1934b47a076736e1afe924, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCampaignVFX
 --- !u!4 &870455411
 Transform:
@@ -13233,7 +13563,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 712925178235604873}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -13344,7 +13674,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83d6a198281e9504f8875df67545ea7c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotEnvironmentMotion
 --- !u!1 &909833164
 GameObject:
@@ -13600,7 +13930,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 3533383543958898424}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -13731,7 +14061,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
   m_SerializedVersion: 0
   m_AgentTypeID: 0
@@ -13932,7 +14262,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 5794804891261558354}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -13946,6 +14276,80 @@ MonoBehaviour:
   - {fileID: 942130737}
   - {fileID: 942130736}
   - {fileID: 942130735}
+--- !u!1001 &943166336
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 994646004}
+    m_Modifications:
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000056028366
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068419364391058540, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_Name
+      value: MeshyVisual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+--- !u!4 &943166337 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+  m_PrefabInstance: {fileID: 943166336}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &943575351
 GameObject:
   m_ObjectHideFlags: 0
@@ -14290,7 +14694,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 2898127415277753655}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -14468,7 +14872,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 1924242237728871701}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -14646,7 +15050,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 2068079056624906502}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -14660,6 +15064,227 @@ MonoBehaviour:
   - {fileID: 992633044}
   - {fileID: 992633043}
   - {fileID: 992633042}
+--- !u!1 &994646003
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 994646004}
+  - component: {fileID: 994646006}
+  - component: {fileID: 994646005}
+  m_Layer: 0
+  m_Name: "Kh\xF3m Tre Ti\u1EBFp Chi\u1EBFn 1"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &994646004
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994646003}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -14, y: 0, z: 4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 943166337}
+  m_Father: {fileID: 473611063}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &994646005
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994646003}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.35
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &994646006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994646003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
+  kind: 4
+  displayName: "B\u1EE5i Tre Ng\xE0 Ti\u1EBFp Chi\u1EBFn"
+  foodValue: 0
+  spinSpeed: 0
+  visualRoot: {fileID: 943166337}
+  labelText: {fileID: 0}
+--- !u!1001 &995923770
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 546324671}
+    m_Modifications:
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000051379204
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.83388585
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.551937
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068419364391058540, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_Name
+      value: MeshyVisual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+--- !u!4 &995923771 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+  m_PrefabInstance: {fileID: 995923770}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &999328880
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 835268982}
+    m_Modifications:
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000056028366
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.39073122
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.92050487
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068419364391058540, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_Name
+      value: MeshyVisual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+--- !u!4 &999328881 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+  m_PrefabInstance: {fileID: 999328880}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1006004362
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14773,7 +15398,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ff3c54c87e60edf4d98dc64df8fd0602, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCampaignAudio
   musicGain: 0.11
   ambienceGain: 0.5
@@ -14788,7 +15413,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ca6fde01d85d6441be64a0c63dcdf2f, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCampaignController
   battleRoot: {fileID: 1986611453}
   bambooRoot: {fileID: 304865421}
@@ -14814,7 +15439,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a5eaa5e0b56bf7049b357e99f392bb86, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongRibbonCape
   anchorTransform: {fileID: 0}
   anchorOffset: {x: 0, y: 2.35, z: -0.42}
@@ -14842,7 +15467,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a9fb79620a429f3449e828011c644c49, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongSpeedRibbon
   motionSource: {fileID: 1006418138}
   ribbonAnchor: {fileID: 0}
@@ -14858,7 +15483,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e0abfb6b80caf08489a9e6f59fff3ded, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::MountedHorseController
   walkSpeed: 4.8
   runSpeed: 8.5
@@ -14942,7 +15567,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 139c74871db2394449b58070065ecbb4, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotCombatFeedback
 --- !u!114 &1006418140
 MonoBehaviour:
@@ -14954,7 +15579,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0953c1a7d34bdd143b7747cbefc33941, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotMountedMotion
   visual: {fileID: 615639320}
   mirrorX: 1
@@ -14972,7 +15597,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a00bd950ce41486408ffd99ed9607117, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendAudioMix
 --- !u!114 &1006418142
 MonoBehaviour:
@@ -14984,7 +15609,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e05ba03dcd9c9874d85085dc343fcaa6, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendCheckpoint
   activationRadius: 2.2
 --- !u!114 &1006418143
@@ -14997,7 +15622,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed36b9e85d0055344aaf67c925190b14, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendSeedSkills
   maxMana: 100
   manaPerSecond: 4
@@ -15013,7 +15638,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa8b0a9a6ff06414cb064388cb764e5b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendActorArt
 --- !u!114 &1006418145
 MonoBehaviour:
@@ -15025,7 +15650,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2182023d161fe844f8c1624c337fdcdf, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::MeshyHeroVisualDriver
   meshyRoot: {fileID: 1956916532}
   meshyMount: {fileID: 1956916533}
@@ -15260,7 +15885,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2840fdfe40668240851f75a34ef4c47, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendCheckpointBeacon
   checkpointName: "B\u1EBFn h\xE0nh qu\xE2n"
 --- !u!1 &1067471604
@@ -15563,7 +16188,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
   kind: 4
   displayName: "L\u01B0\u01A1ng Th\u1EF1c"
@@ -15758,7 +16383,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 3374968484812992332}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -15892,7 +16517,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 049bde5fe590e99458fbf07c29774740, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::IsometricCameraFollow
   target: {fileID: 1006418138}
   offset: {x: -16, y: 19, z: -16}
@@ -15999,7 +16624,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
   m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2
@@ -18673,7 +19298,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: da938ab650b115d4ab55c361a71d05c7, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendAtmosphere
   chapterIndex: 0
   terrainRoot: {fileID: 0}
@@ -18688,7 +19313,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5944f38831138ee49b83845f9c6dce4a, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendWorldPresentation
   player: {fileID: 1006418138}
   labelDistance: 9
@@ -18702,7 +19327,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
   m_IsGlobal: 1
   priority: 20
@@ -18735,7 +19360,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2764cef631a05d54ea73bdd27ecef8a3, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendLandscapePresentation
   chapterIndex: 2
   hero: {fileID: 1006418138}
@@ -18931,13 +19556,87 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79b01badededa314081908b7c34f168c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiong.Environment.MeshyPropVfxAnimator
   effectKind: 4
   propLight: {fileID: 100765427}
   animatedMeshRoot: {fileID: 1317449047}
   baseLightIntensity: 1.4
   phaseOffset: 0
+--- !u!1001 &1159472806
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2019808837}
+    m_Modifications:
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000051379204
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.18223548
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.9832549
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068419364391058540, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_Name
+      value: MeshyVisual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+--- !u!4 &1159472807 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+  m_PrefabInstance: {fileID: 1159472806}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1160372163
 GameObject:
   m_ObjectHideFlags: 0
@@ -19178,7 +19877,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83d6a198281e9504f8875df67545ea7c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotEnvironmentMotion
 --- !u!1 &1200653490
 GameObject:
@@ -24413,7 +25112,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 3813816420091485443}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -24756,7 +25455,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e744c97e97b0dd343bfe48690036a0d7, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::KayKitMapGuide
   mapTitle: "PH\xC1O \u0110\xC0I NG\u1EA6M QU\xC2N \xC2N"
   description: "Dungeon nhi\u1EC1u t\u1EA7ng: c\u1ED5ng giam, kho binh kh\xED v\xE0 \u0111\u1EA1i s\u1EA3nh ch\u1EC9 huy."
@@ -25002,7 +25701,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79b01badededa314081908b7c34f168c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiong.Environment.MeshyPropVfxAnimator
   effectKind: 4
   propLight: {fileID: 872773920}
@@ -25216,7 +25915,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
   kind: 4
   displayName: "L\u01B0\u01A1ng Th\u1EF1c"
@@ -25381,7 +26080,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83d6a198281e9504f8875df67545ea7c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::GodotEnvironmentMotion
 --- !u!1 &1452813591
 GameObject:
@@ -26205,7 +26904,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
   kind: 4
   displayName: "L\u01B0\u01A1ng Th\u1EF1c"
@@ -26506,7 +27205,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 7731092248659731497}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -26621,7 +27320,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ed88568a3a0d7448a5c28d4a6051be6, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCampaignHUD
   campaign: {fileID: 1006418133}
   panelFrame: {fileID: 2800000, guid: 0d4388ba47826964ab9daafdafd1c72d, type: 3}
@@ -26863,7 +27562,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 1685514853103770704}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -27041,7 +27740,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 1584738031585544072}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -27251,7 +27950,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 8319982735289899645}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -27671,7 +28370,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 982527681709145125}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -28365,7 +29064,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 2999159591358257470}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -28614,6 +29313,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 615639320}
     m_Modifications:
+    - target: {fileID: 97192176319862711, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.0029998124
+      objectReference: {fileID: 0}
+    - target: {fileID: 97192176319862711, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.037999988
+      objectReference: {fileID: 0}
+    - target: {fileID: 566283096440020564, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.01300025
+      objectReference: {fileID: 0}
+    - target: {fileID: 566283096440020564, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.027999818
+      objectReference: {fileID: 0}
     - target: {fileID: 735825631753835529, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.95371693
@@ -28645,6 +29360,22 @@ PrefabInstance:
     - target: {fileID: 799733866251786720, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1899409918871869970, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.0070000887
+      objectReference: {fileID: 0}
+    - target: {fileID: 1899409918871869970, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.16000007
+      objectReference: {fileID: 0}
+    - target: {fileID: 3016523252426722794, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.20999989
+      objectReference: {fileID: 0}
+    - target: {fileID: 3016523252426722794, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.41000018
       objectReference: {fileID: 0}
     - target: {fileID: 3176711593903110942, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -28665,6 +29396,18 @@ PrefabInstance:
     - target: {fileID: 3729040290713103095, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_Name
       value: Meshy_Mounted_ThanhGiong
+      objectReference: {fileID: 0}
+    - target: {fileID: 3813984562568533403, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.05000007
+      objectReference: {fileID: 0}
+    - target: {fileID: 4033433992524014019, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.16000009
+      objectReference: {fileID: 0}
+    - target: {fileID: 4033433992524014019, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.6800002
       objectReference: {fileID: 0}
     - target: {fileID: 4330485298486129303, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -28734,6 +29477,22 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4856102626164289785, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.16000009
+      objectReference: {fileID: 0}
+    - target: {fileID: 5432037930590294746, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.0800001
+      objectReference: {fileID: 0}
+    - target: {fileID: 5575502643057911621, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.009999901
+      objectReference: {fileID: 0}
+    - target: {fileID: 5575502643057911621, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.1590001
+      objectReference: {fileID: 0}
     - target: {fileID: 7123039591855817960, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.23227295
@@ -28749,6 +29508,22 @@ PrefabInstance:
     - target: {fileID: 7123039591855817960, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0.13655518
+      objectReference: {fileID: 0}
+    - target: {fileID: 7538107315331885772, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.20000024
+      objectReference: {fileID: 0}
+    - target: {fileID: 7538107315331885772, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.5400001
+      objectReference: {fileID: 0}
+    - target: {fileID: 7953302552528061881, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.12999976
+      objectReference: {fileID: 0}
+    - target: {fileID: 8500775534726588295, guid: 51d3b4ab993516d428aa3e96d5ba726b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.04000014
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -28994,6 +29769,79 @@ Transform:
   - {fileID: 7898262215105557896}
   m_Father: {fileID: 2029849621}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2019808836
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2019808837}
+  - component: {fileID: 2019808839}
+  - component: {fileID: 2019808838}
+  m_Layer: 0
+  m_Name: "Kh\xF3m Tre Ti\u1EBFp Chi\u1EBFn 4"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2019808837
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019808836}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 16, y: 0, z: 18}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1159472807}
+  m_Father: {fileID: 473611063}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &2019808838
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019808836}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.35
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &2019808839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019808836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
+  kind: 4
+  displayName: "B\u1EE5i Tre Ng\xE0 Ti\u1EBFp Chi\u1EBFn"
+  foodValue: 0
+  spinSpeed: 0
+  visualRoot: {fileID: 1159472807}
+  labelText: {fileID: 0}
 --- !u!1001 &2029849620
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29158,7 +30006,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 7898262215105557896}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -29389,7 +30237,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a270db3bfe4928e429506eb2910d467b, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::LegendEnemyPresentation
   model: {fileID: 5055602437811631967}
   sourceAsset: Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab
@@ -29435,6 +30283,80 @@ Transform:
   - {fileID: 9207830254963863440}
   m_Father: {fileID: 859745637}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &2085585016
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 603346894}
+    m_Modifications:
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000051379204
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.976296
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.21643972
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068419364391058540, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+      propertyPath: m_Name
+      value: MeshyVisual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+--- !u!4 &2085585017 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
+  m_PrefabInstance: {fileID: 2085585016}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2088831647
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29509,6 +30431,79 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4025236378604578719, guid: 603fbdda98e7c4148a2131f6ea3b5bc5, type: 3}
   m_PrefabInstance: {fileID: 2088831647}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2093801934
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2093801935}
+  - component: {fileID: 2093801937}
+  - component: {fileID: 2093801936}
+  m_Layer: 0
+  m_Name: "Kh\xF3m Tre Ti\u1EBFp Chi\u1EBFn 5"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2093801935
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2093801934}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5, y: 0, z: -7}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 170998587}
+  m_Father: {fileID: 473611063}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &2093801936
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2093801934}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.35
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!114 &2093801937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2093801934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26714d47cd5d954a81e618744a2b89c, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCollectible
+  kind: 4
+  displayName: "B\u1EE5i Tre Ng\xE0 Ti\u1EBFp Chi\u1EBFn"
+  foodValue: 0
+  spinSpeed: 0
+  visualRoot: {fileID: 170998587}
+  labelText: {fileID: 0}
 --- !u!1 &2093884138
 GameObject:
   m_ObjectHideFlags: 0
@@ -32317,7 +33312,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79b01badededa314081908b7c34f168c, type: 3}
-  m_Name: 
+  m_Name: ""
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiong.Environment.MeshyPropVfxAnimator
   effectKind: 4
   propLight: {fileID: 198370671}
@@ -79128,3 +80123,4 @@ SceneRoots:
   - {fileID: 1142796546}
   - {fileID: 940554664}
   - {fileID: 830877240}
+  - {fileID: 473611063}

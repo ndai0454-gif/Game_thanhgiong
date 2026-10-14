@@ -61,6 +61,7 @@ public class MountedHorseController : MonoBehaviour
     private Quaternion[] legBaseRotations;
     private Vector3 planarVelocity;
     private Vector3 planarVelocityDamp;
+    private float forwardSpeedDamp;
     private Animator mountedAnimator;
     private ThanhGiong.Mounts.HorseController modularHorse;
     private ThanhGiong.Characters.ThanhGiongCharacterController modularHero;
@@ -197,23 +198,40 @@ public class MountedHorseController : MonoBehaviour
             RequestJump();
 
         bool running = Input.GetKey(KeyCode.LeftShift);
+        DriveMovement(input, running);
+    }
+
+    // Shared by player input and the mounted integration scenario.
+    public void DriveMovement(Vector2 input, bool running)
+    {
+        if (Time.deltaTime <= 0f || controller == null || !controller.enabled) return;
+        bool equipmentBusy = godotMotion != null && godotMotion.IsBusy;
+        Vector3 move = CameraRelativeDirection(equipmentBusy ? Vector2.zero : input);
         float speed = running ? runSpeed : walkSpeed;
         if (IsAttacking) speed *= 0.25f;
-        Vector3 desiredPlanarVelocity = move * speed;
-        float smoothing = desiredPlanarVelocity.sqrMagnitude > planarVelocity.sqrMagnitude ? accelerationTime : decelerationTime;
         bool dodgeFrame = IsDodging;
         if (dodgeFrame)
         {
             float step = Mathf.Min(Time.deltaTime, dodgeTimer);
             planarVelocity = dodgeDirection * (dodgeDistance / Mathf.Max(dodgeDuration, .01f)) * (step / Time.deltaTime);
             planarVelocityDamp = Vector3.zero;
+            forwardSpeedDamp = 0f;
         }
-        else planarVelocity = Vector3.SmoothDamp(planarVelocity, desiredPlanarVelocity, ref planarVelocityDamp, smoothing, 35f, Time.deltaTime);
-
-        if (!dodgeFrame && planarVelocity.sqrMagnitude > 0.025f)
+        else
         {
-            Quaternion target = Quaternion.LookRotation(planarVelocity.normalized, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, target, 1f - Mathf.Exp(-turnSpeed * Time.deltaTime));
+            if (move.sqrMagnitude > .01f)
+            {
+                Quaternion target = Quaternion.LookRotation(move, Vector3.up);
+                // A galloping horse takes a wider turn; it must face the new path before advancing.
+                float agility = Mathf.Lerp(1f, .55f, Mathf.Clamp01(PlanarSpeed / Mathf.Max(runSpeed, .01f)));
+                transform.rotation = Quaternion.Slerp(transform.rotation, target, 1f - Mathf.Exp(-turnSpeed * agility * Time.deltaTime));
+            }
+            float alignment = move.sqrMagnitude > .01f ? Mathf.Clamp01(Vector3.Dot(transform.forward, move)) : 0f;
+            float desiredSpeed = speed * alignment * alignment;
+            float currentSpeed = planarVelocity.magnitude;
+            float smoothing = desiredSpeed > currentSpeed ? accelerationTime : decelerationTime;
+            float forwardSpeed = Mathf.SmoothDamp(currentSpeed, desiredSpeed, ref forwardSpeedDamp, smoothing, 35f, Time.deltaTime);
+            planarVelocity = transform.forward * forwardSpeed;
         }
 
         if (controller.isGrounded)
@@ -493,6 +511,7 @@ public class MountedHorseController : MonoBehaviour
         planarVelocity = Vector3.zero;
         frameVelocity = Vector3.zero;
         planarVelocityDamp = Vector3.zero;
+        forwardSpeedDamp = 0f;
         verticalVelocity = 0f;
         attackTimer = nextAttackTime = 0f;
         dodgeTimer = nextDodgeTime = 0f;

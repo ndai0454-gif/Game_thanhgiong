@@ -75,9 +75,9 @@ public class ThanhGiongCampaignController : MonoBehaviour
             if (CurrentChapter == Chapter.Preparation)
                 return $"MỤC TIÊU MÀN 2: Hoàn tất 4 bước trang bị vua ban (Bước {Mathf.Min(qteIndex + 1, 4)}/4): Nhấn E (Mặc giáp) → Q (Đội nón) → E (Lên ngựa sắt) → F (Phun lửa kiểm tra vũ khí)!";
             if (CurrentChapter == Chapter.Battle && CurrentWeapon == Weapon.IronSword)
-                return $"MỤC TIÊU MÀN 3: Càn quét tiền tuyến bằng Gươm Sắt (Hạ {Kills}/{victoryKills} giặc). Áp lực giặc tăng theo từng đợt; né đúng nhịp và nhặt đá/cây khi bị vây!";
+                return $"MỤC TIÊU MÀN 3: Càn quét tiền tuyến bằng Thương Sắt (Hạ {Kills}/{victoryKills} giặc). Áp lực giặc tăng theo từng đợt; né đúng nhịp và nhặt đá/cây khi bị vây!";
             if (CurrentChapter == Chapter.Battle && CurrentWeapon == Weapon.None)
-                return $"CẢNH BÁO: Gươm sắt đã gãy! Chạy ngay đến khóm tre ngà phát sáng và nhấn [E] {(3 - bambooQte)} lần nữa để NHỔ TRE TIẾP CHIẾN!";
+                return $"CẢNH BÁO: Thương sắt đã gãy! Chạy ngay đến khóm tre ngà phát sáng và nhấn [E] {(3 - bambooQte)} lần nữa để NHỔ TRE TIẾP CHIẾN!";
             if (CurrentChapter == Chapter.Battle)
                 return $"MỤC TIÊU MÀN 3: Dùng Khóm Tre Ngà quét sạch tàn quân & Tướng giặc (Hạ {Kills}/{victoryKills} giặc). Càng về cuối giặc càng áp sát nhanh; tích đủ 100% nhiệt rồi nhấn F phun Hỏa Tuyến!";
             if (CurrentChapter == Chapter.Ascension)
@@ -123,7 +123,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
 
     private string WeaponName => CurrentWeapon switch
     {
-        Weapon.IronSword => "Gươm Sắt (Chém Thư Pháp)",
+        Weapon.IronSword => "Thương Sắt (Đâm / Quét)",
         Weapon.Bamboo => BambooVariantName + " (Quét 360°)",
         Weapon.Environment => "Đá / Gốc cây",
         _ => "Tay không"
@@ -314,7 +314,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
 
     public bool TryCollect(ThanhGiongCollectible item)
     {
-        if (IsDead || Time.timeScale <= 0) return false;
+        if (item == null || item.IsCollected || !item.gameObject.activeInHierarchy || IsDead || Time.timeScale <= 0) return false;
         if (CurrentChapter == Chapter.Prologue && item.kind <= ThanhGiongCollectible.Kind.Meat)
         {
             if (isTransitioning) return false;
@@ -365,6 +365,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
         if (CurrentChapter == Chapter.Battle && CurrentWeapon == Weapon.None && item.kind == ThanhGiongCollectible.Kind.Bamboo)
         {
             bambooQte++;
+            GetComponentInChildren<MeshyMountedCombatPose>(true)?.PlayBambooPull(item.transform.position);
             audioFx?.PlayBambooPull();
             vfx?.PlayFoodBurst(item.transform.position, item.GetAuraColor());
             IsometricCameraFollow.Instance?.Shake(0.25f + bambooQte * 0.08f, 0.45f + bambooQte * 0.08f);
@@ -458,8 +459,14 @@ public class ThanhGiongCampaignController : MonoBehaviour
 
     private void UpdateCharge()
     {
+        ProcessChargeContacts(Input.GetKey(KeyCode.LeftShift));
+    }
+
+    public int ProcessChargeContacts(bool sprinting)
+    {
         CharacterController cc = GetComponent<CharacterController>();
-        if (cc == null || !Input.GetKey(KeyCode.LeftShift) || movement.IsDodging || movement.PlanarSpeed < 5f) return;
+        if (!IsBattleActive || Time.timeScale <= 0f || cc == null || !cc.enabled || !sprinting || movement.IsDodging || movement.PlanarSpeed < 5f) return 0;
+        int applied = 0;
         int count = Physics.OverlapSphereNonAlloc(transform.position + Vector3.up * .6f, 2.4f, hits, ~0, QueryTriggerInteraction.Ignore);
         for (int i = 0; i < count; i++) {
             ThanhGiongEnemy enemy = hits[i].GetComponentInParent<ThanhGiongEnemy>();
@@ -468,14 +475,19 @@ public class ThanhGiongCampaignController : MonoBehaviour
             chargeHits[enemy] = Time.time + 1f;
             float chargeDamage = CalculateChargeDamage(enemy);
             float chargeImpact = Mathf.Clamp(chargeDamage / 18f, 0.75f, 1.55f);
+            float before = enemy.HealthRatio;
             enemy.TakeDamage(chargeDamage, .65f, transform.position, chargeImpact, false);
-            combatFeedback?.PlayImpact(enemy.transform, false);
+            if (enemy.HealthRatio >= before) continue;
+            combatFeedback?.PlayMountedImpact(enemy.transform, transform.position, transform.forward, chargeImpact);
             audioFx?.PlayImpact(false);
+            applied++;
         }
+        return applied;
     }
 
-    private bool TryPullNearestBamboo()
+    public bool TryPullNearestBamboo()
     {
+        if (!IsBattleActive || CurrentWeapon != Weapon.None || Time.timeScale <= 0f || EquipmentBusy || movement.IsDodging) return false;
         ThanhGiongCollectible bamboo = FindNearestBambooPickup(BambooPickupRadius);
         if (bamboo == null)
         {
@@ -499,13 +511,13 @@ public class ThanhGiongCampaignController : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             ThanhGiongCollectible item = bambooProbeHits[i].GetComponentInParent<ThanhGiongCollectible>();
-            if (item == null || item.kind != ThanhGiongCollectible.Kind.Bamboo || !item.gameObject.activeInHierarchy) continue;
+            if (item == null || item.IsCollected || item.kind != ThanhGiongCollectible.Kind.Bamboo || !item.gameObject.activeInHierarchy || item.transform.root == transform.root) continue;
             float sqr = Vector3.ProjectOnPlane(item.transform.position - transform.position, Vector3.up).sqrMagnitude;
             if (sqr < bestSqr) { bestSqr = sqr; best = item; }
         }
         foreach (ThanhGiongCollectible item in runtimeBambooGroves)
         {
-            if (item == null || item.kind != ThanhGiongCollectible.Kind.Bamboo || !item.gameObject.activeInHierarchy) continue;
+            if (item == null || item.IsCollected || item.kind != ThanhGiongCollectible.Kind.Bamboo || !item.gameObject.activeInHierarchy || item.transform.root == transform.root) continue;
             float sqr = Vector3.ProjectOnPlane(item.transform.position - transform.position, Vector3.up).sqrMagnitude;
             if (sqr < bestSqr) { bestSqr = sqr; best = item; }
         }
@@ -595,10 +607,10 @@ public class ThanhGiongCampaignController : MonoBehaviour
         if (item == null) return;
         item.MarkCollected();
         Transform visual = item.visualRoot != null ? item.visualRoot : item.transform;
-        StartCoroutine(PullBambooVisualDown(visual));
+        StartCoroutine(PullBambooVisualDown(visual, item.gameObject));
     }
 
-    private IEnumerator PullBambooVisualDown(Transform visual)
+    private IEnumerator PullBambooVisualDown(Transform visual, GameObject collectible)
     {
         if (visual == null) yield break;
         Vector3 startPos = visual.localPosition;
@@ -615,6 +627,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
             yield return null;
         }
         if (visual != null) visual.gameObject.SetActive(false);
+        if (collectible != null) collectible.SetActive(false);
     }
 
     private static string BambooName(ThanhGiongCollectible item)
@@ -802,14 +815,15 @@ public class ThanhGiongCampaignController : MonoBehaviour
 
         if (CurrentWeapon == Weapon.IronSword && Kills >= swordBreakKills)
         {
-            CurrentWeapon = Weapon.None;
+            GetComponentInChildren<MeshyMountedCombatPose>(true)?.PlayBreak();
             vfx?.PlaySwordBreak(transform);
+            CurrentWeapon = Weapon.None;
             audioFx?.PlaySwordBreak();
             IsometricCameraFollow.Instance?.Shake(0.9f, 1.2f);
 
             if (bambooRoot != null) bambooRoot.SetActive(true);
             RegisterSceneBambooGroves();
-            ShowMessage("RẮC! GƯƠM SẮT GÃY — ĐỨNG CẠNH BẤT KỲ BỤI TRE NÀO VÀ NHẤN E ĐỂ NHỔ TRE NGÀ!", 4f);
+            ShowMessage("RẮC! THƯƠNG SẮT GÃY — ĐỨNG CẠNH BẤT KỲ BỤI TRE NÀO VÀ NHẤN E ĐỂ NHỔ TRE NGÀ!", 4f);
         }
 
         if (Kills >= victoryKills && CurrentWeapon == Weapon.Bamboo && !isTransitioning)
@@ -1081,7 +1095,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
                 enemy.Initialize(this, transform);
         }
         if (bambooRoot != null) bambooRoot.SetActive(true);
-        ShowMessage("BƯỚC VÀO MÀN 3: TRẬN TUYẾN NÚI SÓC!\nCÀN QUÉT QUÂN GIẶC BẰNG GƯƠM SẮT & NGỰA SẮT!", 3.5f);
+        ShowMessage("BƯỚC VÀO MÀN 3: TRẬN TUYẾN NÚI SÓC!\nCÀN QUÉT QUÂN GIẶC BẰNG THƯƠNG SẮT & NGỰA SẮT!", 3.5f);
     }
 
     private void BeginAscension()
