@@ -245,19 +245,18 @@ public sealed class GodotMountedMotion : MonoBehaviour
             contactsPending[i] = cycleTravel > .0001f && (legPhase < legPhases[i] && legPhases[i] > .65f || cycleTravel >= 1f);
             legPhases[i] = legPhase;
             bool front = i < 2; Vector2 wave = LegWave(offset, duty); float lift = wave.y * move;
-            float upper = wave.x * (front ? Mathf.Lerp(14f, 26f, b) : Mathf.Lerp(12f, 22f, b)) * move;
-            float lower = front ? lift * Mathf.Lerp(30f, 46f, b) : -lift * Mathf.Lerp(18f, 28f, b) - 4f * move;
-            // Counter-rotate the front hoof against the knee. Adding both angles
-            // curled the armored foot back through the shin at gallop.
-            float hoof = front ? -lift * Mathf.Lerp(18f, 26f, b) - (1f - wave.y) * 3f * move : lift * Mathf.Lerp(16f, 24f, b) + 3f * move;
-            if (!front) upper += 4f * move;
-            upper = Mathf.Lerp(upper, front ? -48f : 32f, air); lower = Mathf.Lerp(lower, front ? 100f : -22f, air); hoof = Mathf.Lerp(hoof, front ? 45f : 25f, air);
+            float upper = wave.x * (front ? Mathf.Lerp(13f, 22f, b) : Mathf.Lerp(12f, 20f, b)) * move;
+            float lower = front ? lift * Mathf.Lerp(24f, 35f, b) : lift * Mathf.Lerp(16f, 25f, b) + 2f * move;
+            // Counter-rotate the hoof against the knee/hock so the sole stays natural during lift and stance.
+            float hoof = front ? -lift * Mathf.Lerp(14f, 20f, b) - (1f - wave.y) * 2f * move : -lift * Mathf.Lerp(10f, 16f, b) - 2f * move;
+            if (!front) upper += 3f * move;
+            upper = Mathf.Lerp(upper, front ? -42f : 28f, air); lower = Mathf.Lerp(lower, front ? 78f : 26f, air); hoof = Mathf.Lerp(hoof, front ? -28f : -18f, air);
             if (Rear > 0f)
             {
                 float paw = Mathf.Sin(clock * 14f + i * 1.7f);
-                upper = Mathf.Lerp(upper, front ? -62f + paw * 14f : 22f, Rear);
-                lower = Mathf.Lerp(lower, front ? 82f - paw * 18f : -12f, Rear);
-                if (front) hoof = Mathf.Lerp(hoof, 40f, Rear);
+                upper = Mathf.Lerp(upper, front ? -56f + paw * 12f : 18f, Rear);
+                lower = Mathf.Lerp(lower, front ? 68f - paw * 15f : 10f, Rear);
+                if (front) hoof = Mathf.Lerp(hoof, -24f, Rear);
             }
             Pose(horse, LegPrefixes[i] + "_upper", new Vector3(Spring("leg" + i + "u", upper, 9f, 1f, dt), 0, 0));
             Pose(horse, LegPrefixes[i] + "_lower", new Vector3(Spring("leg" + i + "l", lower, 9f, 1f, dt), 0, 0));

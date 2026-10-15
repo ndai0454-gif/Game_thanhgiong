@@ -166,7 +166,10 @@ MonoBehaviour:
   runSpeed: 7.5
   rotationSpeed: 14
   gravity: -24
+  jumpHeight: 2.2
   clickStopDistance: 0.25
+  accelerationTime: 0.14
+  decelerationTime: 0.2
   animator: {fileID: 4203825240370573023}
   gameplayCamera: {fileID: 0}
 --- !u!1001 &62380339675861484
@@ -341,9 +344,81 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5961836333997841693, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: 88ccffa9802aab249b6c1ab783eb0f98, type: 2}
+    - target: {fileID: -5961836333997841693, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3530864053929793114, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: 9f16cf9aee73dc54ba6668728cd8abb2, type: 2}
+    - target: {fileID: -3530864053929793114, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 270157423702485028, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: 5afc6e67d70f8ce4690559cdbb8345f0, type: 2}
+    - target: {fileID: 270157423702485028, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 409350670104493089, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: 3880c67e5966b684d847bdb4493d653d, type: 2}
+    - target: {fileID: 409350670104493089, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
       propertyPath: m_Name
       value: Knight Visual
+      objectReference: {fileID: 0}
+    - target: {fileID: 2864905401325474408, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: fe7b27a8bcaa4fb4ba6b309a34ad0ef2, type: 2}
+    - target: {fileID: 2864905401325474408, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3064714828559208297, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: 10a5fd8d8f404b848b7aaed0689c28d8, type: 2}
+    - target: {fileID: 3064714828559208297, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421160185440302840, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: 9345f6e0c89793c4796dc4df2ea93600, type: 2}
+    - target: {fileID: 4421160185440302840, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7906128453035725863, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: f52ee8b61036bde4b81ba08aa1abe480, type: 2}
+    - target: {fileID: 7906128453035725863, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8260351504431586659, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: 2b775e9b3a9dfe74db672d12e30b0f82, type: 2}
+    - target: {fileID: 8260351504431586659, guid: 265ecd2c575bf85439bd0b2c6e58fe1e, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

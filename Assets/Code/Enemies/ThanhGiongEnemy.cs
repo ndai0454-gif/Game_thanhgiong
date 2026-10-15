@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(CapsuleCollider))]
@@ -58,7 +58,7 @@ public class ThanhGiongEnemy : MonoBehaviour
         {
             if (currentState == value) return;
             BeginAnimationState(value, DefaultAnimationDuration(value),
-                value == EnemyState.Slamming ? (isBoss ? .22f : resolvedRole == EnemyRole.Archer ? .12f : .04f) : 0f);
+                value == EnemyState.Slamming ? (isBoss ? .22f : resolvedRole == EnemyRole.Archer ? .12f : .11f) : 0f);
         }
     }
     private float animationStateStarted;
@@ -70,11 +70,42 @@ public class ThanhGiongEnemy : MonoBehaviour
     public float AnimationContactPhase => Mathf.Clamp01(animationContactTime / animationStateDuration);
     public bool IsStuckInGround => CurrentState == EnemyState.StuckInGround;
     public bool IsStunned => Time.time < stunnedUntil || CurrentState == EnemyState.Stunned;
+    public bool IsFlinching => flinchTimer > 0f;
+    public float FlinchPhase => 1f - Mathf.Clamp01(flinchTimer / (isBoss ? 0.18f : 0.22f));
     public bool IsRooted => Time.time < rootedUntil;
     public bool IsExposed => Time.time < exposedUntil;
     public bool IsSlowed => Time.time < slowedUntil;
     public float HealthRatio => Mathf.Clamp01(health / maxHealth);
     public Rigidbody Body => rb;
+    public bool WorldDormant { get; private set; }
+    private bool worldTierConfigured;
+    public void ConfigureWorldTier(OpenWorldRisk risk)
+    {
+        if(worldTierConfigured||rb==null)return;
+        worldTierConfigured=true;
+        float factor=risk==OpenWorldRisk.Black?1.55f:risk==OpenWorldRisk.Red?1.2f:.85f;
+        float ratio=HealthRatio;
+        maxHealth*=factor;health=maxHealth*ratio;
+        slamDamage*=factor;moveSpeed*=risk==OpenWorldRisk.Black?1.15f:risk==OpenWorldRisk.Yellow?.88f:1f;
+    }
+    public void SetWorldDormant(bool value)
+    {
+        if(WorldDormant==value&&(rb==null||rb.isKinematic==value))return;
+        if(value&&!WorldDormant){
+            StopAllCoroutines();DestroyWarningRing();DestroyStuckBladeMarker();
+            if(CurrentState!=EnemyState.Dead)CurrentState=EnemyState.Idle;
+        }
+        if(!value&&WorldDormant&&CurrentState!=EnemyState.Dead){
+            CurrentState=EnemyState.Chasing;
+            nextMinionAttackTime=Mathf.Max(nextMinionAttackTime,Time.time+.7f);
+            nextHeavyAttackTime=Mathf.Max(nextHeavyAttackTime,Time.time+.7f);
+            nextRangedAttackTime=Mathf.Max(nextRangedAttackTime,Time.time+.7f);
+        }
+        WorldDormant=value;
+        if(rb==null)return;
+        if(value&&!rb.isKinematic){rb.linearVelocity=Vector3.zero;rb.angularVelocity=Vector3.zero;}
+        rb.isKinematic=value;
+    }
 
     private float health;
     private float stunnedUntil;
@@ -275,6 +306,7 @@ public class ThanhGiongEnemy : MonoBehaviour
 
     private void Update()
     {
+        if(WorldDormant)return;
         if (target == null || focusTarget == null) ResolveIronHorseTarget();
 
         AnimateEnemyProcedural();
@@ -414,6 +446,7 @@ public class ThanhGiongEnemy : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if(WorldDormant)return;
         if (health <= 0f || CurrentState == EnemyState.Dead) return;
         if (IsRooted) { if (rb != null) SmoothVelocity(Vector3.zero); return; }
 
@@ -768,8 +801,8 @@ public class ThanhGiongEnemy : MonoBehaviour
     {
         switch (state)
         {
-            case EnemyState.TelegraphingAttack: return isBoss ? telegraphDuration : resolvedRole == EnemyRole.Archer ? .42f : .26f;
-            case EnemyState.Slamming: return isBoss ? .62f : .4f;
+            case EnemyState.TelegraphingAttack: return isBoss ? telegraphDuration : resolvedRole == EnemyRole.Archer ? .42f : .34f;
+            case EnemyState.Slamming: return isBoss ? .62f : resolvedRole == EnemyRole.Archer ? .4f : .44f;
             case EnemyState.StuckInGround: return Mathf.Max(.001f, stateTimer > 0f ? stateTimer : stuckDuration);
             case EnemyState.Recovering: return isBoss ? .45f : .18f;
             case EnemyState.Stunned: return Mathf.Max(.05f, stunnedUntil - Time.time);
@@ -851,6 +884,7 @@ public class ThanhGiongEnemy : MonoBehaviour
 
         // Ground shockwave effects & camera shake
         SpawnGroundImpact(slamTargetPos, effectiveSlamRadius);
+        SpawnMeleeSlashArc(effectiveSlamRadius * 0.85f, new Color(1f, 0.35f, 0.08f, 0.95f), 0.35f);
         IsometricCameraFollow.Instance?.Shake(0.7f, 0.45f);
 
         // Check if player is caught in slam
@@ -934,9 +968,16 @@ public class ThanhGiongEnemy : MonoBehaviour
         if (rb != null) SmoothVelocity(Vector3.zero);
         Vector3 origPos = visualModel != null ? visualModel.localPosition : Vector3.zero;
 
-        // Wind-up: keep facing the target while drawing the weapon back and leaning away.
-        float windup = Mathf.Lerp(0.26f, 0.17f, pressure);
+        // Wind-up: keep facing the target while drawing the weapon back and showing a clear ground telegraph.
+        float windup = Mathf.Lerp(0.34f, 0.24f, pressure);
         BeginAnimationState(EnemyState.TelegraphingAttack, windup);
+        Color roleColor = resolvedRole == EnemyRole.ShieldBearer
+            ? new Color(1f, 0.78f, 0.22f, 0.9f)
+            : resolvedRole == EnemyRole.Raider
+                ? new Color(1f, 0.22f, 0.16f, 0.9f)
+                : new Color(1f, 0.48f, 0.14f, 0.9f);
+        SpawnRangedTracer(transform.position + Vector3.up * 0.14f, transform.position + transform.forward * (2.4f * rangeScale) + Vector3.up * 0.14f, roleColor, windup);
+
         for (float t = 0f; t < windup; t += Time.fixedDeltaTime)
         {
             FaceFocusTarget(14f);
@@ -949,7 +990,7 @@ public class ThanhGiongEnemy : MonoBehaviour
             yield return new WaitForFixedUpdate();
             if (health <= 0f || Time.time < stunnedUntil) yield break;
         }
-        BeginAnimationState(EnemyState.Slamming, .4f, .04f);
+        BeginAnimationState(EnemyState.Slamming, .44f, .11f);
         // Strike: short committed lunge forward, body pitched into the thrust.
         if (!UsesAuthoredAnimation && visualModel != null && visualModel != transform)
         {
@@ -957,14 +998,16 @@ public class ThanhGiongEnemy : MonoBehaviour
             visualModel.localRotation = visualBaseLocalRot * Quaternion.Euler(16f, 0f, 0f);
         }
         bool damageDone = false;
-        for (float t = 0f; t < .12f; t += Time.fixedDeltaTime)
+        for (float t = 0f; t < .16f; t += Time.fixedDeltaTime)
         {
             Vector3 toFocus = (focusTarget != null ? focusTarget.position : target.position) - rb.position; toFocus.y = 0f;
             if (toFocus.magnitude > 1.15f)
                 rb.MovePosition(rb.position + transform.forward * (6.5f * Time.fixedDeltaTime));
-            if (!damageDone && t >= .04f)
+            if (!damageDone && t >= .11f)
             {
                 damageDone = true;
+                SpawnMeleeSlashArc(1.65f * rangeScale, roleColor, 0.24f);
+                SpawnBladeSparks(transform.position + transform.forward * 1.15f + Vector3.up * 1.0f);
                 if (health > 0f && target != null && campaign != null && campaign.IsBattleActive &&
                     Vector3.Distance(target.position, transform.position) < 3f * rangeScale)
                     campaign.DamagePlayer(8f * damageScale, transform.position);
@@ -994,7 +1037,7 @@ public class ThanhGiongEnemy : MonoBehaviour
         Vector3 faceDir = aim - transform.position;
         faceDir.y = 0f;
         if (faceDir.sqrMagnitude > .01f && rb != null) rb.MoveRotation(Quaternion.LookRotation(faceDir.normalized, Vector3.up));
-        SpawnRangedTracer(origin, aim, new Color(1f, .74f, .18f, .95f), .34f);
+        SpawnRangedTracer(origin, aim, new Color(1f, .74f, .18f, .95f), .38f);
 
         float draw = Mathf.Lerp(.42f, .28f, pressure);
         BeginAnimationState(EnemyState.TelegraphingAttack, draw);
@@ -1007,6 +1050,9 @@ public class ThanhGiongEnemy : MonoBehaviour
         BeginAnimationState(EnemyState.Slamming, .4f, .12f);
         yield return new WaitForSeconds(.12f);
         if (health <= 0f || Time.time < stunnedUntil) yield break;
+        Vector3 launchOrigin = transform.position + Vector3.up * 1.3f + transform.forward * 0.45f;
+        Vector3 launchTarget = focusTarget != null ? focusTarget.position + Vector3.up * .9f : aim;
+        StartCoroutine(AnimateFlyingProjectile(launchOrigin, launchTarget, new Color(1f, .82f, .22f, 1f), .18f));
         if (health > 0f && Time.time >= stunnedUntil && target != null && campaign != null && campaign.IsBattleActive)
         {
             Vector3 toTarget = target.position - transform.position;
@@ -1201,6 +1247,73 @@ public class ThanhGiongEnemy : MonoBehaviour
         Destroy(crit, 0.4f);
     }
 
+    private void SpawnMeleeSlashArc(float radius, Color color, float duration)
+    {
+        GameObject arcObj = new GameObject("EnemyMeleeSlashArc");
+        arcObj.transform.position = transform.position + Vector3.up * (isBoss ? 1.35f : 0.95f);
+        float tilt = isBoss ? -38f : resolvedRole == EnemyRole.Raider ? 8f : -28f;
+        arcObj.transform.rotation = transform.rotation * Quaternion.Euler(0f, 0f, tilt);
+
+        LineRenderer line = arcObj.AddComponent<LineRenderer>();
+        line.useWorldSpace = false;
+        line.loop = false;
+        line.positionCount = 18;
+        line.startWidth = isBoss ? 0.36f : 0.22f;
+        line.endWidth = 0.03f;
+        line.numCapVertices = 4;
+        line.material = new Material(Shader.Find("Sprites/Default"));
+        line.startColor = color;
+        line.endColor = new Color(1f, 0.92f, 0.45f, 0.15f);
+
+        for (int i = 0; i < line.positionCount; i++)
+        {
+            float t = i / (float)(line.positionCount - 1);
+            float angle = Mathf.Lerp(-68f, 68f, t) * Mathf.Deg2Rad;
+            line.SetPosition(i, new Vector3(Mathf.Sin(angle) * radius, 0f, Mathf.Cos(angle) * radius));
+        }
+
+        StartCoroutine(FadeOutImpact(arcObj, line, duration));
+    }
+
+    private IEnumerator AnimateFlyingProjectile(Vector3 start, Vector3 end, Color color, float flightDuration)
+    {
+        GameObject proj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        proj.name = "EnemyFlyingJavelin";
+        Collider c = proj.GetComponent<Collider>();
+        if (c != null) Destroy(c);
+        proj.transform.position = start;
+        Vector3 dir = (end - start);
+        if (dir.sqrMagnitude > 0.001f) proj.transform.rotation = Quaternion.LookRotation(dir.normalized, Vector3.up);
+        proj.transform.localScale = new Vector3(0.07f, 0.07f, 0.95f);
+
+        Renderer r = proj.GetComponent<Renderer>();
+        Material mat = new Material(Shader.Find("Sprites/Default")) { color = color };
+        if (r != null) r.material = mat;
+
+        TrailRenderer trail = proj.AddComponent<TrailRenderer>();
+        trail.time = 0.14f;
+        trail.startWidth = 0.14f;
+        trail.endWidth = 0.01f;
+        trail.material = mat;
+        trail.startColor = color;
+        trail.endColor = new Color(color.r, color.g, color.b, 0f);
+
+        float elapsed = 0f;
+        float dur = Mathf.Max(0.05f, flightDuration);
+        while (elapsed < dur && proj != null)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / dur);
+            Vector3 p = Vector3.Lerp(start, end, t) + Vector3.up * (Mathf.Sin(t * Mathf.PI) * 0.65f);
+            proj.transform.position = p;
+            yield return null;
+        }
+
+        SpawnBladeSparks(end);
+        if (mat != null) Destroy(mat);
+        if (proj != null) Destroy(proj);
+    }
+
     private IEnumerator FadeOutImpact(GameObject obj, LineRenderer line, float duration)
     {
         float elapsed = 0f;
@@ -1300,6 +1413,7 @@ public class ThanhGiongEnemy : MonoBehaviour
         stunnedUntil = Mathf.Max(stunnedUntil, Time.time + stunSeconds);
         flinchTimer = Mathf.Max(flinchTimer, isBoss ? 0.18f : 0.22f);
         transform.localScale = (isBoss ? initialScale * 1.8f : initialScale) * 1.05f;
+        SpawnBladeSparks(transform.position + Vector3.up * (isBoss ? 1.45f : 1.0f));
 
         Vector3 source = hitSource != default ? hitSource : (target != null ? target.position : transform.position - transform.forward);
 

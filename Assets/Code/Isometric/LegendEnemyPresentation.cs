@@ -9,6 +9,9 @@ public sealed class LegendEnemyPresentation : MonoBehaviour
     public Transform model;
     public string sourceAsset;
     public Renderer[] placeholders = new Renderer[0];
+    public bool preserveAuthoredMaterials;
+    // The Meshy prefab is grounded from sampled idle vertices, not conservative FBX bounds.
+    public bool modelOriginIsFeet;
     public bool IsUsingAuthoredModel => model != null && model.GetComponentInChildren<SkinnedMeshRenderer>(true) != null;
     public bool HasNativeArt => IsUsingAuthoredModel;
     public int VisibleSkinCount { get { int count = 0; if (model != null) foreach (var r in model.GetComponentsInChildren<SkinnedMeshRenderer>(true)) if (r.enabled && r.gameObject.activeInHierarchy) count++; return count; } }
@@ -41,6 +44,7 @@ public sealed class LegendEnemyPresentation : MonoBehaviour
         enemy = GetComponent<ThanhGiongEnemy>();
         bodyCollider = GetComponent<CapsuleCollider>();
         CacheFeet();
+        if (preserveAuthoredMaterials) return;
         Shader shader = Shader.Find("ThanhGiong/LegendSurface");
         if (shader == null) shader = Shader.Find("Universal Render Pipeline/Lit");
         if (shader == null) return;
@@ -78,6 +82,12 @@ public sealed class LegendEnemyPresentation : MonoBehaviour
     {
         if (model == null) return;
         restModelPosition = model.localPosition;
+        if (modelOriginIsFeet)
+        {
+            restFeetInRoot = transform.InverseTransformPoint(model.position);
+            feetCached = true;
+            return;
+        }
         bool found = false; Bounds bodyBounds = new Bounds();
         foreach (SkinnedMeshRenderer renderer in model.GetComponentsInChildren<SkinnedMeshRenderer>(true))
         {

@@ -45,6 +45,9 @@ public class ThanhGiongCollectible : MonoBehaviour
     {
         if (labelText != null && Camera.main != null)
         {
+            // The adventure HUD projects only the nearby resource label; avoid two overlapping labels.
+            var labelRenderer=labelText.GetComponent<Renderer>();
+            if(labelRenderer!=null)labelRenderer.enabled=IsometricCameraFollow.Instance==null||!IsometricCameraFollow.Instance.useShoulderCamera;
             labelText.transform.rotation = Camera.main.transform.rotation;
         }
     }

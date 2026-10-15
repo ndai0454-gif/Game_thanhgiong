@@ -222,12 +222,37 @@ public sealed class ThanhGiongSceneTransition : MonoBehaviour
 
     public static bool TryTransitionTo(string sceneName, string caption = null)
     {
+        var world = FindAnyObjectByType<ThanhGiongSeamlessCampaign>();
+        if (world != null) return world.HandleLegacyNavigation(sceneName);
         EnsureInstance();
         if (transitioning || string.IsNullOrWhiteSpace(sceneName) || !Application.CanStreamedLevelBeLoaded(sceneName))
             return false;
 
+        string currentScene = SceneManager.GetActiveScene().name;
+        if (IsForwardTransition(currentScene, sceneName))
+        {
+            ThanhGiongCampaignController campaign = FindAnyObjectByType<ThanhGiongCampaignController>();
+            if (campaign != null && !campaign.CanAdvanceToNextScene(out string reason))
+            {
+                campaign.ShowMessage("CHƯA THỂ QUA MÀN · " + reason, 3f);
+                return false;
+            }
+        }
+
         instance.StartCoroutine(instance.LoadScene(sceneName, caption));
         return true;
+    }
+
+    private static bool IsForwardTransition(string currentScene, string targetScene)
+    {
+        string cursor = currentScene;
+        for (int i = 0; i < 6; i++)
+        {
+            cursor = GetNextScene(cursor);
+            if (string.IsNullOrEmpty(cursor)) return false;
+            if (cursor == targetScene) return true;
+        }
+        return false;
     }
 
     public static string GetNextScene(string currentScene)

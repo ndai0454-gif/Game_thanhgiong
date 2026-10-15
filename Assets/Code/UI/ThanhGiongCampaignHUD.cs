@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 // Compact red/bronze Kenney HUD. Scaled game time keeps popup durations frozen during pause.
-public class ThanhGiongCampaignHUD : MonoBehaviour
+public partial class ThanhGiongCampaignHUD : MonoBehaviour
 {
     public ThanhGiongCampaignController campaign;
     public Texture2D panelFrame, bannerFrame, dividerTexture, combatCursor;
@@ -78,12 +78,13 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
 
     public bool RestartCurrentMap()
     {
-        if(paused&&!ThanhGiongSceneTransition.IsTransitioning)LegendCheckpoint.ForgetScene(SceneManager.GetActiveScene().name);
+        if(paused&&campaign.openWorldCampaign==null&&!ThanhGiongSceneTransition.IsTransitioning)LegendCheckpoint.ForgetScene(SceneManager.GetActiveScene().name);
         return LoadFromPause(SceneManager.GetActiveScene().name, "ĐANG CHƠI LẠI MÀN…");
     }
 
     public bool RestartCheckpoint()
     {
+        if(campaign!=null&&campaign.openWorldCampaign!=null)return campaign.openWorldCampaign.SaveCheckpoint();
         if(!paused||checkpoint==null||!checkpoint.HasCheckpoint||ThanhGiongSceneTransition.IsTransitioning)return false;
         paused=false;Time.timeScale=1;
         if(checkpoint.RestartCheckpoint()){guidesVisible=false;return true;}
@@ -105,6 +106,10 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
 
     private void Update()
     {
+        if (campaign != null && campaign.openWorldCampaign != null && campaign.openWorldCampaign.world.MapOpen) {
+            if (Input.GetKeyDown(KeyCode.Escape)) campaign.openWorldCampaign.world.SetMapOpen(false);
+            return;
+        }
         if (Input.GetKeyDown(KeyCode.Escape)) TogglePause();
         if (Input.GetKeyDown(KeyCode.F1)) guidesVisible = !guidesVisible;
         if (Input.GetKeyDown(KeyCode.Tab)) RecallPopups();
@@ -112,6 +117,7 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
         if(seeds==null&&campaign!=null)seeds=campaign.GetComponent<LegendSeedSkills>();
         if(checkpoint==null&&campaign!=null)checkpoint=campaign.GetComponent<LegendCheckpoint>();
         if (campaign == null || paused) return;
+        UpdateAdventureHUD();
         bool ready = campaign.Heat01 >= 1;
         bool carrying = campaign.CarriedWeapon != null;
         if (!haveState || previousChapter != campaign.CurrentChapter || previousStep != campaign.EquipmentStep) RecallPopups();
@@ -174,6 +180,7 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
 
     private void OnGUI()
     {
+        if (campaign != null && campaign.openWorldCampaign != null && campaign.openWorldCampaign.world.MapOpen) return;
         if (campaign == null || (ThanhGiongTrailerDirector.Instance != null && ThanhGiongTrailerDirector.Instance.IsPlayingTrailer)) return;
         EnsureStyles();
         Matrix4x4 oldMatrix = GUI.matrix;
@@ -184,41 +191,30 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
         float scale = CanvasScale(safe);
         float w = safe.width / scale, h = safe.height / scale;
         GUI.matrix = Matrix4x4.TRS(new Vector3(safe.x,Screen.height-safe.yMax,0),Quaternion.identity,new Vector3(scale,scale,1));
-        if(RegionIntroVisible&&!paused&&!guidesVisible) {
-            GUI.color=new Color(1,1,1,PopupAlpha(regionUntil,3.8f));
-            GUI.Label(new Rect((w-420)/2,22,420,30),SceneTitle(),centered);
-            GUI.Label(new Rect((w-360)/2,54,360,22),RegionSubtitle(),small);
-        }
-        if (MissionVisible) {
-            GUI.color = new Color(1, 1, 1, PopupAlpha(missionUntil,missionPopupSeconds));
-            Rect rect = new Rect(16, 16, 280, 100);
-            Box(rect);
-            GUI.Label(new Rect(28, 25, 256, 22), SceneTitle(), hudTitle);
-            GUI.Label(new Rect(28, 49, 256, 38), ShortObjective(), hudBody);
-            GUI.Label(new Rect(28, 91, 256, 18), Sequence(), small);
-        }
+        if (!paused && !guidesVisible) DrawChapterHUD(w,h);
         GUI.color = Color.white;
-        if (!paused && !guidesVisible) DrawVitals(h);
-        if (ControlsVisible && !paused && !guidesVisible) {
+        if (!paused && !guidesVisible) DrawAdventureHUD(w,h,safe,scale);
+        if (ControlsVisible && !paused && !guidesVisible && !ChapterRitualVisible) {
             GUI.color = new Color(1, 1, 1, PopupAlpha(controlsUntil,controlsPopupSeconds));
             Rect actions = new Rect((w - 500) / 2, h - 112, 500, 26);
             Box(actions);
             GUI.Label(new Rect(actions.x + 10, actions.y + 4, 480, 18), ControlHint(), small);
         }
         GUI.color = Color.white;
-        if(seeds!=null&&seeds.IsPlantingContext&&!paused&&!guidesVisible)DrawSeedBar(w,h);
         DrawBoss(w);
         if (campaign.IsDead || !string.IsNullOrEmpty(campaign.CenterMessage)) {
-            Rect message = new Rect((w - 420) / 2, h - 166, 420, 40);
-            Box(message); GUI.Label(new Rect(message.x + 12, message.y + 4, 396, 32), campaign.IsDead ? "GIÓNG ĐÃ GỤC NGÃ · R: VỀ ĐIỂM DỪNG CHÂN" : ShortNotice(campaign.CenterMessage), hudBody);
+            string notice=campaign.IsDead ? "GIÓNG ĐÃ GỤC NGÃ · R: VỀ ĐIỂM DỪNG CHÂN" : ShortNotice(campaign.CenterMessage);
+            float noticeHeight=Mathf.Max(40,hudBody.CalcHeight(new GUIContent(notice),396)+12);
+            Rect message = new Rect((w - 420) / 2, h - (ChapterRitualVisible ? 168 : 126) - noticeHeight, 420, noticeHeight);
+            Box(message); GUI.Label(new Rect(message.x + 12, message.y + 6, 396, noticeHeight-12), notice, hudBody);
         }
         if (guidesVisible || paused) {
             float guideHeight = paused ? 640 : 350;
             Rect guide = new Rect((w - 560) / 2, (h - guideHeight) / 2, 560, guideHeight);
             Box(guide, true);
             GUI.Label(new Rect(guide.x + 24, guide.y + 20, 512, 40), paused ? "TẠM DỪNG" : "BINH PHÁP PHÙ ĐỔNG", title);
-            string help=paused ? "WASD đi · Shift phi ngựa · Space nhảy · C/Alt né\nChuột đánh · 1–5 chọn hạt · Q gieo / đội nón\nR về điểm dừng chân khi gục ngã · F1 trợ giúp\nMenu: ↑↓ chọn · ←→ âm lượng · Enter xác nhận" :
-                "WASD: di chuyển · Shift: phi ngựa · Space: nhảy · C / Alt: lăn né\nChuột trái: chém gươm / quét tre / ném đá\n1 Lumen: trói, phá khiên · 2 Tre: gai làm chậm · 3 Sen: hồi máu, hộ thể dưới chân\n4 Lửa: thiêu, lộ giáp · 5 Gió: ngắt đòn, đẩy lùi · Q: gieo hạt\nE: nhặt lương thực, nhổ tre, vác đá · F: Hỏa Tuyến phá đội hình\nE → Q → E → F: trang bị xuất quân · E → Q → E: cởi giáp, tháo nón, hóa thánh\nNé vòng đỏ của tướng giặc; phản công khi đao mắc kẹt.\nR: về điểm dừng chân khi gục ngã · Tab: nhiệm vụ · F1: trợ giúp";
+            string help=paused ? "WASD đi · Shift phi ngựa · Space nhảy · C/Alt né\nChuột phải ngắm · Chuột giữa xoay · V đổi vai\n1–5 chọn hạt · Q gieo · R về điểm dừng chân\nMenu: ↑↓ chọn · ←→ âm lượng · Enter xác nhận" :
+                "WASD: di chuyển · Shift: phi ngựa · Space: nhảy · C / Alt: lăn né\nChuột trái: đánh / ném đá · Giữ chuột phải + trái: phóng tre\nChuột giữa: xoay máy · V: đổi vai · Chuột phải: ngắm khóa mềm\n1 Quang: trói, phá khiên · 2 Tre: gai chậm · 3 Sen: hồi máu, hộ thể\n4 Lửa: thiêu, lộ giáp · 5 Gió: ngắt đòn, đẩy lùi · Q: gieo hạt\nE / L: nhổ tre · E: vác đá / nhặt lương · F: Hỏa Tuyến\nE → Q → E → F: trang bị · E → Q → E: đặt giáp, hóa thánh\nNé vòng đỏ của tướng giặc; phản công khi đao mắc kẹt.\nR: về điểm dừng chân khi gục ngã · Tab: nhiệm vụ · F1: trợ giúp";
             GUI.Label(new Rect(guide.x+24,guide.y+(paused?66:76),512,paused?82:246),help,body);
             if (paused) DrawPauseButtons(guide);
         }
@@ -256,7 +252,7 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
         DrawEnchantedHealthBar(new Rect(rect.x+12,rect.y+31,254,23),campaign.Health01,false);
         string resource=campaign.CurrentChapter==ThanhGiongCampaignController.Chapter.Prologue
             ? $"Lương {Mathf.RoundToInt(campaign.FoodProgress*100)}% · lớn {campaign.GrowthPhase+1}/4"
-            : campaign.IsBattleActive ? $"Hạ {campaign.Kills}/{campaign.victoryKills} · áp {Mathf.RoundToInt(campaign.BattlePressure01*100)}% · hỏa {Mathf.RoundToInt(campaign.Heat01*100)}%"
+            : campaign.IsBattleActive ? $"Hạ {campaign.Kills}/{campaign.RequiredBattleKills} · hoàn thành {Mathf.RoundToInt(campaign.StageCompletion01*100)}% · hỏa {Mathf.RoundToInt(campaign.Heat01*100)}%"
             : campaign.CurrentChapter==ThanhGiongCampaignController.Chapter.Preparation ? $"Trang bị {Mathf.Min(campaign.EquipmentStep,4)}/4" : "Phù Đổng Thiên Vương";
         GUI.Label(new Rect(rect.x+12,rect.y+59,254,17),resource,small);
         if (campaign.CurrentChapter == ThanhGiongCampaignController.Chapter.Battle && campaign.CurrentWeapon == ThanhGiongCampaignController.Weapon.Bamboo)
@@ -267,8 +263,9 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
     {
         if(campaign.CurrentChapter==ThanhGiongCampaignController.Chapter.Preparation||campaign.CurrentChapter==ThanhGiongCampaignController.Chapter.Ascension)
             return Sequence()+" · WASD di chuyển · Tab nhiệm vụ · F1 trợ giúp";
-        if(campaign.CarriedWeapon!=null||campaign.Heat01>=1||nearInteraction) return CompactStatus()+" · C/Alt né · F1 trợ giúp";
-        return "WASD đi · Chuột đánh · E tương tác · Q gieo hạt · C/Alt né · F1 trợ giúp";
+        if(campaign.CarriedWeapon!=null||campaign.CurrentWeapon==ThanhGiongCampaignController.Weapon.Bamboo) return "Chuột phải ngắm · Trái phóng · Giữa xoay · V đổi vai · F1 trợ giúp";
+        if(campaign.Heat01>=1||nearInteraction) return CompactStatus()+" · C/Alt né · F1 trợ giúp";
+        return "WASD đi · Phải ngắm · Giữa xoay · V đổi vai · E/L tương tác · F1 trợ giúp";
     }
 
     private static string ShortNotice(string text)
@@ -284,14 +281,14 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
         GUI.enabled = !ThanhGiongSceneTransition.IsTransitioning;
         if (GUI.Button(new Rect(guide.x + 24, guide.y + 158, 250, 32), "TIẾP TỤC  [ESC]", button)) TogglePause();
         if (GUI.Button(new Rect(guide.x + 286, guide.y + 158, 250, 32), "🎬 TRAILER DEMO [F10]", button)) { TogglePause(); ThanhGiongTrailerDirector.Instance?.PlayTrailer(false); }
-        if (GUI.Button(new Rect(guide.x + 24, guide.y + 200, 250, 32), "VỀ ĐIỂM DỪNG CHÂN", button)) RestartCheckpoint();
-        if (GUI.Button(new Rect(guide.x + 286, guide.y + 200, 250, 32), "CHƠI LẠI TOÀN MÀN", button)) RestartCurrentMap();
+        if (GUI.Button(new Rect(guide.x + 24, guide.y + 200, 250, 32), campaign.openWorldCampaign!=null?"LƯU HÀNH TRÌNH [F9]":"VỀ ĐIỂM DỪNG CHÂN", button)) RestartCheckpoint();
+        if (GUI.Button(new Rect(guide.x + 286, guide.y + 200, 250, 32), campaign.openWorldCampaign!=null?"VỀ LÀNG AN TOÀN":"CHƠI LẠI TOÀN MÀN", button)) RestartCurrentMap();
         GUI.Label(new Rect(guide.x+24,guide.y+251,512,22),"ÂM THANH",caption);
         float master=MixSlider(guide,282,"TỔNG",LegendAudioMix.Master);
         float music=MixSlider(guide,311,"NHẠC",LegendAudioMix.Music);
         float effects=MixSlider(guide,340,"HIỆU ỨNG",LegendAudioMix.Effects);
         if(!Mathf.Approximately(master,LegendAudioMix.Master)||!Mathf.Approximately(music,LegendAudioMix.Music)||!Mathf.Approximately(effects,LegendAudioMix.Effects))LegendAudioMix.SetMix(master,music,effects);
-        GUI.Label(new Rect(guide.x + 24, guide.y + 383, 512, 24), "CHỌN CHƯƠNG", caption);
+        GUI.Label(new Rect(guide.x + 24, guide.y + 383, 512, 24), campaign.openWorldCampaign!=null?"ĐỊA DANH · MỞ BẢN ĐỒ, CƯỠI NGỰA ĐẾN VÙNG":"CHỌN CHƯƠNG", caption);
         for (int i = 0; i < ChapterScenes.Length; i++) {
             int row = i / 2, column = i % 2;
             Rect rect = new Rect(guide.x + 24 + column * 262, guide.y + 414 + row * 40, 250, 34);
@@ -318,12 +315,12 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
         GUI.Label(new Rect(guide.x+490,guide.y+y-3,46,22),Mathf.RoundToInt(result*100)+"%",small);return result;
     }
 
-    private string SceneTitle() => SceneManager.GetActiveScene().name switch {
+    private string SceneTitle() => campaign.openWorldCampaign != null && campaign.openWorldCampaign.world.CurrentZone != null ? campaign.openWorldCampaign.world.CurrentZone.displayName.ToUpperInvariant() : SceneManager.GetActiveScene().name switch {
         "LangGiongTienTuyen" => "LÀNG PHÙ ĐỔNG", "KinhThanhRenThep" => "KINH THÀNH RÈN THÉP",
         "PhaoDaiNgamQuanAn" => "PHÁO ĐÀI QUÂN ÂN", "ThungLungVuotSong" => "THUNG LŨNG VƯỢT SÔNG",
         "TranTuyenNuiSoc" => "TRẬN TUYẾN NÚI SÓC", "DinhSocHoaThanh" => "ĐỈNH SÓC HÓA THÁNH", _ => "THÁNH GIÓNG"
     };
-    private string RegionSubtitle() => SceneManager.GetActiveScene().name switch {
+    private string RegionSubtitle() => campaign.openWorldCampaign != null && campaign.openWorldCampaign.world.CurrentZone != null ? ThanhGiongOpenWorld.RiskDescription(campaign.openWorldCampaign.world.CurrentZone.risk) : SceneManager.GetActiveScene().name switch {
         "LangGiongTienTuyen" => "Lũy tre xanh giữ lời thề cứu nước.",
         "KinhThanhRenThep" => "Từ lửa rèn, người anh hùng lên đường.",
         "PhaoDaiNgamQuanAn" => "Phá vòng vây, mở đường về Núi Sóc.",
@@ -333,10 +330,10 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
         _ => "Theo con đường giữa những tán rừng."
     };
 
-    private string ShortObjective() => campaign.CurrentChapter switch {
+    private string ShortObjective() => campaign.openWorldCampaign != null ? campaign.openWorldCampaign.CurrentObjective : campaign.CurrentChapter switch {
         ThanhGiongCampaignController.Chapter.Prologue => $"Gom lương thực để Gióng lớn thành tráng sĩ. {Mathf.RoundToInt(campaign.Food)}/{campaign.foodPerGrowth * 3f}.",
         ThanhGiongCampaignController.Chapter.Preparation => $"Nhận giáp, nón và ngựa vua ban. Bước {Mathf.Min(campaign.EquipmentStep + 1, 4)}/4.",
-        ThanhGiongCampaignController.Chapter.Battle when campaign.CurrentWeapon == ThanhGiongCampaignController.Weapon.None => "Gươm đã gãy. Đến khóm tre sáng, nhấn E ba lần để nhổ tre.",
+        ThanhGiongCampaignController.Chapter.Battle when campaign.CurrentWeapon == ThanhGiongCampaignController.Weapon.None => "Thương đã gãy. Đến khóm tre sáng, nhấn E ba lần để nhổ tre.",
         ThanhGiongCampaignController.Chapter.Battle => $"Dẹp quân Ân. Áp lực {Mathf.RoundToInt(campaign.BattlePressure01*100)}%; dùng đúng loại tre để phá vòng vây.",
         ThanhGiongCampaignController.Chapter.Ascension => "Đặt giáp, nón trên đỉnh Sóc. Cưỡi ngựa về trời.",
         _ => "Hoàn thành đại nghiệp cứu quốc. Non sông thái bình."
@@ -353,7 +350,7 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
         if (campaign.CarriedWeapon != null) return "ĐÁ / GỐC CÂY  ·  CHUỘT TRÁI ĐỂ NÉM";
         if (campaign.Heat01 >= 1) return "HỎA KHÍ ĐẦY  ·  NHẤN F PHUN LỬA";
         return campaign.CurrentWeapon switch {
-            ThanhGiongCampaignController.Weapon.IronSword => "GƯƠM SẮT  ·  QUÉT SẠCH QUÂN ÂN",
+            ThanhGiongCampaignController.Weapon.IronSword => "THƯƠNG SẮT  ·  QUÉT SẠCH QUÂN ÂN",
             ThanhGiongCampaignController.Weapon.Bamboo => campaign.BambooVariantName.ToUpperInvariant()+"  ·  QUÉT 360°",
             _ => "E: NHẶT / TƯƠNG TÁC"
         };
@@ -452,6 +449,7 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
 
     private void OnDisable()
     {
+        ReleaseAdventureHUD();
         if (paused) { Time.timeScale = 1; paused = false; }
     }
 }

@@ -41,6 +41,17 @@ public sealed class ThanhGiongCampaignAudio : MonoBehaviour
         "DinhSocHoaThanh" => "sacred", _ => "village"
     };
 
+    public void SetOpenWorldRegion(string value)
+    {
+        if(string.IsNullOrEmpty(value)||Region==value||music==null||ambience==null)return;
+        Region=value;
+        music.Stop(); ambience.Stop();
+        music.clip=Clip(value=="sacred"?"music_sacred_full":"music_"+(value=="battle"?"camp":value));
+        ambience.clip=Clip("ambient_"+value);
+        if(music.clip!=null)music.Play();
+        if(ambience.clip!=null)ambience.Play();
+    }
+
     private void Awake()
     {
         Region = RegionForScene(SceneManager.GetActiveScene().name);

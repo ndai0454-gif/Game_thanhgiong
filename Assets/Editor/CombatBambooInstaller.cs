@@ -8,7 +8,7 @@ using UnityEngine;
 
 public static class CombatBambooInstaller
 {
-    const string PrefabPath="Assets/Prefabs/Meshy/Environment/Meshy_KhomTreNga_ThanThanh.prefab";
+    const string PrefabPath="Assets/Prefabs/Environment/Foliage/BambooGrove_Vietnamese_Legend.prefab";
     const string RootName="COMBAT - BAMBOO RESUPPLY";
     static readonly Dictionary<string,Vector2[]> Layout=new Dictionary<string,Vector2[]>
     {
@@ -44,9 +44,10 @@ public static class CombatBambooInstaller
                 {
                     string name="Khóm Tre Tiếp Chiến "+(i+1);
                     var existing=root.transform.Find(name);
-                    if(existing!=null){placed.Add(existing.position);report.Add("EXISTS "+entry.Key+" "+name);continue;}
-                    Vector3 position=FindPlacement(entry.Key,entry.Value[i],placed,enemies);
-                    var grove=new GameObject(name);grove.transform.SetParent(root.transform,false);grove.transform.position=position;
+                    Vector3 position=existing!=null?existing.position:FindPlacement(entry.Key,entry.Value[i],placed,enemies);
+                    var grove=existing!=null?existing.gameObject:new GameObject(name);
+                    grove.transform.SetParent(root.transform,false);grove.transform.position=position;
+                    Transform oldVisual=grove.transform.Find("MeshyVisual");if(oldVisual!=null)UnityEngine.Object.DestroyImmediate(oldVisual.gameObject);
                     var visual=(GameObject)PrefabUtility.InstantiatePrefab(prefab,grove.transform);visual.name="MeshyVisual";
                     visual.transform.localPosition=Vector3.zero;visual.transform.localRotation=Quaternion.Euler(0,(i*67)%360,0);
                     visual.transform.localScale=Vector3.one*(i%2==0?.48f:.44f);
@@ -55,11 +56,11 @@ public static class CombatBambooInstaller
                     var bounds=new Bounds(position,Vector3.zero);
                     foreach(var renderer in visual.GetComponentsInChildren<MeshRenderer>(true))bounds.Encapsulate(renderer.bounds);
                     visual.transform.position+=Vector3.up*(position.y-bounds.min.y);
-                    var item=grove.AddComponent<ThanhGiongCollectible>();item.kind=ThanhGiongCollectible.Kind.Bamboo;
+                    var item=grove.GetComponent<ThanhGiongCollectible>();if(item==null)item=grove.AddComponent<ThanhGiongCollectible>();item.kind=ThanhGiongCollectible.Kind.Bamboo;
                     item.displayName="Bụi Tre Ngà Tiếp Chiến";item.foodValue=0f;item.spinSpeed=0f;item.visualRoot=visual.transform;
-                    var trigger=grove.AddComponent<SphereCollider>();trigger.isTrigger=true;trigger.radius=2.35f;trigger.center=Vector3.up*1.2f;
+                    var trigger=grove.GetComponent<SphereCollider>();if(trigger==null)trigger=grove.AddComponent<SphereCollider>();trigger.isTrigger=true;trigger.radius=2.8f;trigger.center=Vector3.up*1.25f;
                     placed.Add(position);
-                    report.Add("ADDED "+entry.Key+" "+name+" position="+position.ToString("F2")+" enemyDistance="+enemies.Min(e=>Vector3.Distance(e.transform.position,position)).ToString("F1"));
+                    report.Add((existing==null?"ADDED ":"UPDATED ")+entry.Key+" "+name+" position="+position.ToString("F2")+" enemyDistance="+enemies.Min(e=>Vector3.Distance(e.transform.position,position)).ToString("F1"));
                 }
                 EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);
                 Capture(root.transform,folder+"/"+entry.Key+".png");

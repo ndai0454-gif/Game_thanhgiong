@@ -10,15 +10,9 @@ using UnityEngine.SceneManagement;
 /// <summary>Builds a reusable KayKit Barbarian enemy and deploys a deterministic army.</summary>
 public static class BarbarianArmyBuilder
 {
-    private const string KayKitRoot = "Assets/Plugins/KayKit_Adventurers_2.0_FREE/KayKit_Adventurers_2.0_FREE";
-    private const string ModelPath = KayKitRoot + "/Characters/fbx/Barbarian.fbx";
-    private const string AxePath = KayKitRoot + "/Assets/fbx(unity)/axe_1handed.fbx";
-    private const string ShieldPath = KayKitRoot + "/Assets/fbx(unity)/shield_round_barbarian.fbx";
-    private const string ControllerPath = "Assets/Animations/ThanhGiongEnemySoldier.controller";
-    private const string PrefabFolder = "Assets/Prefabs/Enemies";
-    private const string PrefabPath = PrefabFolder + "/KayKit_Barbarian_Soldier.prefab";
+    private const string PrefabPath = "Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab";
     private const string TargetScene = "Assets/Scenes/ThanhGiongWorld/PhaoDaiNgamQuanAn.unity";
-    private const string ArmyRootName = "DOI QUAN BARBARIAN";
+    private const string ArmyRootName = "DOI QUAN TAN (QIN ARMY)";
     private const string AutoBuildKey = "ThanhGiong.BarbarianArmy.2026-10-02-v1";
 
     [InitializeOnLoadMethod]
@@ -50,57 +44,20 @@ public static class BarbarianArmyBuilder
 
     private static GameObject BuildPrefab()
     {
-        GameObject source = AssetDatabase.LoadAssetAtPath<GameObject>(ModelPath);
-        if (source == null) throw new InvalidOperationException("Missing KayKit Barbarian model: " + ModelPath);
-
-        Directory.CreateDirectory(PrefabFolder);
-        GameObject root = new GameObject("KayKit Barbarian Soldier");
-        root.layer = LayerMask.NameToLayer("Default");
-
-        GameObject visual = PrefabUtility.InstantiatePrefab(source) as GameObject;
-        if (visual == null) throw new InvalidOperationException("Could not instantiate Barbarian model.");
-        visual.name = "Barbarian Visual";
-        visual.transform.SetParent(root.transform, false);
-
-        Animator animator = visual.GetComponent<Animator>();
-        if (animator == null) animator = visual.AddComponent<Animator>();
-        AnimatorController controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath);
-        if (controller != null) animator.runtimeAnimatorController = controller;
-        animator.applyRootMotion = false;
-
-        Transform rightHand = FindBone(visual.transform, "hand.r", "righthand", "hand_r", "right_hand");
-        Transform leftHand = FindBone(visual.transform, "hand.l", "lefthand", "hand_l", "left_hand");
-        AttachProp(AxePath, rightHand != null ? rightHand : visual.transform, "Barbarian Axe");
-        AttachProp(ShieldPath, leftHand != null ? leftHand : visual.transform, "Barbarian Shield");
-
-        CapsuleCollider capsule = root.AddComponent<CapsuleCollider>();
-        capsule.center = new Vector3(0f, 1f, 0f);
-        capsule.height = 2f;
-        capsule.radius = .42f;
-
-        Rigidbody body = root.AddComponent<Rigidbody>();
-        body.mass = 85f;
-        body.linearDamping = .8f;
-        body.angularDamping = 2.5f;
-        body.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-
-        ThanhGiongEnemy enemy = root.AddComponent<ThanhGiongEnemy>();
-        enemy.enemyName = "Chiến Binh Barbarian";
-        enemy.maxHealth = 75f;
-        enemy.moveSpeed = 2.7f;
-        enemy.engageDistance = 28f;
-
-        GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
-        UnityEngine.Object.DestroyImmediate(root);
-        AssetDatabase.SaveAssets();
-        return prefab;
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(ThanhGiong.EditorTools.QinSoldierBuilder.VisualPrefabPath) == null)
+        {
+            ThanhGiong.EditorTools.QinSoldierBuilder.Build();
+        }
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+        if (prefab != null) return prefab;
+        return AssetDatabase.LoadAssetAtPath<GameObject>(ThanhGiong.EditorTools.QinSoldierBuilder.GameplayPrefabPath);
     }
 
     private static void DeployArmy(GameObject prefab, Scene scene)
     {
-        if (!scene.IsValid() || !scene.isLoaded) throw new InvalidOperationException("No loaded scene for Barbarian army.");
+        if (!scene.IsValid() || !scene.isLoaded) throw new InvalidOperationException("No loaded scene for Qin army.");
 
-        GameObject oldRoot = scene.GetRootGameObjects().FirstOrDefault(item => item.name == ArmyRootName);
+        GameObject oldRoot = scene.GetRootGameObjects().FirstOrDefault(item => item.name == ArmyRootName || item.name == "DOI QUAN BARBARIAN");
         if (oldRoot != null) UnityEngine.Object.DestroyImmediate(oldRoot);
 
         GameObject army = new GameObject(ArmyRootName);
@@ -118,12 +75,14 @@ public static class BarbarianArmyBuilder
             {
                 GameObject soldier = PrefabUtility.InstantiatePrefab(prefab, scene) as GameObject;
                 if (soldier == null) continue;
-                soldier.name = $"Barbarian_{row + 1:00}_{column + 1:00}";
+                soldier.name = $"QinSoldier_{row + 1:00}_{column + 1:00}";
                 soldier.transform.SetParent(army.transform, true);
                 float x = (column - (columns - 1) * .5f) * xSpacing;
                 float z = row * zSpacing;
                 soldier.transform.position = GroundPoint(center + new Vector3(x, 0f, z));
                 soldier.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+                ThanhGiongEnemy soldierEnemy = soldier.GetComponent<ThanhGiongEnemy>();
+                if (soldierEnemy != null) ThanhGiong.EditorTools.QinSoldierCampaignInstaller.ApplySoldier(soldierEnemy);
             }
         }
 
@@ -131,21 +90,22 @@ public static class BarbarianArmyBuilder
         GameObject commander = PrefabUtility.InstantiatePrefab(prefab, scene) as GameObject;
         if (commander != null)
         {
-            commander.name = "Barbarian Commander";
+            commander.name = "Qin Army Commander";
             commander.transform.SetParent(army.transform, true);
             commander.transform.position = GroundPoint(center + new Vector3(0f, 0f, rows * zSpacing + 1.8f));
             commander.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
             commander.transform.localScale = Vector3.one * 1.35f;
             ThanhGiongEnemy commanderEnemy = commander.GetComponent<ThanhGiongEnemy>();
-            commanderEnemy.enemyName = "Thủ Lĩnh Barbarian";
+            commanderEnemy.enemyName = "Đội Trưởng Quân Tần";
             commanderEnemy.maxHealth = 180f;
             commanderEnemy.moveSpeed = 2.9f;
+            ThanhGiong.EditorTools.QinSoldierCampaignInstaller.ApplySoldier(commanderEnemy);
         }
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
         Selection.activeGameObject = army;
-        Debug.Log($"[Thanh Giong] Deployed 24 Barbarian soldiers and 1 commander in {scene.name}.");
+        Debug.Log($"[Thanh Giong] Deployed 24 Qin soldiers and 1 commander in {scene.name}.");
     }
 
     private static Vector3 FindDeploymentCenter(Scene scene)
@@ -161,27 +121,5 @@ public static class BarbarianArmyBuilder
         if (Physics.Raycast(point + Vector3.up * 80f, Vector3.down, out RaycastHit hit, 180f, ~0, QueryTriggerInteraction.Ignore))
             point.y = hit.point.y + .03f;
         return point;
-    }
-
-    private static void AttachProp(string assetPath, Transform parent, string name)
-    {
-        GameObject source = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
-        if (source == null) return;
-        GameObject prop = PrefabUtility.InstantiatePrefab(source) as GameObject;
-        if (prop == null) return;
-        prop.name = name;
-        prop.transform.SetParent(parent, false);
-        prop.transform.localPosition = Vector3.zero;
-        prop.transform.localRotation = Quaternion.identity;
-    }
-
-    private static Transform FindBone(Transform root, params string[] candidates)
-    {
-        foreach (Transform item in root.GetComponentsInChildren<Transform>(true))
-        {
-            string normalized = item.name.Replace(" ", "").Replace("-", "").Replace("_", "").Replace(".", "").ToLowerInvariant();
-            if (candidates.Any(candidate => normalized.Contains(candidate.Replace("_", "").Replace(".", "")))) return item;
-        }
-        return null;
     }
 }

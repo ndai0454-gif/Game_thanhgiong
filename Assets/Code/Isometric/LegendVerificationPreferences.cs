@@ -11,10 +11,13 @@ public static class LegendVerificationPreferences
     public static void Capture()
     {
         Restore();Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
-        var data=new Backup{active=true,checkpoints=new Entry[7],audio=new Entry[3]};
-        for(int i=0;i<7;i++){string key=LegendCheckpoint.StorageKeyForScene(GodotPortRuntimeVerifier.Maps[i]);data.checkpoints[i]=new Entry{key=key,exists=PlayerPrefs.HasKey(key),text=PlayerPrefs.GetString(key)};LegendCheckpoint.ForgetScene(GodotPortRuntimeVerifier.Maps[i]);}
+        var maps=GodotPortRuntimeVerifier.Maps;
+        var data=new Backup{active=true,checkpoints=new Entry[maps.Length],audio=new Entry[3]};
+        for(int i=0;i<maps.Length;i++){string key=LegendCheckpoint.StorageKeyForScene(maps[i]);data.checkpoints[i]=new Entry{key=key,exists=PlayerPrefs.HasKey(key),text=PlayerPrefs.GetString(key)};}
         string[] keys={"TG.Audio.Master","TG.Audio.Music","TG.Audio.Effects"};for(int i=0;i<3;i++)data.audio[i]=new Entry{key=keys[i],exists=PlayerPrefs.HasKey(keys[i]),number=PlayerPrefs.GetFloat(keys[i],1)};
         File.WriteAllText(FilePath,JsonUtility.ToJson(data,true));
+        // Persist the complete backup before the first mutation. Never assume a fixed scene count.
+        foreach(string scene in maps)LegendCheckpoint.ForgetScene(scene);
     }
     public static void Restore()
     {

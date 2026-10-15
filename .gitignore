@@ -49,6 +49,14 @@ IsometricVerification/
 CombatBambooVerification/
 HorseRepairVerification/
 MountedCombatVerification/
+ActionForgeEnemyVerification/
+AdventureVerification/
+CharacterMeshVerification/
+GiacAnGeneralVerification/
+OpenWorldVerification/
+QinSoldierVerification/
+Assets/Generated/OpenWorld/BiomeDecor_blue_forest_0.asset
+Assets/Generated/OpenWorld/BiomeDecor_blue_forest_0.asset.meta
 Assets/Temp/
 Assets/Temp.meta
 Assets/UnitySkillsTests_Temp/
