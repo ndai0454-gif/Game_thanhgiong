@@ -17,9 +17,9 @@ public class ThanhGiongPlayModeTests
     }
 
     [UnityTest]
-    public IEnumerator UndergroundFortress_StartsAsPlayableBattle()
+    public IEnumerator OpenWorld_StartsAsPlayableCampaign()
     {
-        yield return SceneManager.LoadSceneAsync("PhaoDaiNgamQuanAn", LoadSceneMode.Single);
+        yield return SceneManager.LoadSceneAsync("ThanhGiongDaiViet", LoadSceneMode.Single);
         for (int i = 0; i < 8; i++) yield return null;
 
         Type campaignType = GameType("ThanhGiongCampaignController");
@@ -31,14 +31,13 @@ public class ThanhGiongPlayModeTests
 
         Component campaign = UnityEngine.Object.FindFirstObjectByType(campaignType) as Component;
         Component horse = UnityEngine.Object.FindFirstObjectByType(horseType) as Component;
-        Assert.NotNull(campaign, "Campaign chưa khởi tạo trong Pháo Đài Ngầm");
-        Assert.NotNull(horse, "Player chưa khởi tạo trong Pháo Đài Ngầm");
+        Assert.NotNull(campaign, "Campaign chưa khởi tạo trong thế giới Đại Việt");
+        Assert.NotNull(horse, "Player chưa khởi tạo trong thế giới Đại Việt");
         Assert.IsTrue(horse.gameObject.activeInHierarchy && ((Behaviour)horse).enabled);
 
-        Transform horseRig = horse.transform.Find("Visual/IronHorse_Rig") ?? horse.transform.Find("Visual/MountedGiong/Mount/IronHorse");
-        Transform heroRig = horse.transform.Find("Visual/ThanhGiong_Rig") ?? horse.transform.Find("Visual/MountedGiong/Mount/ThanhGiong");
-        Assert.NotNull(horseRig);
-        Assert.NotNull(heroRig);
+        Transform meshyRig = horse.transform.Find("Visual/Meshy_Mounted_ThanhGiong");
+        Assert.NotNull(meshyRig, "Thiếu rig Meshy_Mounted_ThanhGiong");
+        Assert.Greater(meshyRig.GetComponentsInChildren<Renderer>(true).Length, 0);
 
         FieldInfo gait = horseType.GetField("gaitTime", BindingFlags.Instance | BindingFlags.NonPublic);
         FieldInfo frontLeg = horseType.GetField("frontLeftLeg", BindingFlags.Instance | BindingFlags.Public);
@@ -59,7 +58,7 @@ public class ThanhGiongPlayModeTests
         Assert.Greater((float)horseType.GetField("attackTimer", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(horse), 0f);
 
         PropertyInfo chapter = campaignType.GetProperty("CurrentChapter");
-        Assert.AreEqual("Battle", chapter.GetValue(campaign).ToString());
+        Assert.NotNull(chapter.GetValue(campaign), "Campaign chưa có chương hiện tại");
         Assert.GreaterOrEqual(UnityEngine.Object.FindObjectsByType(enemyType, FindObjectsInactive.Include, FindObjectsSortMode.None).Length, 20);
         Assert.NotNull(Shader.Find("ThanhGiong/Golden Noise Dissolve"));
     }

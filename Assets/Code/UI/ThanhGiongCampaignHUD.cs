@@ -38,6 +38,7 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
     private GUIStyle title, body, caption, small, centered, frame, button, hudTitle, hudBody, tile;
     private Font serifRegular, serifBold;
     private readonly Collider[] nearby = new Collider[32];
+    private float nextNearScan;
     private static readonly Color Paper = new Color(.94f, .87f, .73f);
     private static readonly Color Gold = new Color(.83f, .65f, .33f);
     private static readonly Color Muted = new Color(.71f, .63f, .52f);
@@ -127,6 +128,8 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
         previousChapter = campaign.CurrentChapter; previousWeapon = campaign.CurrentWeapon;
         previousStep = campaign.EquipmentStep; previousGrowth = campaign.GrowthPhase;
         previousHeatReady = ready; previousCarrying = carrying; haveState = true;
+        if (Time.unscaledTime < nextNearScan) return;
+        nextNearScan = Time.unscaledTime + 0.1f; // proximity hint does not need per-frame physics queries
         bool nowNear = false;
         int count = Physics.OverlapSphereNonAlloc(campaign.transform.position, 4.5f, nearby, ~0, QueryTriggerInteraction.Collide);
         for (int i = 0; i < count; i++) {
