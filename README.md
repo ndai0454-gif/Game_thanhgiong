@@ -13,7 +13,18 @@ Dự án game Unity lấy cảm hứng từ truyền thuyết Thánh Gióng. Hà
 1. Clone repository này về máy.
 2. Trong Unity Hub, chọn **Add project from disk** và trỏ đến **thư mục gốc của repository** (thư mục chứa `Assets`, `Packages` và `ProjectSettings`).
 3. Mở bằng Unity 6000.6.0f1 và chờ Unity nhập tài nguyên, tải package.
-4. Mở một scene trong `Assets/Scenes/ThanhGiongWorld/`. Các scene này cũng đã được đưa vào Build Settings.
+4. Mở scene trong `Assets/Scenes/ThanhGiongWorld/`:
+   - Scene thế giới liền mạch: `ThanhGiongDaiViet.unity` (scene chính trải nghiệm trọn vẹn 4 chương).
+   - Hoặc các scene chiến dịch 6 màn truyền thống.
+   Các scene này đều đã được cấu hình trong Build Settings.
+
+## Điều khiển cơ bản
+
+- **WASD / Shift / Space / C hoặc Alt:** Di chuyển, phi ngựa, nhảy, né đòn.
+- **M:** Mở bản đồ toàn lục địa.
+- **G:** Thu thập tài nguyên gần, rèn/đúc vật phẩm tại lò rèn.
+- **B:** Cất tài nguyên vào kho làng khi ở cạnh lò rèn.
+- **F9 / Escape:** Lưu hành trình hoặc mở menu tạm dừng.
 
 Thư mục `My project/` là một dự án Unity khác nằm trong repository. Nếu cần xem dự án đó, thêm chính thư mục `My project/` vào Unity Hub như một dự án riêng.
 
