@@ -21,6 +21,9 @@ public class IsometricCameraFollow : MonoBehaviour
     public float aimingFov = 60f;
     public float shoulderOffset = .85f;
     public float orbitSensitivity = 2.2f;
+    [Tooltip("Turn the camera with the mouse alone (cursor locked while playing). Hold the release key to use the cursor.")]
+    public bool mouseLook = true;
+    public KeyCode releaseCursorKey = KeyCode.LeftAlt;
     public float orbitPitch = 15f;
     public float collisionRadius = .22f;
     public bool IsAiming => useShoulderCamera && aim != null && aim.IsAiming;
@@ -34,6 +37,8 @@ public class IsometricCameraFollow : MonoBehaviour
     float orbitYaw, boomDistance;
     bool orbitInitialized;
     readonly RaycastHit[] cameraHits = new RaycastHit[96];
+    ThanhGiongCampaignController campaign;
+    bool cursorCaptured;
 
     [Header("2.5D isometric framing")]
     public bool useOrthographicIsometric = true;
@@ -55,7 +60,35 @@ public class IsometricCameraFollow : MonoBehaviour
     Vector3 overviewPosition, overviewLookAt;
 
     void Awake() { Instance = this; view = GetComponent<Camera>(); ApplyProjection(); }
-    void OnDestroy() { if (Instance == this) Instance = null; }
+    void OnDestroy() { if (Instance == this) Instance = null; ReleaseCursor(); }
+    void OnDisable() { ReleaseCursor(); }
+
+    void ReleaseCursor()
+    {
+        if (!cursorCaptured) return;
+        cursorCaptured = false;
+        Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
+    }
+
+    /// <summary>True while gameplay should own the mouse: no pause, map, death or released-cursor key.</summary>
+    bool WantsMouseLook()
+    {
+        if (!mouseLook || !useShoulderCamera || isOverview || Application.isBatchMode || !Application.isFocused) return false;
+        if (Time.timeScale <= 0f || Input.GetKey(releaseCursorKey)) return false;
+        if (campaign == null || campaign.transform != target) campaign = target != null ? target.GetComponent<ThanhGiongCampaignController>() : null;
+        if (campaign == null) return true;
+        if (campaign.IsDead) return false;
+        var world = campaign.openWorldCampaign != null ? campaign.openWorldCampaign.world : null;
+        return world == null || !world.MapOpen;
+    }
+
+    void UpdateCursorCapture(bool capture)
+    {
+        if (capture == cursorCaptured) return;
+        cursorCaptured = capture;
+        Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None;
+        Cursor.visible = !capture;
+    }
     float ShotSize => currentShot == Shot.Combat ? combatSize : currentShot == Shot.Vista ? vistaSize : currentShot == Shot.Boss ? bossSize : currentShot == Shot.Close ? closeSize : exploreSize;
     Quaternion IsometricRotation => Quaternion.Euler(isometricPitch, isometricYaw, 0f);
 
@@ -105,7 +138,7 @@ public class IsometricCameraFollow : MonoBehaviour
     void LateUpdate()
     {
         float dt = Time.deltaTime;
-        if (dt <= 0f || Time.timeScale <= 0f) return;
+        if (dt <= 0f || Time.timeScale <= 0f) { UpdateCursorCapture(false); return; }
         ApplyProjection();
         if (!isOverview && target == null) return;
         if (useShoulderCamera && !isOverview) { UpdateShoulder(dt, false); return; }
@@ -157,7 +190,9 @@ public class IsometricCameraFollow : MonoBehaviour
         if (target == null || view == null) return;
         if (aim == null || aim.transform != target) aim = target.GetComponent<AdventureAimController>();
         if (!orbitInitialized) { orbitYaw = target.eulerAngles.y; orbitInitialized = true; }
-        if (!snap && (Input.GetMouseButton(1) || Input.GetMouseButton(2))) {
+        bool capture = !snap && WantsMouseLook();
+        UpdateCursorCapture(capture);
+        if (!snap && (capture || Input.GetMouseButton(1) || Input.GetMouseButton(2))) {
             orbitYaw += Input.GetAxis("Mouse X") * orbitSensitivity;
             orbitPitch = Mathf.Clamp(orbitPitch - Input.GetAxis("Mouse Y") * orbitSensitivity, -20f, 65f);
         }
