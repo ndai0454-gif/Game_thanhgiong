@@ -13,7 +13,7 @@
 - **Thất bại:** hết máu thì thua và phải chơi lại từ đầu màn. *(ASSUMED — chưa xác nhận với code.)*
 
 ## MVP — what must exist to be the game
-- 6 màn chơi được và nối liền nhau (`Assets/Scenes/ThanhGiongWorld/`).
+- 6 màn chơi được và nối liền nhau (`Assets/Scenes/ThanhGiongWorld/`), hoặc trải nghiệm hợp nhất trong thế giới liền mạch `ThanhGiongDaiViet.unity`.
 - Nhân vật chính: di chuyển, thể lực, tấn công, ngắm.
 - Ngựa sắt: cưỡi, xông trận, giẫm quân địch.
 - Quân giặc Ân và tướng, có AI, hoạt ảnh và ragdoll.
