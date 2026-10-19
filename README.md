@@ -21,6 +21,10 @@ Dự án game Unity lấy cảm hứng từ truyền thuyết Thánh Gióng. Hà
 ## Điều khiển cơ bản
 
 - **WASD / Shift / Space / C hoặc Alt:** Di chuyển, phi ngựa, nhảy, né đòn.
+- **Chuột trái / Chuột phải:** Đánh cận chiến / ngắm qua vai (kèm chuột trái để phóng tre).
+- **Chuột giữa (giữ & di):** Xoay camera tự do; **V:** Đổi vai ngắm.
+- **E / Q / F:** Tương tác / gieo hạt hoặc vật phẩm / phun lửa (hỏa tuyến).
+- **1–5:** Chọn loại hạt thiêng (Quang căn, Mầm tre, Sen hồi phục, Hạt lửa, Hạt gió).
 - **M:** Mở bản đồ toàn lục địa.
 - **G:** Thu thập tài nguyên gần, rèn/đúc vật phẩm tại lò rèn.
 - **B:** Cất tài nguyên vào kho làng khi ở cạnh lò rèn.
