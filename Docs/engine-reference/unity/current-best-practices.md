@@ -347,8 +347,8 @@ using UnityEngine;
 
 Debug.Log($"Player {playerName} scored {score} points");
 
-// ✅ Conditional compilation for debug code
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+// ✅ Conditional compilation for debug code (Note: DEVELOPMENT_BUILD is deprecated in 6.6; use UNITY_ENABLE_CHECKS or Debug.isDebugBuild)
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS || DEVELOPMENT_BUILD
     Debug.DrawRay(transform.position, direction, Color.red);
 #endif
 ```
