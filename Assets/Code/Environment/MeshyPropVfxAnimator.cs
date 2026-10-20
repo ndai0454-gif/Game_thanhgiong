@@ -21,7 +21,9 @@ namespace ThanhGiong.Environment
             EnemyWatchtowerFire = 6,
             RiverBridgeMist = 7,
             ResourceFeastHover = 8,
-            CelestialAscensionAltar = 9
+            CelestialAscensionAltar = 9,
+            SacredStatueAura = 10,
+            CrimsonWarlordGaze = 11
         }
 
         public PropEffectKind effectKind = PropEffectKind.HearthLantern;
@@ -72,7 +74,11 @@ namespace ThanhGiong.Environment
                         break;
                     case PropEffectKind.SacredDrumShrine:
                     case PropEffectKind.CelestialAscensionAltar:
+                    case PropEffectKind.SacredStatueAura:
                         propLight.intensity = baseLightIntensity * (1f + 0.20f * Mathf.Sin(t * 2.4f));
+                        break;
+                    case PropEffectKind.CrimsonWarlordGaze:
+                        propLight.intensity = baseLightIntensity * (1f + 0.32f * Mathf.Sin(t * 5.8f));
                         break;
                     default:
                         propLight.intensity = baseLightIntensity * (1f + 0.12f * Mathf.Sin(t * 4.2f));
