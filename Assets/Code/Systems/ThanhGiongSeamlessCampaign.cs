@@ -142,6 +142,8 @@ public sealed class ThanhGiongSeamlessCampaign : MonoBehaviour
         if(!campaign.RestoreCheckpointState(state,world.safeSpawn,initialRotation))return false;
         world.RefreshCurrentZone();ScheduleSave();return true;
     }
+    // Closing the window keeps the journey, the same as Save & Quit from the pause menu.
+    private void OnApplicationQuit(){if(persistenceEnabled&&!restoring)SaveCheckpoint();}
     public bool SaveCheckpoint()
     {
         if(!persistenceEnabled||restoring||campaign==null||campaign.IsDead||campaign.EquipmentBusy||campaign.OpenWorldFlightInProgress)return false;

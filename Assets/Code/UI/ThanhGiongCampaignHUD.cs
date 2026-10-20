@@ -92,6 +92,29 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
         paused=true;Time.timeScale=0;pauseNotice="Chờ động tác hiện tại kết thúc rồi thử lại.";return false;
     }
 
+    private float quitWithoutSaveUntil = -1f;
+
+    /// <summary>Saves the journey, then closes the game. If saving is not possible right now,
+    /// a second press within a few seconds quits anyway.</summary>
+    public void SaveAndQuit()
+    {
+        bool openWorld = campaign != null && campaign.openWorldCampaign != null;
+        bool saved = !openWorld || campaign.openWorldCampaign.SaveCheckpoint();
+        if (!saved && Time.unscaledTime > quitWithoutSaveUntil)
+        {
+            quitWithoutSaveUntil = Time.unscaledTime + 4f;
+            pauseNotice = "Chưa lưu được lúc này (đang chiến đấu, trang bị hoặc bay). Nhấn THOÁT lần nữa để thoát không lưu.";
+            return;
+        }
+        PlayerPrefs.Save();
+        pauseNotice = saved ? "Đã lưu hành trình. Đang thoát…" : "Đang thoát…";
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
     private bool LoadFromPause(string sceneName, string message)
     {
         if (!paused || ThanhGiongSceneTransition.IsTransitioning) return false;
@@ -142,7 +165,7 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
 
     private void UpdatePauseNavigation()
     {
-        int choices = 6 + ChapterScenes.Length;
+        int choices = 7 + ChapterScenes.Length;
         if(Input.GetKeyDown(KeyCode.DownArrow))PauseSelection=(PauseSelection+1)%choices;
         if(Input.GetKeyDown(KeyCode.UpArrow))PauseSelection=(PauseSelection+choices-1)%choices;
         float step=Input.GetKeyDown(KeyCode.RightArrow)?.05f:Input.GetKeyDown(KeyCode.LeftArrow)?-.05f:0;
@@ -153,7 +176,7 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
         }
         if(!Input.GetKeyDown(KeyCode.Return)&&!Input.GetKeyDown(KeyCode.KeypadEnter))return;
         if(PauseSelection==0)TogglePause();else if(PauseSelection==1)RestartCheckpoint();
-        else if(PauseSelection==2)RestartCurrentMap();else if(PauseSelection>=6)SelectChapter(PauseSelection-6);
+        else if(PauseSelection==2)RestartCurrentMap();else if(PauseSelection==6+ChapterScenes.Length)SaveAndQuit();else if(PauseSelection>=6)SelectChapter(PauseSelection-6);
     }
 
     private void EnsureStyles()
@@ -297,13 +320,18 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
             Rect rect = new Rect(guide.x + 24 + column * 262, guide.y + 414 + row * 40, 250, 34);
             if (GUI.Button(rect, ChapterLabels[i], button)) SelectChapter(i);
         }
+        int chapterRows = (ChapterScenes.Length + 1) / 2;
+        Rect quitRect = new Rect(guide.x + 24, guide.y + 414 + chapterRows * 40 + 10, 512, 34);
+        GUI.enabled = true; // closing the game must stay possible even during a scene fade
+        if (GUI.Button(quitRect, campaign.openWorldCampaign != null ? "LƯU & THOÁT GAME" : "THOÁT GAME", button)) SaveAndQuit();
         GUI.enabled = wasEnabled;
         if (!string.IsNullOrEmpty(pauseNotice))
-            GUI.Label(new Rect(guide.x + 24, guide.y + 584, 512, 38), pauseNotice, small);
+            GUI.Label(new Rect(guide.x + 24, quitRect.yMax + 6, 512, 38), pauseNotice, small);
         Rect focus;
         if(PauseSelection==0)focus=new Rect(guide.x+24,guide.y+158,512,32);
         else if(PauseSelection<=2)focus=new Rect(guide.x+24+(PauseSelection-1)*262,guide.y+200,250,32);
         else if(PauseSelection<=5)focus=new Rect(guide.x+20,guide.y+273+(PauseSelection-3)*29,520,25);
+        else if(PauseSelection==6+ChapterScenes.Length)focus=quitRect;
         else {int i=PauseSelection-6;focus=new Rect(guide.x+24+i%2*262,guide.y+414+i/2*40,250,34);}
         Color saved=GUI.color;GUI.color=Gold;
         GUI.DrawTexture(new Rect(focus.x-3,focus.y-2,focus.width+6,2),Texture2D.whiteTexture);
