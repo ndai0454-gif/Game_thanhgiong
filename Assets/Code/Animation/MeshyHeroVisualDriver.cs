@@ -35,6 +35,17 @@ public sealed class MeshyHeroVisualDriver : MonoBehaviour
     private float fallbackPhase;
     private float riderLean, riderBank, previousYaw, previousSpeed;
     private Vector3 seatOffset;
+
+    [Header("Rider fit on the Iron Horse")]
+    [Tooltip("Rider scale inside the mount. The prefab's 1.45 made Thanh Giong almost twice the horse's size.")]
+    public float riderScale = 1.0f;
+    [Tooltip("Rider root height above the mount so the pelvis rests in the saddle.")]
+    public float seatHeight = 0.75f;
+    public float seatForward = -0.08f;
+    [Tooltip("Outward spread of the thighs so the legs wrap the horse's barrel.")]
+    public float thighSpread = 22f;
+    public float thighForward = 50f;
+    public float kneeBend = 55f;
     private ThanhGiongCampaignController.Chapter lastChapter = (ThanhGiongCampaignController.Chapter)(-1);
 
     private static readonly int SpeedHash = Animator.StringToHash("Speed");
@@ -149,10 +160,10 @@ public sealed class MeshyHeroVisualDriver : MonoBehaviour
             hipsBone.localPosition = new Vector3(0.03f, -0.06f, 1.06f);
             hipsBone.localRotation = Quaternion.Euler(86.24f, 0f, 0f);
         }
-        if (leftUpLeg != null) leftUpLeg.localRotation = Quaternion.Euler(26f, 198f, 188f);
-        if (rightUpLeg != null) rightUpLeg.localRotation = Quaternion.Euler(26f, 162f, 172f);
-        if (leftLeg != null) leftLeg.localRotation = Quaternion.Euler(35f, 0f, 0f);
-        if (rightLeg != null) rightLeg.localRotation = Quaternion.Euler(35f, 0f, 0f);
+        if (leftUpLeg != null) leftUpLeg.localRotation = Quaternion.Euler(thighForward, 198f, 180f + thighSpread);
+        if (rightUpLeg != null) rightUpLeg.localRotation = Quaternion.Euler(thighForward, 162f, 180f - thighSpread);
+        if (leftLeg != null) leftLeg.localRotation = Quaternion.Euler(kneeBend, 0f, 0f);
+        if (rightLeg != null) rightLeg.localRotation = Quaternion.Euler(kneeBend, 0f, 0f);
     }
 
     private void HideLegacyMeshRenderers()
@@ -273,7 +284,8 @@ public sealed class MeshyHeroVisualDriver : MonoBehaviour
             float bob = -Mathf.Sin(cycleRadians - .35f) * .018f * normalizedSpeed;
             seatOffset = Vector3.Lerp(seatOffset, new Vector3(0f, bob, 0f), settle);
             // Seat hero cleanly on the skinned horse saddle
-            meshyHero.localPosition = new Vector3(0f, 0.72f, -0.08f) + seatOffset;
+            meshyHero.localScale = Vector3.one * riderScale;
+            meshyHero.localPosition = new Vector3(0f, seatHeight, seatForward) + seatOffset;
 
             ApplySeatedLegPose();
 
