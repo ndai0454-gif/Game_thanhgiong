@@ -122,6 +122,8 @@ public sealed class ThanhGiongCampaignAudio : MonoBehaviour
             foreach (AudioSource voice in voices) SetPaused(voice);
         }
         if (paused) return;
+        // Regional loops can be stopped during scene start-up (e.g. a disable/enable cycle); keep them running.
+        EnsureLooping(music); EnsureLooping(ambience); EnsureLooping(combatMusic);
         age += Time.deltaTime;
         float fade = Mathf.Clamp01(age / 1.3f);
         ascensionMix = Mathf.MoveTowards(ascensionMix, ascensionMusic != null && ascensionMusic.isPlaying ? 1f : 0f, Time.deltaTime * .9f);
@@ -184,6 +186,11 @@ public sealed class ThanhGiongCampaignAudio : MonoBehaviour
     {
         if (index < 0 || index > 4 || Time.timeScale <= 0) return;
         SeedCueCount++; PlayCue("seed_" + index, bloom ? .32f : .60f);
+    }
+
+    private static void EnsureLooping(AudioSource source)
+    {
+        if (source != null && source.loop && source.clip != null && !source.isPlaying) source.Play();
     }
 
     private void SetPaused(AudioSource source)

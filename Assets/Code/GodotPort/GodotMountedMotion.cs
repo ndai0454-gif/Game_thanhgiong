@@ -21,6 +21,10 @@ public sealed class GodotMountedMotion : MonoBehaviour
     public float AttackWindup { get; private set; }
     public float AttackStrike { get; private set; }
     public float EquipmentProgress => action == null ? 0f : Mathf.Clamp01(elapsed / Mathf.Max(equipmentDuration, .1f));
+    /// <summary>The equip/remove action being played ("equip_armor", "remove_helmet", ...), or null.</summary>
+    public string CurrentEquipmentAction => action;
+    public bool HelmetWorn => helmetWorn;
+    public bool ArmorWorn => armorWorn;
     public int HoofContactCount { get; private set; }
     public Vector3 LastHoofContact { get; private set; }
     public int ActiveContactParticles => contacts != null ? contacts.particleCount : 0;
@@ -58,6 +62,7 @@ public sealed class GodotMountedMotion : MonoBehaviour
     Texture2D contactTexture;
     ActionForgeMountedClip swordAnimation;
     MeshyMountedRig meshyRig;
+    MeshyHeroEquipment meshyEquipment;
     public bool HasActionForgeSwordAnimation => swordAnimation != null;
     public float ActionForgeSwordWeight { get; private set; }
 
@@ -349,7 +354,13 @@ public sealed class GodotMountedMotion : MonoBehaviour
         item.SetPositionAndRotation(bone.t.TransformPoint(V(offset)), bone.t.rotation);
         item.gameObject.SetActive(visible);
     }
-    void PlaceWorn() { Attach(helmet, "head", new Vector3(0, .21f, 0), helmetWorn); Attach(armor, "chest", new Vector3(0, -.08f, .025f), armorWorn); }
+    void PlaceWorn()
+    {
+        Attach(helmet, "head", new Vector3(0, .21f, 0), helmetWorn); Attach(armor, "chest", new Vector3(0, -.08f, .025f), armorWorn);
+        // The Meshy rider has no Godot bones; its generated helmet and armour rest on its own skeleton.
+        if (meshyEquipment == null && visual != null) meshyEquipment = visual.GetComponentInChildren<MeshyHeroEquipment>(true);
+        if (meshyEquipment != null) meshyEquipment.SetWorn(helmetWorn, armorWorn);
+    }
     void DriveEquipment(float dt)
     {
         PlaceWorn();

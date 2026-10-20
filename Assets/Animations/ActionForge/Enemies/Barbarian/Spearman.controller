@@ -116,13 +116,13 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.04
+  m_TransitionDuration: 0.08
   m_TransitionOffset: 0
   m_ExitTime: 0.75
   m_HasExitTime: 0
   m_HasFixedDuration: 1
-  m_InterruptionSource: 3
-  m_OrderedInterruption: 0
+  m_InterruptionSource: 1
+  m_OrderedInterruption: 1
   m_CanTransitionToSelf: 0
 --- !u!1102 &-3167996464691816090
 AnimatorState:
@@ -167,13 +167,13 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.06
+  m_TransitionDuration: 0.08
   m_TransitionOffset: 0
   m_ExitTime: 0.75
   m_HasExitTime: 0
   m_HasFixedDuration: 1
-  m_InterruptionSource: 3
-  m_OrderedInterruption: 0
+  m_InterruptionSource: 1
+  m_OrderedInterruption: 1
   m_CanTransitionToSelf: 0
 --- !u!91 &9100000
 AnimatorController:
@@ -265,13 +265,13 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.06
+  m_TransitionDuration: 0.08
   m_TransitionOffset: 0
   m_ExitTime: 0.75
   m_HasExitTime: 0
   m_HasFixedDuration: 1
-  m_InterruptionSource: 3
-  m_OrderedInterruption: 0
+  m_InterruptionSource: 1
+  m_OrderedInterruption: 1
   m_CanTransitionToSelf: 0
 --- !u!1101 &1104711428770774453
 AnimatorStateTransition:
@@ -290,13 +290,13 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.06
+  m_TransitionDuration: 0.08
   m_TransitionOffset: 0
   m_ExitTime: 0.75
   m_HasExitTime: 0
   m_HasFixedDuration: 1
-  m_InterruptionSource: 3
-  m_OrderedInterruption: 0
+  m_InterruptionSource: 1
+  m_OrderedInterruption: 1
   m_CanTransitionToSelf: 0
 --- !u!1101 &1155957159884194629
 AnimatorStateTransition:
@@ -315,13 +315,13 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.04
+  m_TransitionDuration: 0.08
   m_TransitionOffset: 0
   m_ExitTime: 0.75
   m_HasExitTime: 0
   m_HasFixedDuration: 1
-  m_InterruptionSource: 3
-  m_OrderedInterruption: 0
+  m_InterruptionSource: 1
+  m_OrderedInterruption: 1
   m_CanTransitionToSelf: 0
 --- !u!206 &2664381006344873733
 BlendTree:
@@ -392,8 +392,8 @@ AnimatorStateTransition:
   m_ExitTime: 0.75
   m_HasExitTime: 0
   m_HasFixedDuration: 1
-  m_InterruptionSource: 3
-  m_OrderedInterruption: 0
+  m_InterruptionSource: 1
+  m_OrderedInterruption: 1
   m_CanTransitionToSelf: 0
 --- !u!1101 &3859828839719199649
 AnimatorStateTransition:
@@ -417,8 +417,8 @@ AnimatorStateTransition:
   m_ExitTime: 0.75
   m_HasExitTime: 0
   m_HasFixedDuration: 1
-  m_InterruptionSource: 3
-  m_OrderedInterruption: 0
+  m_InterruptionSource: 1
+  m_OrderedInterruption: 1
   m_CanTransitionToSelf: 0
 --- !u!1102 &4759497238659975222
 AnimatorState:

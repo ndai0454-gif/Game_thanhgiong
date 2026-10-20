@@ -136,6 +136,7 @@ public static class ThanhGiongOpenWorldBuilder
             bambooRoot.gameObject.SetActive(false);
 
             WritePlanAsset();
+            Report.AppendLine(ThanhGiongWorldSolids.Repair(destination));
             ValidateAuthoredScene(world, sources, sourceHashes);
             EditorSceneManager.MarkSceneDirty(destination);
             if (!EditorSceneManager.SaveScene(destination, OutputPath, false)) throw new IOException("Final scene save failed.");

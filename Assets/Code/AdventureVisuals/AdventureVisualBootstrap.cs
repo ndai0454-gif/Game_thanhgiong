@@ -228,8 +228,8 @@ public sealed class AdventureVisualBootstrap : MonoBehaviour
         var bloom = profile.Add<Bloom>(true); bloom.threshold.Override(.9f); bloom.intensity.Override(fortress ? .75f : 1.2f); bloom.scatter.Override(.7f);
         if (!fortress)
         {
-            var color = profile.Add<ColorAdjustments>(true); color.contrast.Override(8); color.saturation.Override(10); color.colorFilter.Override(new Color(1f, .985f, .95f));
-            var tone = profile.Add<Tonemapping>(true); tone.mode.Override(TonemappingMode.Neutral);
+            var color = profile.Add<ColorAdjustments>(true); color.contrast.Override(12); color.saturation.Override(16); color.colorFilter.Override(new Color(1f, .955f, .88f));
+            var tone = profile.Add<Tonemapping>(true); tone.mode.Override(TonemappingMode.ACES);
             // Keep authored atmospheric settings where enabled, particularly the fortress.
             if (!RenderSettings.fog)
             {

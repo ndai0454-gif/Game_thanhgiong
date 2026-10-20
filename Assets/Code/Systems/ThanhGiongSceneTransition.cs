@@ -115,26 +115,12 @@ public sealed class ThanhGiongSceneTransition : MonoBehaviour
         GUI.color = new Color(PaleGold.r, PaleGold.g, PaleGold.b, veilAlpha);
         GUI.Label(new Rect(410f, 292f, 780f, 38f), "HÀNH TRÌNH TỪ PHÙ ĐỔNG ĐẾN NÚI SÓC", detailStyle);
 
-        Rect bar = new Rect(405f, 458f, 790f, 56f);
-        DrawColor(new Rect(bar.x - 5f, bar.y - 5f, bar.width + 10f, bar.height + 10f), PaleGold, veilAlpha * 0.92f);
-        DrawColor(bar, new Color(0.015f, 0.12f, 0.115f), veilAlpha);
-        float fillWidth = Mathf.Max(0f, (bar.width - 12f) * Mathf.Clamp01(displayProgress));
+        Rect bar = new Rect(405f, 480f, 790f, 4f);
+        DrawColor(bar, new Color(.18f, .20f, .16f), veilAlpha);
+        float fillWidth = bar.width * Mathf.Clamp01(displayProgress);
         if (fillWidth > 0f)
-        {
-            Rect fill = new Rect(bar.x + 6f, bar.y + 6f, fillWidth, bar.height - 12f);
-            DrawColor(fill, new Color(0.32f, 0.66f, 0.16f), veilAlpha);
-            DrawColor(new Rect(fill.x, fill.y, fill.width, 12f), new Color(0.76f, 0.96f, 0.34f), veilAlpha * 0.88f);
-            DrawColor(new Rect(fill.x, fill.yMax - 8f, fill.width, 8f), new Color(0.08f, 0.43f, 0.28f), veilAlpha * 0.72f);
-            float shimmerX = fill.x + Mathf.Repeat(Time.unscaledTime * 170f, Mathf.Max(1f, fill.width));
-            DrawColor(new Rect(shimmerX, fill.y + 2f, Mathf.Min(12f, fill.xMax - shimmerX), fill.height - 4f), Cream, veilAlpha * 0.42f);
-        }
+            DrawColor(new Rect(bar.x, bar.y, fillWidth, bar.height), ThanhGiongUITheme.Brass, veilAlpha);
 
-        // A translucent ribbon is generated once, so its curves stay smooth at every resolution.
-        if (ribbonTexture != null)
-        {
-            GUI.color = new Color(1f, 1f, 1f, veilAlpha * 0.83f);
-            GUI.DrawTexture(new Rect(bar.x - 36f, bar.y - 49f, bar.width + 72f, 154f), ribbonTexture);
-        }
         for (int i = 0; i < 24; i++)
         {
             float phase = i * 2.39996f;
@@ -153,8 +139,8 @@ public sealed class ThanhGiongSceneTransition : MonoBehaviour
     private void EnsureLoadingStyles()
     {
         if (titleStyle != null) return;
-        Font bold = Resources.Load<Font>("ThanhGiongUI/OldStandard-Bold");
-        Font regular = Resources.Load<Font>("ThanhGiongUI/OldStandard-Regular");
+        Font bold = ThanhGiongUITheme.Medium;
+        Font regular = ThanhGiongUITheme.Regular;
         titleStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, font = bold, fontSize = 78, fontStyle = bold == null ? FontStyle.Bold : FontStyle.Normal };
         captionStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, font = bold, fontSize = 35, fontStyle = bold == null ? FontStyle.Bold : FontStyle.Normal };
         detailStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, font = regular, fontSize = 26, fontStyle = FontStyle.Normal, wordWrap = true };

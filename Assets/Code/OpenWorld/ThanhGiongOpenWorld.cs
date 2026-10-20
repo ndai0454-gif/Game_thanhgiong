@@ -80,8 +80,8 @@ public sealed class ThanhGiongOpenWorld : MonoBehaviour
     private static readonly string[] BiomeLabels = { "Rừng tre", "Núi khoáng", "Cao nguyên", "Đồng lúa", "Đầm lầy" };
     private static readonly string[] RiskLabels = { "AN TOÀN", "XANH DƯƠNG · T1–T4", "VÀNG · T5", "ĐỎ · T6–T7", "ĐEN · T8" };
     private static readonly Color[] RiskColors = {
-        new Color(.44f, .85f, .67f), new Color(.27f, .65f, .95f), new Color(.96f, .76f, .26f),
-        new Color(.94f, .32f, .26f), new Color(.58f, .43f, .69f)
+        new Color(.40f, .55f, .44f), new Color(.40f, .52f, .60f), new Color(.65f, .57f, .37f),
+        new Color(.63f, .37f, .31f), new Color(.47f, .41f, .53f)
     };
     private bool recovering;
     private Coroutine recoveryRoutine;
@@ -90,7 +90,7 @@ public sealed class ThanhGiongOpenWorld : MonoBehaviour
     private OpenWorldZone selectedZone;
     private ThanhGiongResourceNode nearestNode;
     private ThanhGiongForgeStation nearestForge;
-    private GUIStyle titleStyle, bodyStyle, smallStyle, centeredStyle, buttonStyle;
+    private GUIStyle titleStyle, bodyStyle, smallStyle, centeredStyle, buttonStyle, mapRegionTitle;
     private Rect worldBounds;
 
     private void Awake()
@@ -361,37 +361,35 @@ public sealed class ThanhGiongOpenWorld : MonoBehaviour
     private void EnsureStyles()
     {
         if (bodyStyle != null) return;
-        bodyStyle = new GUIStyle(GUI.skin.label) { fontSize = 14, wordWrap = true, normal = { textColor = new Color(.93f, .9f, .79f) } };
-        smallStyle = new GUIStyle(bodyStyle) { fontSize = 11 };
-        titleStyle = new GUIStyle(bodyStyle) { fontSize = 23, fontStyle = FontStyle.Bold };
+        bodyStyle = new GUIStyle(GUI.skin.label) { font = ThanhGiongUITheme.Regular, fontSize = 17, wordWrap = true, normal = { textColor = ThanhGiongUITheme.Paper } };
+        smallStyle = new GUIStyle(bodyStyle) { fontSize = 14 };
+        titleStyle = new GUIStyle(bodyStyle) { fontSize = 30, font = ThanhGiongUITheme.Light, fontStyle = FontStyle.Normal };
         centeredStyle = new GUIStyle(smallStyle) { alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold };
-        buttonStyle = new GUIStyle(GUI.skin.button) { fontSize = 13, wordWrap = true };
+        buttonStyle = ThanhGiongUITheme.Button(17);
+        mapRegionTitle = new GUIStyle(titleStyle) { fontSize = 24 };
     }
 
     private void DrawTravelHud()
     {
         Rect panel = new Rect(20f, 628f, 270f, 69f);
-        Fill(panel, new Color(.025f, .09f, .085f, .91f));
         var risk = CurrentZone != null ? CurrentZone.risk : OpenWorldRisk.Red;
-        Fill(new Rect(panel.x, panel.y, panel.width, 4f), RiskColor(risk));
-        GUI.Label(new Rect(30f, 635f, 250f, 21f), CurrentZone != null ? CurrentZone.displayName : "Đường liên vùng", bodyStyle);
-        GUI.color = RiskColor(risk); GUI.Label(new Rect(30f, 657f, 250f, 19f), RiskLabel(risk) + " · Bền " + Mathf.RoundToInt(durability) + "%", smallStyle); GUI.color = Color.white;
-        GUI.Label(new Rect(30f, 677f, 250f, 19f), "[M] Bản đồ · [G] Thu thập / rèn", smallStyle);
+        ThanhGiongUITheme.ShadowLabel(new Rect(30f, 635f, 250f, 21f), CurrentZone != null ? CurrentZone.displayName : "Đường liên vùng", bodyStyle);
+        GUI.color = RiskColor(risk); ThanhGiongUITheme.ShadowLabel(new Rect(30f, 657f, 250f, 19f), RiskLabel(risk) + " · Bền " + Mathf.RoundToInt(durability) + "%", smallStyle); GUI.color = Color.white;
+        ThanhGiongUITheme.ShadowLabel(new Rect(30f, 677f, 250f, 19f), "[M] Bản đồ · [G] Thu thập / rèn", smallStyle);
         if (!string.IsNullOrEmpty(InteractionPrompt)) {
             bool ritual = campaign != null && (campaign.CurrentChapter == ThanhGiongCampaignController.Chapter.Preparation || campaign.CurrentChapter == ThanhGiongCampaignController.Chapter.Ascension);
             float promptY = ritual ? 510f : 621f;
-            Fill(new Rect(315f, promptY, 650f, 32f), new Color(.025f, .09f, .085f, .94f));
-            GUI.Label(new Rect(325f, promptY + 6f, 630f, 25f), InteractionPrompt, new GUIStyle(bodyStyle) { alignment = TextAnchor.MiddleCenter });
+            ThanhGiongUITheme.ShadowLabel(new Rect(325f, promptY + 6f, 630f, 25f), InteractionPrompt, new GUIStyle(bodyStyle) { alignment = TextAnchor.MiddleCenter });
         }
         if (!string.IsNullOrEmpty(Notice)) {
-            Fill(new Rect(350f, 160f, 570f, 42f), new Color(.025f, .09f, .085f, .94f));
-            GUI.Label(new Rect(362f, 165f, 546f, 34f), Notice, new GUIStyle(bodyStyle) { alignment = TextAnchor.MiddleCenter });
+            Fill(new Rect(350f, 160f, 570f, 42f), new Color(.075f, .085f, .073f, .94f));
+            ThanhGiongUITheme.ShadowLabel(new Rect(362f, 165f, 546f, 34f), Notice, new GUIStyle(bodyStyle) { alignment = TextAnchor.MiddleCenter });
         }
     }
 
     private void DrawWorldMap()
     {
-        Fill(new Rect(0f, 0f, 1280f, 720f), new Color(.018f, .045f, .04f, .98f));
+        Fill(new Rect(0f, 0f, 1280f, 720f), new Color(.065f, .075f, .065f, .98f));
         GUI.Label(new Rect(32f, 20f, 970f, 38f), "VĂN LANG · MỘT LỤC ĐỊA, BỐN CHẶNG TRUYỀN THUYẾT", titleStyle);
         GUI.Label(new Rect(34f, 62f, 920f, 27f), "Nhấp vùng để xem luật · Đường nối: lối đi · Chấm sáng: Gióng · Ô nhỏ: tài nguyên · Bản đồ tạm dừng trò chơi", bodyStyle);
         if (GUI.Button(new Rect(1110f, 27f, 130f, 32f), "Đóng [M]", buttonStyle)) SetMapOpen(false);
@@ -400,10 +398,10 @@ public sealed class ThanhGiongOpenWorld : MonoBehaviour
             Fill(new Rect(38f + i * 169f, 653f, 12f, 12f), RiskColors[i]);
             GUI.Label(new Rect(55f + i * 169f, 648f, 149f, 27f), RiskLabels[i], smallStyle);
         }
-        Fill(new Rect(899f, 110f, 349f, 577f), new Color(.055f, .13f, .11f));
+        Fill(new Rect(899f, 110f, 349f, 577f), new Color(.105f, .12f, .10f));
         var zone = selectedZone ?? CurrentZone;
         if (zone != null) {
-            GUI.color = RiskColor(zone.risk); GUI.Label(new Rect(917f, 127f, 310f, 57f), zone.displayName, titleStyle); GUI.color = Color.white;
+            GUI.color = ThanhGiongUITheme.Paper; GUI.Label(new Rect(917f, 120f, 310f, 72f), zone.displayName, mapRegionTitle); GUI.color = Color.white;
             GUI.Label(new Rect(918f, 188f, 310f, 26f), RiskLabel(zone.risk) + " · " + BiomeLabel(zone.biome), bodyStyle);
             GUI.Label(new Rect(918f, 220f, 310f, 85f), RiskDescription(zone.risk), bodyStyle);
             GUI.Label(new Rect(918f, 312f, 310f, 26f), zone.risk == OpenWorldRisk.Safe ? "LÒ RÈN · KHO LÀNG · LƯƠNG THỰC" : "PHÂN BỔ TÀI NGUYÊN 6 : 3 : 1", bodyStyle);

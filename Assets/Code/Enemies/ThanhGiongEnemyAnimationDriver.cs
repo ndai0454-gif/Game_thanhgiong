@@ -8,7 +8,7 @@ using UnityEngine;
 [DefaultExecutionOrder(50)]
 public class ThanhGiongEnemyAnimationDriver : MonoBehaviour
 {
-    public float speedBlendTime = .12f;
+    public float speedBlendTime = .22f;
     public float stateBlendTime = .1f;
     public ActionForgeEnemyMotionSet actionForgeMotions;
 
