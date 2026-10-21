@@ -73,6 +73,22 @@ public static class ThanhGiongStatuePlacer
         var s = go.transform.lossyScale;
         col.size = new Vector3(b.size.x * .6f / s.x, b.size.y / s.y, b.size.z * .6f / s.z);
         GameObjectUtility.SetStaticEditorFlags(go, StaticEditorFlags.BatchingStatic | StaticEditorFlags.ContributeGI);
+        // Attach atmospheric glow aura and animator for statue landmarks
+        var lightGo = new GameObject(name + " · Hào Quang");
+        lightGo.transform.SetParent(go.transform, false);
+        lightGo.transform.localPosition = new Vector3(0f, height * 0.45f, 0f);
+        var ptLight = lightGo.AddComponent<Light>();
+        ptLight.type = LightType.Point;
+        ptLight.range = height * 2.8f;
+        bool isHero = name.Contains("Gióng");
+        ptLight.color = isHero ? new Color(1.0f, 0.88f, 0.45f) : new Color(0.95f, 0.22f, 0.15f);
+        ptLight.intensity = isHero ? 2.5f : 1.8f;
+        ptLight.shadows = LightShadows.None;
+
+        var vfxAnim = go.AddComponent<ThanhGiong.Environment.MeshyPropVfxAnimator>();
+        vfxAnim.effectKind = isHero ? ThanhGiong.Environment.MeshyPropVfxAnimator.PropEffectKind.SacredStatueAura : ThanhGiong.Environment.MeshyPropVfxAnimator.PropEffectKind.CrimsonWarlordGaze;
+        vfxAnim.propLight = ptLight;
+        vfxAnim.baseLightIntensity = ptLight.intensity;
         Debug.Log($"[Statues] {name}: {b.size} at {go.transform.position} (asked {wanted})");
     }
 
