@@ -26,6 +26,9 @@ public static class ThanhGiongSceneNavigator
         OpenScene("DinhSocHoaThanh");
     }
 
+    [MenuItem("Tools/Thanh Giong/Open Map/0 - Màn Hình Chờ (Lobby)")]
+    private static void OpenStartScreen() => OpenScene("ManHinhCho");
+
     [MenuItem("Tools/Thanh Giong/Open Map/1 - Làng Gióng")]
     private static void OpenVillage() => OpenScene("LangGiongTienTuyen");
 

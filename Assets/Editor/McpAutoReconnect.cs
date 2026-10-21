@@ -28,14 +28,9 @@ public static class McpAutoReconnect
         if (MCPServiceLocator.Bridge.IsRunning) return;
 
         bool connected = await MCPServiceLocator.Bridge.StartAsync();
-        Debug.Log(connected
-            ? "[Thanh Giong] MCP for Unity session restored automatically."
-            : "[Thanh Giong] MCP auto-reconnect could not start a session; use Window > MCP for Unity.");
-
-        if (!connected)
+        if (connected)
         {
-            await Task.Delay(1500);
-            EditorApplication.delayCall += ReconnectOnce;
+            Debug.Log("[Thanh Giong] MCP for Unity session restored automatically.");
         }
     }
 }

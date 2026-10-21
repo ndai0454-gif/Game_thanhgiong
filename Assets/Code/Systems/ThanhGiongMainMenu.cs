@@ -26,6 +26,8 @@ public sealed class ThanhGiongMainMenu : MonoBehaviour
     {
         if (Application.isBatchMode || FindFirstObjectByType<ThanhGiongMainMenu>() != null) return;
         if (Application.isEditor && PlayerPrefs.GetInt("TG.MainMenu.Editor", 0) != 1) return;
+        // Nếu bản build mở bằng màn hình chờ (ManHinhCho) thì dùng màn hình đó, không hiện menu thứ hai.
+        if (UnityEngine.SceneManagement.SceneUtility.GetBuildIndexByScenePath("Assets/Scenes/ThanhGiongWorld/ManHinhCho.unity") == 0) return;
         if (skipOnce) { skipOnce = false; return; }
         if (FindFirstObjectByType<ThanhGiongCampaignController>() == null) return;
         new GameObject("ThanhGiong Main Menu").AddComponent<ThanhGiongMainMenu>();

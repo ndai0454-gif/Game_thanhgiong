@@ -5,7 +5,7 @@ using UnityEngine;
 public sealed class AdventureStamina : MonoBehaviour
 {
     public float capacity = 180f, sprintCostPerSecond = 12f, regenerationPerSecond = 34f;
-    public float Current { get; private set; } = 100f;
+    public float Current { get; private set; } = 180f;
     public float Ratio => Mathf.Clamp01(Current / Mathf.Max(1f, capacity));
     public bool SprintAllowed => !exhausted && Current > 0;
     public bool IsConsuming { get; private set; }

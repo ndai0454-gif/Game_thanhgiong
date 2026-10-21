@@ -34,6 +34,10 @@ public sealed class MeshyMountedCombatPose : MonoBehaviour
     public bool IsReady => leftHand != null && rightHand != null && head != null && mount != null;
     public float ReinGripError { get; private set; }
     public bool IsPulling => pullRemaining > 0f;
+    [Header("Held Bamboo Sizing")]
+    [Tooltip("Tỉ lệ kích thước cây tre trên tay: X, Z là độ to (thân tre), Y là chiều dài.")]
+    public Vector3 bambooScale = new Vector3(1.3f, 2.0f, 1.3f);
+
     public bool IsBreaking => breakRemaining > 0f;
     public bool HeldBambooVisible => bamboo != null && bamboo.gameObject.activeInHierarchy;
     public float HeldBambooSwayDegrees { get; private set; }
@@ -202,6 +206,7 @@ public sealed class MeshyMountedCombatPose : MonoBehaviour
     void ConfigureHeldBamboo()
     {
         if (bamboo == null) return;
+        bamboo.localScale = bambooScale;
         if (bamboo.parent == rightHand)
         {
             bamboo.localPosition = new Vector3(-.005f, .105f, -.012f);
@@ -454,6 +459,7 @@ public sealed class MeshyMountedCombatPose : MonoBehaviour
         HeldBambooSwayDegrees = idleSway + strikeFlex;
         bamboo.localPosition = bambooBasePosition + Vector3.up * (Mathf.Sin(gait * .5f) * .006f * speed);
         bamboo.localRotation = bambooBaseRotation * Quaternion.Euler(HeldBambooSwayDegrees, 0f, -idleSway * .35f);
+        bamboo.localScale = bambooScale;
     }
 
     static void Solve(Transform upper, Transform lower, Transform hand, Vector3 target, Vector3 pole, Transform mount, Vector3 palmNormal)
