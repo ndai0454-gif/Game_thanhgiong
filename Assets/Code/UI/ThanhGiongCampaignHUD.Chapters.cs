@@ -28,9 +28,9 @@ public partial class ThanhGiongCampaignHUD
     private void EnsureChapterStyles()
     {
         if(chapterHeading != null) return;
-        chapterHeading=Style(34,Paper); chapterHeading.font=ThanhGiongUITheme.Light; chapterHeading.alignment=TextAnchor.MiddleCenter;
-        chapterKicker=Style(15,Gold); chapterKicker.alignment=TextAnchor.MiddleCenter;
-        chapterCentered=Style(18,Paper); chapterCentered.alignment=TextAnchor.MiddleCenter;
+        chapterHeading=Style(42,Paper); chapterHeading.font=ThanhGiongUITheme.Light; chapterHeading.alignment=TextAnchor.MiddleCenter;
+        chapterKicker=Style(16,Gold); chapterKicker.alignment=TextAnchor.MiddleCenter;
+        chapterCentered=Style(18,Muted); chapterCentered.alignment=TextAnchor.MiddleCenter;
         chapterAction=Style(20,Paper,true); chapterAction.alignment=TextAnchor.MiddleCenter;
     }
 
@@ -57,12 +57,31 @@ public partial class ThanhGiongCampaignHUD
             ShadowLabel(new Rect(quest.x+14,quest.y+130,265,18),"TAB nhắc nhiệm vụ   ·   ESC tạm dừng",small);
         }
         if(RegionIntroVisible) {
-            GUI.color=new Color(1,1,1,PopupAlpha(regionUntil,3.8f));
-            float y=h*.50f;
-            ShadowLabel(new Rect((w-620)/2,y-22,620,22),$"HỒI {NarrativeChapterIndex+1:00}   /   {NarrativeChapterTitle}",chapterKicker);
-            ShadowLabel(new Rect((w-760)/2,y,760,84),SceneTitle(),chapterHeading);
-            DrawHudLine(new Vector2(w*.5f-170,y+87),new Vector2(w*.5f+170,y+87),new Color(accent.r,accent.g,accent.b,GUI.color.a),1);
-            ShadowLabel(new Rect((w-620)/2,y+95,620,54),RegionSubtitle(),chapterCentered);
+            float remaining = regionUntil - Time.time;
+            float elapsed = regionPopupSeconds - remaining;
+            float a = Mathf.Clamp01(elapsed / 0.6f) * Mathf.Clamp01(remaining / 0.6f);
+            a = a * a * (3f - 2f * a);
+            if (a > 0.001f) {
+                float startY = h * 0.38f - 40f;
+                GUI.color = new Color(.06f, .03f, .02f, a * 0.60f);
+                GUI.DrawTexture(new Rect((w - 760)/2, startY - 12, 760, 136), Texture2D.whiteTexture);
+
+                GUI.color = new Color(1, 1, 1, a);
+                ShadowLabel(new Rect((w-620)/2, startY, 620, 22), $"HỒI {NarrativeChapterIndex+1:00}   ·   {NarrativeChapterTitle}", chapterKicker);
+                ShadowLabel(new Rect((w-780)/2, startY + 22, 780, 56), SceneTitle(), chapterHeading);
+
+                float lineY = startY + 82f;
+                Color lineCol = new Color(accent.r, accent.g, accent.b, a);
+                Color goldCol = new Color(Gold.r, Gold.g, Gold.b, a);
+                DrawHudLine(new Vector2(w*.5f-180, lineY), new Vector2(w*.5f-14, lineY), lineCol, 1.5f);
+                DrawHudLine(new Vector2(w*.5f+14, lineY), new Vector2(w*.5f+180, lineY), lineCol, 1.5f);
+                DrawHudLine(new Vector2(w*.5f, lineY-4), new Vector2(w*.5f+5, lineY), goldCol, 1.5f);
+                DrawHudLine(new Vector2(w*.5f+5, lineY), new Vector2(w*.5f, lineY+4), goldCol, 1.5f);
+                DrawHudLine(new Vector2(w*.5f, lineY+4), new Vector2(w*.5f-5, lineY), goldCol, 1.5f);
+                DrawHudLine(new Vector2(w*.5f-5, lineY), new Vector2(w*.5f, lineY-4), goldCol, 1.5f);
+
+                ShadowLabel(new Rect((w-660)/2, lineY + 8, 660, 30), RegionSubtitle(), chapterCentered);
+            }
         }
         GUI.color=saved;
         if(ChapterRitualVisible) DrawChapterRitual(w,h);

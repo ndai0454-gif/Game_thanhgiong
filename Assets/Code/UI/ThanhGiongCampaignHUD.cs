@@ -9,6 +9,7 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
     [Range(1, 20)] public float missionPopupSeconds = 6f;
     [Range(1, 20)] public float controlsPopupSeconds = 4f;
     [Range(.05f, 1)] public float popupFadeSeconds = .3f;
+    [Range(2, 10)] public float regionPopupSeconds = 4.2f;
     public bool MissionVisible => Time.time < missionUntil;
     public bool ControlsVisible => Time.time < controlsUntil;
     public bool GuideVisible => guidesVisible;
@@ -51,7 +52,7 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
         if (campaign == null) campaign = FindAnyObjectByType<ThanhGiongCampaignController>();
         if(campaign!=null){seeds=campaign.GetComponent<LegendSeedSkills>();checkpoint=campaign.GetComponent<LegendCheckpoint>();}
         RecallPopups();
-        regionUntil=Time.time+3.8f;
+        regionUntil = Time.time + regionPopupSeconds;
         if (combatCursor != null) Cursor.SetCursor(combatCursor,
             new Vector2(combatCursor.width * .18f, combatCursor.height * .18f), CursorMode.Auto);
     }
@@ -60,6 +61,7 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
     {
         missionUntil = Time.time + missionPopupSeconds;
         controlsUntil = Time.time + controlsPopupSeconds;
+        regionUntil = Time.time + regionPopupSeconds;
     }
 
     public void TogglePause()
@@ -355,7 +357,7 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
     private string SceneTitle() => campaign.openWorldCampaign != null && campaign.openWorldCampaign.world.CurrentZone != null ? campaign.openWorldCampaign.world.CurrentZone.displayName : SceneManager.GetActiveScene().name switch {
         "LangGiongTienTuyen" => "LÀNG PHÙ ĐỔNG", "KinhThanhRenThep" => "KINH THÀNH RÈN THÉP",
         "PhaoDaiNgamQuanAn" => "PHÁO ĐÀI QUÂN ÂN", "ThungLungVuotSong" => "THUNG LŨNG VƯỢT SÔNG",
-        "TranTuyenNuiSoc" => "TRẬN TUYẾN NÚI SÓC", "DinhSocHoaThanh" => "ĐỈNH SÓC HÓA THÁNH", _ => "THÁNH GIÓNG"
+        "TranTuyenNuiSoc" => "TRẬN TUYẾN NÚI SÓC", "DinhSocHoaThanh" => "ĐỈNH SÓC HÓA THÁNH", "ThanhGiongDaiViet" => "ĐẠI VIỆT HOÀNG THÀNH", _ => "THÁNH GIÓNG"
     };
     private string RegionSubtitle() => campaign.openWorldCampaign != null && campaign.openWorldCampaign.world.CurrentZone != null ? ThanhGiongOpenWorld.RiskDescription(campaign.openWorldCampaign.world.CurrentZone.risk) : SceneManager.GetActiveScene().name switch {
         "LangGiongTienTuyen" => "Lũy tre xanh giữ lời thề cứu nước.",
@@ -364,6 +366,7 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
         "ThungLungVuotSong" => "Qua cầu gỗ, theo tiếng nước về phía trước.",
         "TranTuyenNuiSoc" => "Tre ngà quét giặc, non sông chờ bình yên.",
         "DinhSocHoaThanh" => "Gác lại giáp sắt, cưỡi ngựa về trời.",
+        "ThanhGiongDaiViet" => "Hành trình giữ nước qua vạn dặm non sông.",
         _ => "Theo con đường giữa những tán rừng."
     };
 
