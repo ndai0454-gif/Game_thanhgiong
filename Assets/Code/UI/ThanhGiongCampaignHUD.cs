@@ -174,7 +174,7 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
 
     private void OnGUI()
     {
-        if (campaign == null || (ThanhGiongTrailerDirector.Instance != null && ThanhGiongTrailerDirector.Instance.IsPlayingTrailer)) return;
+        if (campaign == null || (ThanhGiongTrailerDirector.Instance != null && ThanhGiongTrailerDirector.Instance.IsPlayingTrailer) || ThanhGiongStartScreen.IsWaitingActive) return;
         EnsureStyles();
         Matrix4x4 oldMatrix = GUI.matrix;
         Color oldColor = GUI.color;
@@ -217,8 +217,8 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
             Rect guide = new Rect((w - 560) / 2, (h - guideHeight) / 2, 560, guideHeight);
             Box(guide, true);
             GUI.Label(new Rect(guide.x + 24, guide.y + 20, 512, 40), paused ? "TẠM DỪNG" : "BINH PHÁP PHÙ ĐỔNG", title);
-            string help=paused ? "WASD đi · Shift phi ngựa · Space nhảy · C/Alt né\nChuột đánh · 1–5 chọn hạt · Q gieo / đội nón\nR về điểm dừng chân khi gục ngã · F1 trợ giúp\nMenu: ↑↓ chọn · ←→ âm lượng · Enter xác nhận" :
-                "WASD: di chuyển · Shift: phi ngựa · Space: nhảy · C / Alt: lăn né\nChuột trái: chém gươm / quét tre / ném đá\n1 Lumen: trói, phá khiên · 2 Tre: gai làm chậm · 3 Sen: hồi máu, hộ thể dưới chân\n4 Lửa: thiêu, lộ giáp · 5 Gió: ngắt đòn, đẩy lùi · Q: gieo hạt\nE: nhặt lương thực, nhổ tre, vác đá · F: Hỏa Tuyến phá đội hình\nE → Q → E → F: trang bị xuất quân · E → Q → E: cởi giáp, tháo nón, hóa thánh\nNé vòng đỏ của tướng giặc; phản công khi đao mắc kẹt.\nR: về điểm dừng chân khi gục ngã · Tab: nhiệm vụ · F1: trợ giúp";
+            string help=paused ? "WASD đi · Shift phi ngựa · Space nhảy · C/Ctrl né\nChuột đánh · Giữ chuột phải: xoay góc nhìn · F2: đổi chế độ chuột\n1–5 chọn hạt · Q gieo / đội nón · R điểm dừng chân · F1 trợ giúp\nMenu: ↑↓ chọn · ←→ âm lượng · Enter xác nhận" :
+                "WASD: di chuyển · Shift: phi ngựa · Space: nhảy · C / Ctrl: lăn né\nChuột trái: chém gươm / quét tre / ném đá · Giữ chuột phải: xoay camera\n1 Lumen: trói, phá khiên · 2 Tre: gai làm chậm · 3 Sen: hồi máu, hộ thể\n4 Lửa: thiêu, lộ giáp · 5 Gió: ngắt đòn, đẩy lùi · Q: gieo hạt\nE: nhặt lương thực, nhổ tre, vác đá · F: Hỏa Tuyến phá đội hình\nE → Q → E → F: trang bị xuất quân · E → Q → E: cởi giáp, tháo nón, hóa thánh\nNé vòng đỏ của tướng giặc; phản công khi đao mắc kẹt.\nR: về điểm dừng chân khi gục ngã · F2: đổi chế độ chuột / camera · F1: trợ giúp";
             GUI.Label(new Rect(guide.x+24,guide.y+(paused?66:76),512,paused?82:246),help,body);
             if (paused) DrawPauseButtons(guide);
         }
@@ -283,8 +283,8 @@ public class ThanhGiongCampaignHUD : MonoBehaviour
         bool wasEnabled = GUI.enabled;
         GUI.enabled = !ThanhGiongSceneTransition.IsTransitioning;
         if (GUI.Button(new Rect(guide.x + 24, guide.y + 158, 250, 32), "TIẾP TỤC  [ESC]", button)) TogglePause();
-        if (GUI.Button(new Rect(guide.x + 286, guide.y + 158, 250, 32), "🎬 TRAILER DEMO [F10]", button)) { TogglePause(); ThanhGiongTrailerDirector.Instance?.PlayTrailer(false); }
-        if (GUI.Button(new Rect(guide.x + 24, guide.y + 200, 250, 32), "VỀ ĐIỂM DỪNG CHÂN", button)) RestartCheckpoint();
+        if (GUI.Button(new Rect(guide.x + 286, guide.y + 158, 250, 32), "🏛️ MÀN HÌNH CHỜ", button)) { TogglePause(); ThanhGiongStartScreen.OpenWaitingScreen(); }
+        if (GUI.Button(new Rect(guide.x + 24, guide.y + 200, 250, 32), "🎬 TRAILER [F10]", button)) { TogglePause(); ThanhGiongTrailerDirector.Instance?.PlayTrailer(false); }
         if (GUI.Button(new Rect(guide.x + 286, guide.y + 200, 250, 32), "CHƠI LẠI TOÀN MÀN", button)) RestartCurrentMap();
         GUI.Label(new Rect(guide.x+24,guide.y+251,512,22),"ÂM THANH",caption);
         float master=MixSlider(guide,282,"TỔNG",LegendAudioMix.Master);

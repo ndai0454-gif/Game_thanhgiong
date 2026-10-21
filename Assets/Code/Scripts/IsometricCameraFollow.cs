@@ -24,6 +24,12 @@ public class IsometricCameraFollow : MonoBehaviour
     public float leadSeconds = .3f;
     public float maximumShake = .32f;
 
+    [Header("Mouse Look & Remote Parsec Settings")]
+    [Tooltip("If false, cursor remains free for Parsec; right-click drag rotates camera. If true, cursor is locked.")]
+    public bool mouseLook = false;
+    public float mouseSensitivity = 2.5f;
+    public KeyCode toggleMouseLookKey = KeyCode.F2;
+
     Camera view;
     CharacterController targetController;
     MountedHorseController targetMovement;
@@ -105,6 +111,45 @@ public class IsometricCameraFollow : MonoBehaviour
         transform.SetPositionAndRotation(smoothPosition, rotation);
         if (view != null) view.orthographicSize = Mathf.Max(1f, ShotSize);
         shakeTimer = shakeIntensity = shakeAge = 0f; initialized = true;
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(toggleMouseLookKey))
+        {
+            mouseLook = !mouseLook;
+            if (!mouseLook)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+        }
+
+        if (mouseLook)
+        {
+            if (Cursor.lockState != CursorLockMode.Locked)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+            float mouseX = Input.GetAxis("Mouse X");
+            if (Mathf.Abs(mouseX) > 0.001f)
+            {
+                isometricYaw += mouseX * mouseSensitivity;
+            }
+        }
+        else
+        {
+            // Parsec-friendly mode: cursor is always free. Right-click drag rotates yaw.
+            if (Input.GetMouseButton(1))
+            {
+                float mouseX = Input.GetAxis("Mouse X");
+                if (Mathf.Abs(mouseX) > 0.001f)
+                {
+                    isometricYaw += mouseX * mouseSensitivity;
+                }
+            }
+        }
     }
 
     void LateUpdate()

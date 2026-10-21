@@ -192,7 +192,7 @@ public class MountedHorseController : MonoBehaviour
         Vector2 input = equipmentBusy ? Vector2.zero : new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         Vector3 move = CameraRelativeDirection(input);
         if (move.sqrMagnitude > .01f) { recentDirection = move; recentDirectionTime = Time.time; }
-        if (Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.LeftControl)) TryDodge(move);
+        if (Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.LeftControl)) TryDodge(move);
         if (!equipmentBusy && campaignController == null && Input.GetMouseButtonDown(0))
             TryAttack();
 

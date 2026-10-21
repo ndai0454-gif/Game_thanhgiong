@@ -234,6 +234,7 @@ public sealed class ThanhGiongSceneTransition : MonoBehaviour
     {
         return currentScene switch
         {
+            "ManHinhCho" => "LangGiongTienTuyen",
             "LangGiongTienTuyen" => "KinhThanhRenThep",
             "KinhThanhRenThep" => "PhaoDaiNgamQuanAn",
             "PhaoDaiNgamQuanAn" => "ThungLungVuotSong",
