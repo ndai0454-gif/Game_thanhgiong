@@ -204,7 +204,7 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
     private void OnGUI()
     {
         if (campaign != null && campaign.openWorldCampaign != null && campaign.openWorldCampaign.world.MapOpen) return;
-        if (campaign == null || (ThanhGiongTrailerDirector.Instance != null && ThanhGiongTrailerDirector.Instance.IsPlayingTrailer)) return;
+        if (campaign == null || (ThanhGiongTrailerDirector.Instance != null && ThanhGiongTrailerDirector.Instance.IsPlayingTrailer) || ThanhGiongStartScreen.IsWaitingActive) return;
         EnsureStyles();
         Matrix4x4 oldMatrix = GUI.matrix;
         Color oldColor = GUI.color;
@@ -313,7 +313,7 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
         GUI.enabled = !ThanhGiongSceneTransition.IsTransitioning;
         if (GUI.Button(new Rect(guide.x + 24, guide.y + 158, 250, 32), "TIẾP TỤC  [ESC]", button)) TogglePause();
         if (GUI.Button(new Rect(guide.x + 286, guide.y + 158, 250, 32), "XEM ĐOẠN GIỚI THIỆU [F10]", button)) { TogglePause(); ThanhGiongTrailerDirector.Instance?.PlayTrailer(false); }
-        if (GUI.Button(new Rect(guide.x + 24, guide.y + 200, 250, 32), campaign.openWorldCampaign!=null?"LƯU HÀNH TRÌNH [F9]":"VỀ ĐIỂM DỪNG CHÂN", button)) RestartCheckpoint();
+        if (GUI.Button(new Rect(guide.x + 24, guide.y + 200, 250, 32), "🏛️ MÀN HÌNH CHỜ", button)) { TogglePause(); ThanhGiongStartScreen.OpenWaitingScreen(); }
         if (GUI.Button(new Rect(guide.x + 286, guide.y + 200, 250, 32), campaign.openWorldCampaign!=null?"VỀ LÀNG AN TOÀN":"CHƠI LẠI TOÀN MÀN", button)) RestartCurrentMap();
         ShadowLabel(new Rect(guide.x+24,guide.y+251,512,22),"ÂM THANH",caption);
         float master=MixSlider(guide,282,"TỔNG",LegendAudioMix.Master);
