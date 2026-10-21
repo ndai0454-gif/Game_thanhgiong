@@ -29,6 +29,7 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
     private float missionUntil, controlsUntil, nextBossCheck, regionUntil;
     private bool guidesVisible, paused, haveState;
     private ThanhGiongCampaignController.Chapter previousChapter;
+    private string previousZoneId = string.Empty;
     private ThanhGiongCampaignController.Weapon previousWeapon;
     private int previousStep, previousGrowth;
     private bool previousHeatReady, previousCarrying, nearInteraction;
@@ -148,6 +149,16 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
         else if (previousWeapon != campaign.CurrentWeapon || previousGrowth != campaign.GrowthPhase ||
             (ready && !previousHeatReady) || (carrying && !previousCarrying)) controlsUntil = Time.time + controlsPopupSeconds;
         if(haveState&&(previousGrowth!=campaign.GrowthPhase||previousWeapon!=campaign.CurrentWeapon))missionUntil=Time.time+missionPopupSeconds;
+        if (campaign.openWorldCampaign != null && campaign.openWorldCampaign.world != null)
+        {
+            var currentZone = campaign.openWorldCampaign.world.CurrentZone;
+            string currentZoneId = currentZone != null ? currentZone.id : string.Empty;
+            if (haveState && !string.IsNullOrEmpty(currentZoneId) && currentZoneId != previousZoneId)
+            {
+                regionUntil = Time.time + 4.5f;
+            }
+            previousZoneId = currentZoneId;
+        }
         previousChapter = campaign.CurrentChapter; previousWeapon = campaign.CurrentWeapon;
         previousStep = campaign.EquipmentStep; previousGrowth = campaign.GrowthPhase;
         previousHeatReady = ready; previousCarrying = carrying; haveState = true;
