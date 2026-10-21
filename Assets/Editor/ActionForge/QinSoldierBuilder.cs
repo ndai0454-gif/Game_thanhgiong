@@ -1345,6 +1345,7 @@ namespace ThanhGiong.EditorTools
                 enemy.moveSpeed = 2.75f;
                 enemy.engageDistance = 28f;
                 enemy.isBoss = false;
+                enemy.soldierScaleMultiplier = 1.2f;
 
                 var presentation = root.AddComponent<LegendEnemyPresentation>();
                 presentation.model = model.transform;

@@ -133,27 +133,24 @@ public partial class ThanhGiongCampaignHUD
 
     void DrawRiceVitals()
     {
-        Color saved=GUI.color;
-        ShadowLabel(new Rect(21,14,300,31),"Thánh Gióng",hudTitle);
-        for(int i=0;i<10;i++)
+        Color saved = GUI.color;
+        ShadowLabel(new Rect(23, 14, 240, 24), "THÁNH GIÓNG", hudTitle);
+
+        bool hasWard = campaign != null && campaign.LotusWardRemaining > 0;
+        float h01 = campaign != null ? campaign.Health01 : 1f;
+        float curHp = campaign != null ? campaign.Health : 100f;
+        float maxHp = campaign != null ? campaign.maxHealth : 100f;
+
+        DrawModernHealthBar(new Rect(23, 40, 216, 13), h01, ref heroGhostHealth01, ref heroLastDamageTime, ref previousHeroHealth01, false, 4, hasWard);
+
+        ShadowLabel(new Rect(246, 37, 120, 18), $"{Mathf.CeilToInt(curHp)} / {Mathf.CeilToInt(maxHp)}", small);
+
+        if (hasWard)
         {
-            Rect grain=new Rect(23+i*22,40,16,23);
-            GUI.color=new Color(.16f,.12f,.09f,.82f); GUI.DrawTexture(grain,riceGrain);
-            float fill=Mathf.Clamp01(campaign.Health01*10-i);
-            if(fill>0)
-            {
-                GUI.color=Color.Lerp(new Color(.96f,.30f,.19f),Paper,campaign.Health01);
-                GUI.DrawTextureWithTexCoords(new Rect(grain.x,grain.y+grain.height*(1-fill),grain.width,grain.height*fill),riceGrain,new Rect(0,0,1,fill));
-            }
+            GUI.color = Gold;
+            ShadowLabel(new Rect(23, 58, 300, 18), $"★ SEN HỘ THỂ {campaign.LotusWardRemaining:0.0}s  ·  -32% SÁT THƯƠNG", small);
         }
-        GUI.color=Color.white;
-        ShadowLabel(new Rect(23,65,235,23),$"SINH LỰC  {campaign.Health:0} / {campaign.maxHealth:0}",small);
-        if(campaign.LotusWardRemaining>0)
-        {
-            GUI.color=Gold;GUI.DrawTexture(new Rect(251,40,16,23),riceGrain);GUI.color=saved;
-            ShadowLabel(new Rect(276,38,260,36),$"SEN HỘ THỂ {campaign.LotusWardRemaining:0.0}s\nGiảm 32% sát thương",small);
-        }
-        GUI.color=saved;
+        GUI.color = saved;
     }
 
     void DrawAdventureQuickSlots()

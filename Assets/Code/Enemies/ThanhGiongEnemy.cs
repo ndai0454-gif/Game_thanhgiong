@@ -32,6 +32,8 @@ public class ThanhGiongEnemy : MonoBehaviour
     public bool isBoss;
     public EnemyRole role = EnemyRole.Auto;
     public string enemyName = "Giáo Binh Ân";
+    [Tooltip("Hệ số kích thước dành riêng cho lính thường (không áp dụng cho Boss)")]
+    public float soldierScaleMultiplier = 1.2f;
 
     [Header("Heavy Slam & Vulnerability (Understory Mechanics)")]
     public float heavyAttackRange = 4.5f;
@@ -167,14 +169,6 @@ public class ThanhGiongEnemy : MonoBehaviour
         initialScale = transform.localScale;
         initialPosition = transform.position;
         initialRotation = transform.rotation;
-        if (isBoss)
-        {
-            maxHealth = 540f;
-            moveSpeed = 3.2f;
-            enemyName = "Tướng Giặc Ân";
-            transform.localScale = initialScale * 1.8f;
-        }
-
         col = GetComponent<CapsuleCollider>();
         if (col == null)
         {
@@ -182,6 +176,23 @@ public class ThanhGiongEnemy : MonoBehaviour
             col.radius = isBoss ? 0.9f : 0.5f;
             col.height = isBoss ? 3.6f : 2.0f;
             col.center = Vector3.zero;
+        }
+
+        if (isBoss)
+        {
+            maxHealth = 540f;
+            moveSpeed = 3.2f;
+            enemyName = "Tướng Giặc Ân";
+            transform.localScale = initialScale * 1.8f;
+        }
+        else if (soldierScaleMultiplier > 0.01f && Mathf.Abs(soldierScaleMultiplier - 1f) > 0.001f)
+        {
+            float deltaY = col.height * 0.5f * (soldierScaleMultiplier - 1f);
+            transform.localScale = initialScale * soldierScaleMultiplier;
+            transform.position += Vector3.up * deltaY;
+            initialPosition = transform.position;
+            separationRadius *= soldierScaleMultiplier;
+            surroundRadius *= soldierScaleMultiplier;
         }
 
         rb = GetComponent<Rigidbody>();
@@ -289,7 +300,7 @@ public class ThanhGiongEnemy : MonoBehaviour
         if (ragdoll != null) ragdoll.ResetForBattle();
         gameObject.SetActive(false); // Restores original dissolve materials and clears telegraphs.
         transform.SetPositionAndRotation(initialPosition, initialRotation);
-        transform.localScale = isBoss ? initialScale * 1.8f : initialScale;
+        transform.localScale = isBoss ? initialScale * 1.8f : (soldierScaleMultiplier > 0.01f ? initialScale * soldierScaleMultiplier : initialScale);
         if (col != null) col.enabled = true;
         stateTimer = 0; flinchTimer = 0; enemyGaitTime = 0;
         visualSpeedBlend = 0f; visualSpeedBlendVel = 0f; attackPoseBlend = 0f; stuckPoseBlend = 0f; stunnedPoseBlend = 0f;
@@ -332,6 +343,11 @@ public class ThanhGiongEnemy : MonoBehaviour
             visualModel.localScale = Vector3.SmoothDamp(visualModel.localScale, visualBaseScale,
                 ref visualScaleVelocity, .07f, 10f, secondaryDt);
             flinchTimer = Mathf.Max(0f, flinchTimer - secondaryDt);
+            Vector3 baseScaleActionForge = isBoss ? initialScale * 1.8f : (soldierScaleMultiplier > 0.01f ? initialScale * soldierScaleMultiplier : initialScale);
+            if (transform.localScale != baseScaleActionForge && flinchTimer <= 0f)
+            {
+                transform.localScale = Vector3.MoveTowards(transform.localScale, baseScaleActionForge, secondaryDt * 4f);
+            }
             return;
         }
 
@@ -442,6 +458,12 @@ public class ThanhGiongEnemy : MonoBehaviour
         visualModel.localPosition = Vector3.SmoothDamp(visualModel.localPosition, targetPos, ref visualPoseVelocity, damping, 12f, dt);
         visualModel.localRotation = Quaternion.Slerp(visualModel.localRotation, targetRot, 1f - Mathf.Exp(-20f * dt));
         visualModel.localScale = Vector3.SmoothDamp(visualModel.localScale, targetScale, ref visualScaleVelocity, .07f, 10f, dt);
+
+        Vector3 currentBaseScale = isBoss ? initialScale * 1.8f : (soldierScaleMultiplier > 0.01f ? initialScale * soldierScaleMultiplier : initialScale);
+        if (transform.localScale != currentBaseScale && flinchTimer <= 0f)
+        {
+            transform.localScale = Vector3.MoveTowards(transform.localScale, currentBaseScale, dt * 4f);
+        }
     }
 
     private void FixedUpdate()
@@ -1412,7 +1434,8 @@ public class ThanhGiongEnemy : MonoBehaviour
         health -= actualDamage;
         stunnedUntil = Mathf.Max(stunnedUntil, Time.time + stunSeconds);
         flinchTimer = Mathf.Max(flinchTimer, isBoss ? 0.18f : 0.22f);
-        transform.localScale = (isBoss ? initialScale * 1.8f : initialScale) * 1.05f;
+        Vector3 hitBaseScale = isBoss ? initialScale * 1.8f : (soldierScaleMultiplier > 0.01f ? initialScale * soldierScaleMultiplier : initialScale);
+        transform.localScale = hitBaseScale * 1.05f;
         SpawnBladeSparks(transform.position + Vector3.up * (isBoss ? 1.45f : 1.0f));
 
         Vector3 source = hitSource != default ? hitSource : (target != null ? target.position : transform.position - transform.forward);

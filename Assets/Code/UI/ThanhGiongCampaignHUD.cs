@@ -36,6 +36,12 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
     private ThanhGiongEnemy cachedBoss;
     private LegendSeedSkills seeds;
     private LegendCheckpoint checkpoint;
+    private float heroGhostHealth01 = 1f;
+    private float bossGhostHealth01 = 1f;
+    private float heroLastDamageTime;
+    private float bossLastDamageTime;
+    private float previousHeroHealth01 = 1f;
+    private float previousBossHealth01 = 1f;
     private GUIStyle title, body, caption, small, centered, frame, button, hudTitle, hudBody, tile;
     private Font serifRegular, serifBold;
     private readonly Collider[] nearby = new Collider[32];
@@ -408,10 +414,24 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
             }
         }
         if (cachedBoss == null || !cachedBoss.gameObject.activeInHierarchy || cachedBoss.HealthRatio <= 0) return;
-        Rect rect = new Rect(w - 294, 16, 278, 67);
-        Box(rect);
-        ShadowLabel(new Rect(rect.x + 12, rect.y + 5, 254, 23), cachedBoss.IsStuckInGround ? "TƯỚNG ÂN · ĐAO MẮC KẸT!" : "TƯỚNG GIẶC ÂN",hudTitle);
-        DrawEnchantedHealthBar(new Rect(rect.x + 12, rect.y + 32, 254, 23), cachedBoss.HealthRatio, true);
+
+        float barWidth = Mathf.Clamp(w - 560f, 380f, 520f);
+        float x = (w - barWidth) * 0.5f;
+        float y = 14f;
+
+        string titleText = cachedBoss.IsStuckInGround ? "★  SƠ HỞ CHÍ MẠNG · PHẢN CÔNG!  ★" : "⚔  TƯỚNG GIẶC ÂN  ⚔";
+        Color previousColor = GUI.color;
+        GUI.color = cachedBoss.IsStuckInGround ? Color.Lerp(Gold, Color.white, Mathf.PingPong(Time.time * 6f, 1f)) : Paper;
+        GUIStyle bossTitleStyle = chapterAction != null ? chapterAction : (hudTitle != null ? hudTitle : GUI.skin.label);
+        ShadowLabel(new Rect(x - 40, y, barWidth + 80, 24), titleText, bossTitleStyle);
+
+        GUI.color = Muted;
+        string phaseInfo = $"GIAI ĐOẠN {cachedBoss.BossPhase}   ·   {Mathf.RoundToInt(cachedBoss.HealthRatio * 100)}% MÁU";
+        GUIStyle subStyle = chapterCentered != null ? chapterCentered : (small != null ? small : GUI.skin.label);
+        ShadowLabel(new Rect(x, y + 22, barWidth, 16), phaseInfo, subStyle);
+        GUI.color = previousColor;
+
+        DrawModernHealthBar(new Rect(x, y + 40, barWidth, 14), cachedBoss.HealthRatio, ref bossGhostHealth01, ref bossLastDamageTime, ref previousBossHealth01, true, 3);
     }
 
     private void Box(Rect rect,bool expanded=false)
@@ -429,13 +449,96 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
 
     private void DrawEnchantedHealthBar(Rect rect, float value, bool boss)
     {
-        // A quiet matte strip: no moving glint, bevel or bright highlight.
-        Color saved = GUI.color;
-        GUI.color = new Color(.12f, .13f, .11f, saved.a);
+        if (boss)
+            DrawModernHealthBar(rect, value, ref bossGhostHealth01, ref bossLastDamageTime, ref previousBossHealth01, true, 3);
+        else
+            DrawModernHealthBar(rect, value, ref heroGhostHealth01, ref heroLastDamageTime, ref previousHeroHealth01, false, 4, campaign != null && campaign.LotusWardRemaining > 0);
+    }
+
+    private void DrawModernHealthBar(Rect rect, float health01, ref float ghost01, ref float lastDamageTime, ref float previousHealth01, bool isBoss, int phaseSegments = 0, bool hasShield = false)
+    {
+        if (health01 < previousHealth01 - 0.001f) lastDamageTime = Time.unscaledTime;
+        else if (health01 > previousHealth01 + 0.001f) ghost01 = health01;
+        previousHealth01 = health01;
+
+        if (Time.unscaledTime > lastDamageTime + 0.28f)
+            ghost01 = Mathf.MoveTowards(ghost01, health01, Time.unscaledDeltaTime * (isBoss ? 0.35f : 0.45f));
+
+        Color savedColor = GUI.color;
+
+        // Aura glow behind the bar (Lotus ward or Boss rage)
+        if (hasShield)
+        {
+            float pulse = 0.5f + 0.5f * Mathf.Sin(Time.time * 4f);
+            GUI.color = new Color(0.96f, 0.82f, 0.35f, 0.40f + pulse * 0.25f);
+            GUI.DrawTexture(new Rect(rect.x - 3, rect.y - 3, rect.width + 6, rect.height + 6), Texture2D.whiteTexture);
+        }
+
+        // Lacquer / bronze frame border
+        Color borderColor = hasShield ? new Color(0.96f, 0.82f, 0.35f, 0.95f) : (isBoss ? new Color(0.72f, 0.52f, 0.32f, 0.95f) : new Color(0.68f, 0.55f, 0.35f, 0.85f));
+        GUI.color = borderColor;
+        GUI.DrawTexture(new Rect(rect.x - 1, rect.y - 1, rect.width + 2, rect.height + 2), Texture2D.whiteTexture);
+
+        // Deep dark background
+        GUI.color = new Color(0.08f, 0.04f, 0.035f, 0.94f);
         GUI.DrawTexture(rect, Texture2D.whiteTexture);
-        GUI.color = boss ? new Color(.64f, .39f, .30f, saved.a) : new Color(.55f, .62f, .43f, saved.a);
-        GUI.DrawTexture(new Rect(rect.x + 1, rect.y + 1, (rect.width - 2) * Mathf.Clamp01(value), rect.height - 2), Texture2D.whiteTexture);
-        GUI.color = saved;
+
+        float innerX = rect.x + 1;
+        float innerY = rect.y + 1;
+        float innerW = rect.width - 2;
+        float innerH = rect.height - 2;
+
+        // Ghost damage bar (amber/gold trailing damage)
+        float ghostW = innerW * Mathf.Clamp01(ghost01);
+        if (ghostW > 0.5f)
+        {
+            GUI.color = isBoss ? new Color(0.96f, 0.65f, 0.25f, 0.82f) : new Color(0.98f, 0.75f, 0.32f, 0.85f);
+            GUI.DrawTexture(new Rect(innerX, innerY, ghostW, innerH), Texture2D.whiteTexture);
+        }
+
+        // Current health main bar
+        float fillW = innerW * Mathf.Clamp01(health01);
+        if (fillW > 0.5f)
+        {
+            Color mainColor = isBoss
+                ? Color.Lerp(new Color(0.75f, 0.14f, 0.12f, 1f), new Color(0.90f, 0.28f, 0.18f, 1f), health01)
+                : Color.Lerp(new Color(0.82f, 0.18f, 0.14f, 1f), new Color(0.95f, 0.40f, 0.22f, 1f), health01);
+
+            if (!isBoss && health01 < 0.25f)
+            {
+                mainColor = Color.Lerp(mainColor, new Color(1f, 0.25f, 0.25f, 1f), Mathf.PingPong(Time.time * 4f, 1f));
+            }
+
+            GUI.color = mainColor;
+            GUI.DrawTexture(new Rect(innerX, innerY, fillW, innerH), Texture2D.whiteTexture);
+
+            // Subtle 1.5px bevel highlight on top edge
+            GUI.color = new Color(1f, 1f, 1f, 0.35f);
+            GUI.DrawTexture(new Rect(innerX, innerY, fillW, 2f), Texture2D.whiteTexture);
+        }
+
+        // Segment dividers
+        if (phaseSegments > 1)
+        {
+            for (int i = 1; i < phaseSegments; i++)
+            {
+                float divX = innerX + (innerW * i / phaseSegments);
+                GUI.color = new Color(0.06f, 0.03f, 0.02f, 0.85f);
+                GUI.DrawTexture(new Rect(divX - 1, innerY, 2, innerH), Texture2D.whiteTexture);
+                GUI.color = isBoss ? new Color(0.92f, 0.74f, 0.38f, 0.9f) : new Color(0.85f, 0.75f, 0.5f, 0.7f);
+                GUI.DrawTexture(new Rect(divX, innerY, 1, innerH), Texture2D.whiteTexture);
+            }
+        }
+
+        // Diamond pips at both ends for Boss
+        if (isBoss)
+        {
+            GUI.color = borderColor;
+            GUI.DrawTexture(new Rect(rect.x - 4, rect.y + rect.height * 0.5f - 2, 4, 4), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(rect.xMax, rect.y + rect.height * 0.5f - 2, 4, 4), Texture2D.whiteTexture);
+        }
+
+        GUI.color = savedColor;
     }
 
     private void Bar(Rect rect, float value, Color fill, string label)
