@@ -180,6 +180,26 @@ public class ThanhGiongStartScreen : MonoBehaviour
         {
             OpenWaitingScreen();
         }
+        else
+        {
+            CloseWaitingScreenImmediate();
+        }
+    }
+
+    public static void CloseWaitingScreenImmediate()
+    {
+        IsWaitingActive = false;
+        if (Instance != null)
+        {
+            Instance.veilAlpha = 0f;
+            Instance.isTransitioningToGame = false;
+            if (Instance.menuAudioSource != null && Instance.menuAudioSource.isPlaying)
+            {
+                Instance.menuAudioSource.Stop();
+            }
+        }
+        Time.timeScale = 1f;
+        SetPlayerInput(true);
     }
 
     public static void OpenWaitingScreen()
@@ -212,12 +232,28 @@ public class ThanhGiongStartScreen : MonoBehaviour
         PlaySfx(startSfx);
         string currentScene = SceneManager.GetActiveScene().name;
 
-        // Nếu đang ở màn sảnh riêng "ManHinhCho", nạp màn 1
+        // Nếu đang ở màn sảnh riêng "ManHinhCho", nạp màn chơi
         if (currentScene == "ManHinhCho")
         {
+            isTransitioningToGame = true;
             IsWaitingActive = false;
+            veilAlpha = 0f;
             Time.timeScale = 1f;
-            ThanhGiongSceneTransition.TryTransitionTo("LangGiongTienTuyen", "ĐANG TIẾN VÀO LÀNG PHÙ ĐỔNG...");
+            if (menuAudioSource != null) menuAudioSource.Stop();
+
+            string targetScene = "LangGiongTienTuyen";
+            if (!Application.CanStreamedLevelBeLoaded(targetScene))
+            {
+                if (Application.CanStreamedLevelBeLoaded("ThanhGiongDaiViet"))
+                    targetScene = "ThanhGiongDaiViet";
+            }
+
+            Debug.Log($"[ThanhGiongStartScreen] Bắt đầu vào game -> Đang chuyển sang scene: {targetScene}");
+
+            if (!ThanhGiongSceneTransition.TryTransitionTo(targetScene, "ĐANG TIẾN VÀO LÀNG PHÙ ĐỔNG..."))
+            {
+                SceneManager.LoadScene(targetScene);
+            }
             return;
         }
 
@@ -260,11 +296,19 @@ public class ThanhGiongStartScreen : MonoBehaviour
         if (index < 0 || index >= ChapterScenes.Length) return;
 
         PlaySfx(clickSfx);
+        isTransitioningToGame = true;
         IsWaitingActive = false;
+        veilAlpha = 0f;
         Time.timeScale = 1f;
         if (menuAudioSource != null) menuAudioSource.Stop();
 
-        ThanhGiongSceneTransition.TryTransitionTo(ChapterScenes[index], "ĐANG ĐẾN " + ChapterTitles[index]);
+        string scene = ChapterScenes[index];
+        Debug.Log($"[ThanhGiongStartScreen] Chọn chương -> Đang chuyển sang scene: {scene}");
+
+        if (!ThanhGiongSceneTransition.TryTransitionTo(scene, "ĐANG ĐẾN " + ChapterTitles[index]))
+        {
+            SceneManager.LoadScene(scene);
+        }
     }
 
     private void PlaySfx(AudioClip clip)
