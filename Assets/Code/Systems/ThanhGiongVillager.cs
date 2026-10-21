@@ -15,7 +15,7 @@ public class ThanhGiongVillager : MonoBehaviour
     [Tooltip("Hệ số nhịp bước (trẻ em nhanh, cụ già chậm)")] public float stride = 1f;
     [Tooltip("Độ khom lưng (cụ già)")] public float hunch = 0f;
 
-    const float CullDistance = 80f;
+    const float CullDistance = 60f;
 
     Vector3 home, target;
     float wait, phase, idlePhase, cullTimer, moveBlend;

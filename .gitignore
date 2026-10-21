@@ -78,3 +78,6 @@ AudioBackup_Original_*/
 
 # Claude Code worktrees
 .claude/worktrees/
+
+# Tài liệu tham khảo ngoài dự án (PlayCanvas engine)
+References/

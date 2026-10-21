@@ -229,7 +229,7 @@ public sealed class ThanhGiongDialogueUI : MonoBehaviour
             findTimer = 1f;
             var p = FindFirstObjectByType<AdventureStamina>(); player = p != null ? p.transform : null;
         }
-        if (player == null || Time.timeScale == 0f) { target = null; return; }
+        if (player == null || Time.timeScale == 0f || ThanhGiongStartScreen.IsWaitingActive) { target = null; return; }
         target = Nearest();
         if (target != null && Input.GetKeyDown(TalkKey)) Open(target);
     }
@@ -327,7 +327,7 @@ public sealed class ThanhGiongDialogueUI : MonoBehaviour
         var cam = Camera.main;
         if (!IsOpen)
         {
-            if (cam != null && player != null && Time.timeScale > 0f)
+            if (cam != null && player != null && Time.timeScale > 0f && !ThanhGiongStartScreen.IsWaitingActive)
             {
                 foreach (var v in ThanhGiongVillager.All)
                 {

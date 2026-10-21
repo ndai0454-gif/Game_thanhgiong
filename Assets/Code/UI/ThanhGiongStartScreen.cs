@@ -30,7 +30,7 @@ public class ThanhGiongStartScreen : MonoBehaviour
     public static bool IsWaitingActive { get; private set; } = false;
 
     private Tab currentTab = Tab.Main;
-    private float veilAlpha = 1f;
+    private float veilAlpha = 0f; // chỉ = 1 khi OpenWaitingScreen() được gọi (tránh che màn hình khi vào thẳng scene game)
     private bool isTransitioningToGame = false;
     private AudioSource menuAudioSource;
     private AudioSource sfxAudioSource;

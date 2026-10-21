@@ -12,6 +12,7 @@ public static class ThanhGiongVillagerRigger
     const string Dir = "Assets/Art/Villagers";
     const string RigDir = "Assets/Art/Villagers/Rigged";
     const float SizeBoost = 1.3f;
+    const int TargetTris = 20000;   // mỗi dân làng ~20k tam giác (bản gốc Meshy 220–300k)
 
     struct Def { public string model; public float height; public Def(string m, float h) { model = m; height = h; } }
     static readonly Def[] Defs =
@@ -54,6 +55,50 @@ public static class ThanhGiongVillagerRigger
         Debug.Log("[VillagerRigger] xong " + i + " dân làng");
     }
 
+    // Giản lược bằng gom cụm đỉnh: cùng ô vị trí VÀ cùng ô UV mới gộp, nên không làm nhòe đường nối texture.
+    static void Simplify(ref Vector3[] v, ref Vector3[] n, ref Vector2[] uv, ref int[] t, float H, int targetTris)
+    {
+        float lo = 0.0005f, hi = 0.25f; int[] best = null; int bestCount = 0;
+        for (int iter = 0; iter < 16; iter++)
+        {
+            float cell = (lo + hi) * 0.5f;
+            int count; var map = Cluster(v, uv, H, cell, out count);
+            int tc = CountTris(t, map);
+            if (tc > targetTris) lo = cell; else { hi = cell; best = map; bestCount = count; }
+        }
+        if (best == null) { int c; best = Cluster(v, uv, H, hi, out c); bestCount = c; }
+        var nv = new Vector3[bestCount]; var nn = new Vector3[bestCount]; var nu = new Vector2[bestCount]; var cnt = new int[bestCount];
+        for (int i = 0; i < v.Length; i++) { int k = best[i]; nv[k] += v[i]; nn[k] += n[i]; nu[k] += uv[i]; cnt[k]++; }
+        for (int k = 0; k < bestCount; k++) { float inv = 1f / Mathf.Max(1, cnt[k]); nv[k] *= inv; nu[k] *= inv; nn[k] = nn[k].sqrMagnitude > 1e-8f ? nn[k].normalized : Vector3.up; }
+        var nt = new List<int>(t.Length / 4);
+        for (int i = 0; i + 2 < t.Length; i += 3)
+        {
+            int a = best[t[i]], b = best[t[i + 1]], c = best[t[i + 2]];
+            if (a == b || b == c || a == c) continue; nt.Add(a); nt.Add(b); nt.Add(c);
+        }
+        v = nv; n = nn; uv = nu; t = nt.ToArray();
+    }
+    static int[] Cluster(Vector3[] v, Vector2[] uv, float H, float cell, out int count)
+    {
+        var dict = new Dictionary<long, int>(v.Length / 4); var map = new int[v.Length];
+        float inv = 1f / cell, uvInv = H / cell * 0.5f; count = 0;
+        for (int i = 0; i < v.Length; i++)
+        {
+            long x = Mathf.FloorToInt(v[i].x * inv) & 0x3FFF, y = Mathf.FloorToInt(v[i].y * inv) & 0x3FFF, z = Mathf.FloorToInt(v[i].z * inv) & 0x3FFF;
+            long u = Mathf.FloorToInt(uv[i].x * uvInv) & 0x3FF, w = Mathf.FloorToInt(uv[i].y * uvInv) & 0x3FF;
+            long key = x | (y << 14) | (z << 28) | (u << 42) | (w << 52);
+            int idx; if (!dict.TryGetValue(key, out idx)) { idx = count++; dict[key] = idx; }
+            map[i] = idx;
+        }
+        return map;
+    }
+    static int CountTris(int[] t, int[] map)
+    {
+        int c = 0;
+        for (int i = 0; i + 2 < t.Length; i += 3) { int a = map[t[i]], b = map[t[i + 1]], d = map[t[i + 2]]; if (a != b && b != d && a != d) c++; }
+        return c;
+    }
+
     static GameObject BuildPrefab(Def d)
     {
         var asset = AssetDatabase.LoadAssetAtPath<GameObject>(Dir + "/" + d.model + ".glb");
@@ -71,6 +116,9 @@ public static class ThanhGiongVillagerRigger
         Vector3 off = new Vector3(b.center.x, b.min.y, b.center.z);
         for (int i = 0; i < verts.Length; i++) { verts[i] = (verts[i] - off) * s; if (sn.Length == sv.Length) norms[i] = rel.MultiplyVector(sn[i]).normalized; }
         float H = d.height * SizeBoost;
+        Vector2[] uvs = src.uv; int[] tris = src.triangles;
+        if (uvs.Length != sv.Length) uvs = new Vector2[sv.Length];
+        Simplify(ref verts, ref norms, ref uvs, ref tris, H, TargetTris);
 
         // vị trí bản lề (không gian gốc, chân ở y=0)
         Vector3 hips = new Vector3(0, 0.50f * H, 0);
@@ -114,9 +162,11 @@ public static class ThanhGiongVillagerRigger
             weights[i] = bw;
         }
 
-        Mesh m = Object.Instantiate(src);
+        Mesh m = new Mesh();
         m.name = d.model + "_Rigged";
-        m.vertices = verts; if (sn.Length == sv.Length) m.normals = norms;
+        if (verts.Length > 65000) m.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        m.vertices = verts; m.uv = uvs; m.triangles = tris;
+        if (sn.Length == sv.Length) m.normals = norms; else m.RecalculateNormals();
         m.RecalculateBounds();
         m.boneWeights = weights;
         var bind = new Matrix4x4[bones.Length];
