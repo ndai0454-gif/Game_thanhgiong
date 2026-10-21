@@ -4,8 +4,8 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class AdventureStamina : MonoBehaviour
 {
-    public float capacity = 100f, sprintCostPerSecond = 18f, regenerationPerSecond = 24f;
-    public float Current { get; private set; } = 100f;
+    public float capacity = 150f, sprintCostPerSecond = 14f, regenerationPerSecond = 28f;
+    public float Current { get; private set; } = 150f;
     public float Ratio => Mathf.Clamp01(Current / Mathf.Max(1f, capacity));
     public bool SprintAllowed => !exhausted && Current > 0;
     public bool IsConsuming { get; private set; }
