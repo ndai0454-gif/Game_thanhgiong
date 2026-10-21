@@ -50,6 +50,10 @@ public class IsometricCameraFollow : MonoBehaviour
     public float leadSeconds = .3f;
     public float maximumShake = .32f;
 
+    [Header("Mouse Look & Remote Parsec Settings")]
+    public float mouseSensitivity = 2.5f;
+    public KeyCode toggleMouseLookKey = KeyCode.F2;
+
     Camera view;
     CharacterController targetController;
     MountedHorseController targetMovement;
@@ -59,7 +63,40 @@ public class IsometricCameraFollow : MonoBehaviour
     bool isOverview, initialized;
     Vector3 overviewPosition, overviewLookAt;
 
-    void Awake() { Instance = this; view = GetComponent<Camera>(); ApplyProjection(); }
+    void Awake()
+    {
+        Instance = this;
+        view = GetComponent<Camera>();
+        EnsureTarget();
+        ApplyProjection();
+        if (target != null) SnapToTarget();
+    }
+
+    void EnsureTarget()
+    {
+        if (target == null)
+        {
+            var hero = FindAnyObjectByType<MountedHorseController>();
+            if (hero != null) target = hero.transform;
+            else
+            {
+                var adv = FindAnyObjectByType<AdventurerController>();
+                if (adv != null) target = adv.transform;
+            }
+        }
+    }
+
+#if UNITY_EDITOR
+    void OnValidate()
+    {
+        if (!Application.isPlaying)
+        {
+            EnsureTarget();
+            if (target != null) SnapToTarget();
+        }
+    }
+#endif
+
     void OnDestroy() { if (Instance == this) Instance = null; ReleaseCursor(); }
     void OnDisable() { ReleaseCursor(); }
 
@@ -89,6 +126,7 @@ public class IsometricCameraFollow : MonoBehaviour
         Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None;
         Cursor.visible = !capture;
     }
+
     float ShotSize => currentShot == Shot.Combat ? combatSize : currentShot == Shot.Vista ? vistaSize : currentShot == Shot.Boss ? bossSize : currentShot == Shot.Close ? closeSize : exploreSize;
     Quaternion IsometricRotation => Quaternion.Euler(isometricPitch, isometricYaw, 0f);
 
@@ -133,6 +171,47 @@ public class IsometricCameraFollow : MonoBehaviour
         transform.SetPositionAndRotation(smoothPosition, rotation);
         if (view != null) view.orthographicSize = Mathf.Max(1f, ShotSize);
         shakeTimer = shakeIntensity = shakeAge = 0f; initialized = true;
+    }
+
+    void Update()
+    {
+        if (useShoulderCamera) return;
+
+        if (Input.GetKeyDown(toggleMouseLookKey))
+        {
+            mouseLook = !mouseLook;
+            if (!mouseLook)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+        }
+
+        if (mouseLook)
+        {
+            if (Cursor.lockState != CursorLockMode.Locked)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+            float mouseX = Input.GetAxis("Mouse X");
+            if (Mathf.Abs(mouseX) > 0.001f)
+            {
+                isometricYaw += mouseX * mouseSensitivity;
+            }
+        }
+        else
+        {
+            // Parsec-friendly mode: cursor is always free. Right-click drag rotates yaw.
+            if (Input.GetMouseButton(1))
+            {
+                float mouseX = Input.GetAxis("Mouse X");
+                if (Mathf.Abs(mouseX) > 0.001f)
+                {
+                    isometricYaw += mouseX * mouseSensitivity;
+                }
+            }
+        }
     }
 
     void LateUpdate()

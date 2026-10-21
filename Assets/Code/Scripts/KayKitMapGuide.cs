@@ -28,8 +28,8 @@ public class KayKitMapGuide : MonoBehaviour
         if (!showLegacyPanel || !legacyPanelVisible) return;
         if (title == null)
         {
-            Font bold = Resources.Load<Font>("ThanhGiongUI/OldStandard-Bold");
-            Font regular = Resources.Load<Font>("ThanhGiongUI/OldStandard-Regular");
+            Font bold = ThanhGiongUITheme.Medium;
+            Font regular = ThanhGiongUITheme.Regular;
             title = new GUIStyle(GUI.skin.label) { font = bold, fontSize = 24, fontStyle = bold == null ? FontStyle.Bold : FontStyle.Normal };
             title.normal.textColor = new Color(1f, .78f, .18f);
             body = new GUIStyle(GUI.skin.label) { font = regular, fontSize = 16, wordWrap = true };

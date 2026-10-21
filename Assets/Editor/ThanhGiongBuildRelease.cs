@@ -7,11 +7,21 @@ using UnityEngine;
 
 public static class ThanhGiongBuildRelease
 {
-    private static readonly string[] BuildScenes =
+    private static string[] GetBuildScenes()
     {
-        // Seamless open-world campaign (Docs/SEAMLESS_DAI_VIET_WORLD.md); matches the scene enabled in Build Settings.
-        "Assets/Scenes/ThanhGiongWorld/ThanhGiongDaiViet.unity"
-    };
+        string[] scenes = EditorBuildSettings.scenes
+            .Where(s => s.enabled && !string.IsNullOrEmpty(s.path))
+            .Select(s => s.path)
+            .ToArray();
+
+        if (scenes.Length > 0) return scenes;
+
+        return new[]
+        {
+            "Assets/Scenes/ThanhGiongWorld/ManHinhCho.unity",
+            "Assets/Scenes/ThanhGiongWorld/ThanhGiongDaiViet.unity"
+        };
+    }
 
     private const string OutputPath = "Builds/Windows/ThanhGiong.exe";
 
@@ -43,8 +53,10 @@ public static class ThanhGiongBuildRelease
         PlayerSettings.bundleVersion = "1.0.0";
         PlayerSettings.defaultIsFullScreen = true;
 
+        string[] scenes = GetBuildScenes();
+
         // Verify all scenes exist
-        foreach (string scenePath in BuildScenes)
+        foreach (string scenePath in scenes)
         {
             if (AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath) == null)
             {
@@ -57,7 +69,7 @@ public static class ThanhGiongBuildRelease
         // Prepare build options
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions
         {
-            scenes = BuildScenes,
+            scenes = scenes,
             locationPathName = OutputPath,
             target = BuildTarget.StandaloneWindows64,
             targetGroup = BuildTargetGroup.Standalone,

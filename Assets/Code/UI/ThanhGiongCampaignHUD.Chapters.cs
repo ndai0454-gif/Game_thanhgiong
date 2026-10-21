@@ -19,18 +19,18 @@ public partial class ThanhGiongCampaignHUD
          campaign.CurrentChapter == ThanhGiongCampaignController.Chapter.Ascension);
 
     private Color ChapterAccent => NarrativeChapterIndex switch {
-        0 => new Color(.68f,.82f,.43f),
-        1 => new Color(.98f,.65f,.32f),
-        2 => new Color(.91f,.46f,.29f),
-        _ => new Color(.61f,.85f,.88f)
+        0 => new Color(.62f,.67f,.47f),
+        1 => new Color(.74f,.61f,.41f),
+        2 => new Color(.70f,.43f,.34f),
+        _ => new Color(.61f,.69f,.65f)
     };
 
     private void EnsureChapterStyles()
     {
         if(chapterHeading != null) return;
-        chapterHeading=Style(29,Paper,true); chapterHeading.alignment=TextAnchor.MiddleCenter;
-        chapterKicker=Style(12,Gold); chapterKicker.alignment=TextAnchor.MiddleCenter;
-        chapterCentered=Style(14,Paper); chapterCentered.alignment=TextAnchor.MiddleCenter;
+        chapterHeading=Style(34,Paper); chapterHeading.font=ThanhGiongUITheme.Light; chapterHeading.alignment=TextAnchor.MiddleCenter;
+        chapterKicker=Style(15,Gold); chapterKicker.alignment=TextAnchor.MiddleCenter;
+        chapterCentered=Style(18,Paper); chapterCentered.alignment=TextAnchor.MiddleCenter;
         chapterAction=Style(20,Paper,true); chapterAction.alignment=TextAnchor.MiddleCenter;
     }
 
@@ -41,28 +41,28 @@ public partial class ThanhGiongCampaignHUD
         Color accent=ChapterAccent;
         // Right anchor leaves the actor and the existing upper-left vitality/skills clear.
         Rect quest=new Rect(w-314,104,294,MissionVisible?152:91);
-        GUI.color=new Color(.018f,.055f,.045f,.78f);
-        GUI.DrawTexture(quest,Texture2D.whiteTexture);
+        GUI.color=new Color(.105f,.055f,.045f,.86f);
+        // text-only panel
         GUI.color=saved;
-        DrawHudLine(new Vector2(quest.x,quest.y),new Vector2(quest.x,quest.yMax),accent,2);
-        GUI.Label(new Rect(quest.x+14,quest.y+9,265,20),$"HỒI {NarrativeChapterIndex+1:00} · {NarrativeChapterTitle}",caption);
+        // no top rule
+        ShadowLabel(new Rect(quest.x+14,quest.y+9,265,20),$"HỒI {NarrativeChapterIndex+1:00} · {NarrativeChapterTitle}",caption);
         for(int i=0;i<4;i++) {
             Color mark=i<=NarrativeChapterIndex?accent:new Color(.48f,.49f,.40f,.6f);
             DrawHudLine(new Vector2(quest.x+15+i*66,quest.y+36),new Vector2(quest.x+71+i*66,quest.y+36),mark,2);
         }
-        GUI.Label(new Rect(quest.x+14,quest.y+43,265,24),ChapterProgressLabel(),hudBody);
+        ShadowLabel(new Rect(quest.x+14,quest.y+43,265,24),ChapterProgressLabel(),hudBody);
         ThinBar(new Rect(quest.x+15,quest.y+73,264,3),campaign.StageCompletion01,accent);
         if(MissionVisible) {
-            GUI.Label(new Rect(quest.x+14,quest.y+85,265,42),ShortObjective(),hudBody);
-            GUI.Label(new Rect(quest.x+14,quest.y+130,265,18),"TAB nhắc nhiệm vụ   ·   ESC tạm dừng",small);
+            ShadowLabel(new Rect(quest.x+14,quest.y+85,265,42),ShortObjective(),hudBody);
+            ShadowLabel(new Rect(quest.x+14,quest.y+130,265,18),"TAB nhắc nhiệm vụ   ·   ESC tạm dừng",small);
         }
         if(RegionIntroVisible) {
             GUI.color=new Color(1,1,1,PopupAlpha(regionUntil,3.8f));
-            float y=h*.59f;
-            GUI.Label(new Rect((w-620)/2,y-22,620,22),$"HỒI {NarrativeChapterIndex+1:00}   /   {NarrativeChapterTitle}",chapterKicker);
-            GUI.Label(new Rect((w-760)/2,y,760,48),SceneTitle(),chapterHeading);
-            DrawHudLine(new Vector2(w*.5f-170,y+53),new Vector2(w*.5f+170,y+53),new Color(accent.r,accent.g,accent.b,GUI.color.a),1);
-            GUI.Label(new Rect((w-620)/2,y+61,620,27),RegionSubtitle(),chapterCentered);
+            float y=h*.50f;
+            ShadowLabel(new Rect((w-620)/2,y-22,620,22),$"HỒI {NarrativeChapterIndex+1:00}   /   {NarrativeChapterTitle}",chapterKicker);
+            ShadowLabel(new Rect((w-760)/2,y,760,84),SceneTitle(),chapterHeading);
+            DrawHudLine(new Vector2(w*.5f-170,y+87),new Vector2(w*.5f+170,y+87),new Color(accent.r,accent.g,accent.b,GUI.color.a),1);
+            ShadowLabel(new Rect((w-620)/2,y+95,620,54),RegionSubtitle(),chapterCentered);
         }
         GUI.color=saved;
         if(ChapterRitualVisible) DrawChapterRitual(w,h);
@@ -86,16 +86,16 @@ public partial class ThanhGiongCampaignHUD
         float width=keys.Length*114f+28;
         Rect panel=new Rect((w-width)/2,h-151,width,119);
         Color saved=GUI.color;
-        GUI.color=new Color(.018f,.055f,.045f,.85f); GUI.DrawTexture(panel,Texture2D.whiteTexture);
+        // text-only panel
         GUI.color=saved;
-        GUI.Label(new Rect(panel.x+10,panel.y+7,width-20,22),campaign.EquipmentBusy?"CHỜ ĐỘNG TÁC HOÀN TẤT":preparation?"TRANG BỊ VUA BAN":"NGHI THỨC HÓA THÁNH",chapterKicker);
+        ShadowLabel(new Rect(panel.x+10,panel.y+7,width-20,22),campaign.EquipmentBusy?"CHỜ ĐỘNG TÁC HOÀN TẤT":preparation?"TRANG BỊ VUA BAN":"NGHI THỨC HÓA THÁNH",chapterKicker);
         for(int i=0;i<keys.Length;i++) {
             float x=panel.x+14+i*114;
             Color color=i==step?ChapterAccent:i<step?Gold:Muted;
             DrawHudArc(new Vector2(x+50,panel.y+55),19,1,color,i==step?2:1);
             if(i<keys.Length-1) DrawHudLine(new Vector2(x+74,panel.y+55),new Vector2(x+140,panel.y+55),Muted,1);
-            GUI.Label(new Rect(x+31,panel.y+38,38,32),i<step?"·":keys[i],chapterAction);
-            GUI.Label(new Rect(x,panel.y+82,100,24),labels[i],chapterCentered);
+            ShadowLabel(new Rect(x+31,panel.y+38,38,32),i<step?"·":keys[i],chapterAction);
+            ShadowLabel(new Rect(x,panel.y+82,100,24),labels[i],chapterCentered);
         }
         GUI.color=saved;
     }

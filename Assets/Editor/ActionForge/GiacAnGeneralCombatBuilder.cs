@@ -15,6 +15,7 @@ namespace ThanhGiong.EditorTools
         public const string OutputFolder = GiacAnGeneralBuilder.OutputFolder + "/Combat";
         public const string ControllerPath = OutputFolder + "/GiacAnGeneral_Combat.controller";
         public const string MotionSetPath = "Assets/Resources/ActionForge/EnemyMotionSets/GiacAnGeneral.asset";
+        public const string UpgradeFbxPath = "Assets/Animations/actionforge_8_clips_unity_fit_inplace_anim_only.fbx";
         public const float StrikeContact = .35484f;
         const float SourceContact = .35f;
         static readonly string[] PhaseNames = { "Windup", "Strike", "Stuck", "Recovery", "Hit", "Death" };
@@ -30,6 +31,10 @@ namespace ThanhGiong.EditorTools
             if (source == null) throw new InvalidOperationException("Missing fitted Giac An general FBX.");
             var clips = AssetDatabase.LoadAllAssetsAtPath(GiacAnGeneralBuilder.SourcePath).OfType<AnimationClip>()
                 .Where(c => !c.name.StartsWith("__preview", StringComparison.Ordinal)).ToDictionary(c => c.name);
+            // Newer 8-clip ActionForge export overrides matching clips (same skeleton paths); walk/sword_idle stay on the old source.
+            foreach (var extra in AssetDatabase.LoadAllAssetsAtPath(UpgradeFbxPath).OfType<AnimationClip>()
+                .Where(c => !c.name.StartsWith("__preview", StringComparison.Ordinal)))
+                clips[extra.name == "idle_loop_fit" ? "sword_idle_fit" : extra.name] = extra;
             foreach (string name in new[] { "sword_idle", "sword_attack", "walk_loop", "jog_fwd_loop", "sprint_loop", "hit_chest", "death01" })
                 if (!clips.ContainsKey(name + "_fit")) throw new InvalidOperationException("Missing source clip: " + name);
             EnsureFolder(OutputFolder);
@@ -252,7 +257,7 @@ namespace ThanhGiong.EditorTools
                     threshold = name == "Locomotion" ? (int)ThanhGiongEnemy.EnemyState.TelegraphingAttack : (int)map[name] } };
                 transition.hasExitTime = false;
                 transition.hasFixedDuration = true;
-                transition.duration = name == "Hit" || name == "Strike" ? .04f : name == "Locomotion" || name == "Death" ? .08f : .06f;
+                transition.duration = name == "Hit" || name == "Strike" ? .06f : name == "Locomotion" || name == "Death" ? .16f : .09f;
                 transition.canTransitionToSelf = false;
                 transition.interruptionSource = TransitionInterruptionSource.SourceThenDestination;
                 transition.orderedInterruption = false;
@@ -307,7 +312,8 @@ namespace ThanhGiong.EditorTools
             }
             var set = AssetDatabase.LoadAssetAtPath<ActionForgeEnemyMotionSet>(MotionSetPath);
             if (set == null || set.boss != controller) throw new InvalidOperationException("Boss motion-set assignment missing.");
-            var sourceAttack = AssetDatabase.LoadAllAssetsAtPath(GiacAnGeneralBuilder.SourcePath).OfType<AnimationClip>()
+            var sourceAttack = AssetDatabase.LoadAllAssetsAtPath(UpgradeFbxPath).OfType<AnimationClip>()
+                .FirstOrDefault(c => c.name == "sword_attack_fit") ?? AssetDatabase.LoadAllAssetsAtPath(GiacAnGeneralBuilder.SourcePath).OfType<AnimationClip>()
                 .Single(c => c.name == "sword_attack_fit");
             ValidateRotationPose(source, sourceAttack, SourceContact * sourceAttack.length, Clip("Strike"), StrikeContact);
             ValidateRotationPose(source, Clip("Windup"), 1f, Clip("Strike"), 0f);

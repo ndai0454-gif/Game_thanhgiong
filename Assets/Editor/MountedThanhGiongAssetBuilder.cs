@@ -17,7 +17,6 @@ public static class MountedThanhGiongAssetBuilder
     private const string TexturePath = "Assets/Art/Textures/ThanhGiong_Mounted_Albedo.png";
     private const string OutputFolder = "Assets/Prefabs/Player";
     private const string MaterialPath = "Assets/Materials/Characters/ThanhGiong_Mounted.mat";
-    private const string LegMaterialPath = "Assets/Materials/Characters/ThanhGiong_HorseLegs.mat";
     private const string PrefabPath = OutputFolder + "/ThanhGiong_Mounted.prefab";
     private const string ScenePath = "Assets/Scenes/AlbionForestMap.unity";
     private const string SceneObjectName = "Thanh Giong Mounted 3D";
@@ -67,6 +66,7 @@ public static class MountedThanhGiongAssetBuilder
     {
         Directory.CreateDirectory(OutputFolder);
         ConfigureTexture();
+        MountedHorseMeshRigBuilder.EnsureReadableSource();
 
         GameObject source = AssetDatabase.LoadAssetAtPath<GameObject>(ModelPath);
         if (source == null) throw new InvalidOperationException("Missing model: " + ModelPath);
@@ -107,48 +107,11 @@ public static class MountedThanhGiongAssetBuilder
 
         MountedHorseController movement = root.AddComponent<MountedHorseController>();
         movement.visual = visual.transform;
-        CreateFourLegRig(root.transform, CreateLegMaterial(), finalBounds, movement);
+        MountedHorseMeshRigBuilder.Configure(movement);
 
         GameObject saved = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
         UnityEngine.Object.DestroyImmediate(root);
         if (saved == null) throw new InvalidOperationException("Could not save prefab: " + PrefabPath);
-    }
-
-    private static void CreateFourLegRig(Transform root, Material material, Bounds bounds, MountedHorseController movement)
-    {
-        float halfWidth = Mathf.Clamp(bounds.size.x * .15f, .3f, .48f);
-        float halfLength = Mathf.Clamp(bounds.size.z * .27f, .72f, 1.05f);
-        float hipY = Mathf.Clamp(bounds.size.y * .32f, .84f, 1.04f);
-        movement.frontLeftLeg = CreateLeg(root, "Front Left Leg", new Vector3(-halfWidth, hipY, halfLength), material);
-        movement.frontRightLeg = CreateLeg(root, "Front Right Leg", new Vector3(halfWidth, hipY, halfLength), material);
-        movement.rearLeftLeg = CreateLeg(root, "Rear Left Leg", new Vector3(-halfWidth, hipY, -halfLength), material);
-        movement.rearRightLeg = CreateLeg(root, "Rear Right Leg", new Vector3(halfWidth, hipY, -halfLength), material);
-    }
-
-    private static Transform CreateLeg(Transform parent, string name, Vector3 hip, Material material)
-    {
-        GameObject upper = new GameObject(name);
-        upper.transform.SetParent(parent, false);
-        upper.transform.localPosition = hip;
-
-        CreateLegPiece(upper.transform, "Upper Mesh", new Vector3(0f, -.23f, 0f), new Vector3(.14f, .46f, .17f), material);
-        GameObject lower = new GameObject("Lower");
-        lower.transform.SetParent(upper.transform, false);
-        lower.transform.localPosition = new Vector3(0f, -.45f, 0f);
-        CreateLegPiece(lower.transform, "Lower Mesh", new Vector3(0f, -.2f, 0f), new Vector3(.11f, .4f, .14f), material);
-        CreateLegPiece(lower.transform, "Hoof", new Vector3(0f, -.43f, .055f), new Vector3(.19f, .11f, .28f), material);
-        return upper.transform;
-    }
-
-    private static void CreateLegPiece(Transform parent, string name, Vector3 localPosition, Vector3 localScale, Material material)
-    {
-        GameObject piece = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        piece.name = name;
-        piece.transform.SetParent(parent, false);
-        piece.transform.localPosition = localPosition;
-        piece.transform.localScale = localScale;
-        UnityEngine.Object.DestroyImmediate(piece.GetComponent<Collider>());
-        piece.GetComponent<Renderer>().sharedMaterial = material;
     }
 
     private static void ConfigureTexture()
@@ -167,28 +130,6 @@ public static class MountedThanhGiongAssetBuilder
             changed = true;
         }
         if (changed) importer.SaveAndReimport();
-    }
-
-    private static Material CreateLegMaterial()
-    {
-        Material material = AssetDatabase.LoadAssetAtPath<Material>(LegMaterialPath);
-        if (material == null)
-        {
-            Shader shader = Shader.Find("Universal Render Pipeline/Lit");
-            shader ??= Shader.Find("Standard");
-            material = new Material(shader) { name = "Iron Horse Legs" };
-            AssetDatabase.CreateAsset(material, LegMaterialPath);
-        }
-
-        Color iron = new Color(.055f, .075f, .105f, 1f);
-        if (material.HasProperty("_BaseMap")) material.SetTexture("_BaseMap", null);
-        if (material.HasProperty("_MainTex")) material.SetTexture("_MainTex", null);
-        if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", iron);
-        if (material.HasProperty("_Color")) material.SetColor("_Color", iron);
-        if (material.HasProperty("_Metallic")) material.SetFloat("_Metallic", .72f);
-        if (material.HasProperty("_Smoothness")) material.SetFloat("_Smoothness", .3f);
-        EditorUtility.SetDirty(material);
-        return material;
     }
 
     private static Material CreateMaterial()

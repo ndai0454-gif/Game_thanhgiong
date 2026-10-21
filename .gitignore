@@ -64,3 +64,17 @@ Assets/UnitySkillsTests_Temp/
 Assets/UnitySkillsTests_Temp.meta
 Assets/_Recovery/
 Assets/_Recovery.meta
+
+# Claude Code Game Studios local state
+.claude/settings.local.json
+CLAUDE.local.md
+project.local.yaml
+production/session-logs/
+production/session-state/
+.scratch/
+.claude/agent-memory/
+RollbackBackups/
+AudioBackup_Original_*/
+
+# Claude Code worktrees
+.claude/worktrees/

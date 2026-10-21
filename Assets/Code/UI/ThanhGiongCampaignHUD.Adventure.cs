@@ -121,8 +121,8 @@ public partial class ThanhGiongCampaignHUD
     {
         EnsureAdventureStyles();
         Color previous=GUI.color;
-        GUI.color=new Color(.018f,.055f,.045f,.62f);
-        GUI.DrawTexture(new Rect(14,10,seeds!=null&&seeds.IsPlantingContext?530:265,137),Texture2D.whiteTexture);
+        GUI.color=new Color(.105f,.055f,.045f,.78f);
+        // text-only panel: no background box
         GUI.color=previous;
         DrawRiceVitals();
         DrawAdventureQuickSlots();
@@ -134,7 +134,7 @@ public partial class ThanhGiongCampaignHUD
     void DrawRiceVitals()
     {
         Color saved=GUI.color;
-        GUI.Label(new Rect(21,15,300,22),"THÁNH GIÓNG",hudTitle);
+        ShadowLabel(new Rect(21,14,300,31),"Thánh Gióng",hudTitle);
         for(int i=0;i<10;i++)
         {
             Rect grain=new Rect(23+i*22,40,16,23);
@@ -147,11 +147,11 @@ public partial class ThanhGiongCampaignHUD
             }
         }
         GUI.color=Color.white;
-        GUI.Label(new Rect(23,65,235,17),$"SINH LỰC  {campaign.Health:0} / {campaign.maxHealth:0}",small);
+        ShadowLabel(new Rect(23,65,235,23),$"SINH LỰC  {campaign.Health:0} / {campaign.maxHealth:0}",small);
         if(campaign.LotusWardRemaining>0)
         {
             GUI.color=Gold;GUI.DrawTexture(new Rect(251,40,16,23),riceGrain);GUI.color=saved;
-            GUI.Label(new Rect(276,38,260,36),$"SEN HỘ THỂ {campaign.LotusWardRemaining:0.0}s\nGiảm 32% sát thương",small);
+            ShadowLabel(new Rect(276,38,260,36),$"SEN HỘ THỂ {campaign.LotusWardRemaining:0.0}s\nGiảm 32% sát thương",small);
         }
         GUI.color=saved;
     }
@@ -163,27 +163,27 @@ public partial class ThanhGiongCampaignHUD
         string weapon=campaign.CarriedWeapon!=null ? (campaign.CarriedWeapon.type==ThanhGiongImprovisedWeapon.WeaponType.Boulder?"ĐÁ NÉM":"GỐC CÂY")
             :campaign.CurrentWeapon==ThanhGiongCampaignController.Weapon.IronSword?"THƯƠNG SẮT"
             :campaign.CurrentWeapon==ThanhGiongCampaignController.Weapon.Bamboo?campaign.BambooVariantName.ToUpperInvariant():"TAY KHÔNG";
-        GUI.Label(new Rect(22,84,310,19),weapon+"  ·  "+(campaign.CarriedWeapon!=null?"CHUỘT: NÉM":"CHUỘT: ĐÁNH"),small);
+        ShadowLabel(new Rect(22,88,320,23),weapon+"  ·  "+(campaign.CarriedWeapon!=null?"CHUỘT: NÉM":"CHUỘT: ĐÁNH"),small);
         if(seeds!=null&&seeds.IsPlantingContext)
         {
             string[] names={"SÁNG","TRE","SEN","LỬA","GIÓ"};
             for(int i=0;i<5;i++)
             {
                 bool selected=(int)seeds.SelectedSeed==i;
-                Rect r=new Rect(22+i*50,106,44,34);
-                GUI.color=new Color(.015f,.07f,.065f,selected?.88f:.50f);GUI.DrawTexture(r,Texture2D.whiteTexture);
+                Rect r=new Rect(22+i*50,118,44,42);
+                GUI.color=Color.clear;
                 GUI.color=selected?Gold:Muted;
-                DrawHudArc(r.center,17,selected?1:Mathf.Clamp01(1-seeds.CooldownFor(i)/11),selected?Gold:new Color(.60f,.56f,.40f,.7f),1.2f);
-                GUI.Label(new Rect(r.x+1,r.y+1,r.width-2,17),$"{i+1} {names[i]}",tile);
-                GUI.Label(new Rect(r.x+1,r.y+17,r.width-2,15),seeds.CooldownFor(i)>0?$"{seeds.CooldownFor(i):0}s":$"×{seeds.ChargesFor(i)}",tile);
+                DrawHudLine(new Vector2(r.x+3,r.yMax),new Vector2(r.xMax-3,r.yMax),selected?Gold:Muted,1);
+                ShadowLabel(new Rect(r.x+1,r.y+1,r.width-2,22),$"{i+1} {names[i]}",tile);
+                ShadowLabel(new Rect(r.x+1,r.y+21,r.width-2,21),seeds.CooldownFor(i)>0?$"{seeds.CooldownFor(i):0}s":$"×{seeds.ChargesFor(i)}",tile);
             }
             GUI.color=saved;
-            GUI.Label(new Rect(278,108,270,32),$"Q gieo · {seeds.Mana:0}/{seeds.MaxMana:0} linh lực\n{seeds.SelectedName}",small);
+            ShadowLabel(new Rect(278,117,270,49),$"Q gieo · {seeds.Mana:0}/{seeds.MaxMana:0} linh lực\n{seeds.SelectedName}",small);
         }
         else
         {
             string status=campaign.CurrentChapter==ThanhGiongCampaignController.Chapter.Prologue?$"Lương thực {campaign.Food:0}/{campaign.foodPerGrowth*3:0} · Lớn {campaign.GrowthPhase+1}/4":campaign.IsBattleActive?$"Hạ giặc {campaign.Kills}/{campaign.RequiredBattleKills}":Sequence();
-            GUI.Label(new Rect(22,107,330,26),status,small);
+            ShadowLabel(new Rect(22,115,330,27),status,small);
         }
         GUI.color=saved;
     }
@@ -205,12 +205,12 @@ public partial class ThanhGiongCampaignHUD
         float x=Mathf.Clamp(anchor.x+42,320,w-190),y=Mathf.Clamp(anchor.y-22,170,h-180);
         if(stamina)
         {
-            DrawEnergyCells(x,y,adventureStamina.Ratio,new Color(.67f,.9f,.37f),$"THỂ LỰC  {adventureStamina.Current:0}/{adventureStamina.capacity:0}");
+            DrawEnergyCells(x,y,adventureStamina.Ratio,new Color(.57f,.64f,.43f),$"THỂ LỰC  {adventureStamina.Current:0}/{adventureStamina.capacity:0}");
             y+=40;
         }
         if(bambooCharge)
         {
-            DrawEnergyCells(x,y,campaign.BambooPull01,new Color(.42f,.92f,.52f),$"GỒNG NHỔ TRE  {campaign.BambooPullStep}/3");
+            DrawEnergyCells(x,y,campaign.BambooPull01,new Color(.52f,.63f,.45f),$"GỒNG NHỔ TRE  {campaign.BambooPullStep}/3");
             y+=40;
         }
         if(heat)
@@ -218,21 +218,21 @@ public partial class ThanhGiongCampaignHUD
             DrawEnergyCells(x,y,campaign.Heat01,new Color(1,.61f,.25f),campaign.Heat01>=.99f?"HỎA KHÍ ĐẦY · F":"HỎA KHÍ  "+Mathf.RoundToInt(campaign.Heat01*100)+"%");
             y+=40;
         }
-        if(mana)DrawEnergyCells(x,y,seeds.Mana/Mathf.Max(1,seeds.MaxMana),new Color(.35f,.83f,.90f),$"LINH LỰC  {seeds.Mana:0}/{seeds.MaxMana:0}");
+        if(mana)DrawEnergyCells(x,y,seeds.Mana/Mathf.Max(1,seeds.MaxMana),new Color(.53f,.65f,.64f),$"LINH LỰC  {seeds.Mana:0}/{seeds.MaxMana:0}");
     }
 
     void DrawEnergyCells(float x,float y,float value,Color color,string label)
     {
         Color saved=GUI.color;
-        GUI.color=new Color(.015f,.06f,.065f,.66f);
-        GUI.DrawTexture(new Rect(x-4,y-4,184,39),Texture2D.whiteTexture);
+        GUI.color=new Color(.075f,.032f,.026f,.66f);
+        // no backing box
         for(int i=0;i<8;i++)
         {
-            Rect cell=new Rect(x+i*13,y,10,8);GUI.color=new Color(.015f,.06f,.065f,.78f);GUI.DrawTexture(cell,Texture2D.whiteTexture);
+            Rect cell=new Rect(x+i*13,y,10,8);GUI.color=new Color(.075f,.032f,.026f,.78f);GUI.DrawTexture(cell,Texture2D.whiteTexture);
             GUI.color=color;float fill=Mathf.Clamp01(value*8-i);GUI.DrawTexture(new Rect(cell.x,cell.y,cell.width*fill,cell.height),Texture2D.whiteTexture);
         }
         GUI.color=saved;
-        GUI.Label(new Rect(x,y+11,180,24),label,small);
+        ShadowLabel(new Rect(x,y+11,180,24),label,small);
     }
 
     bool WorldToHud(Vector3 point,Rect safe,float scale,out Vector2 result)
@@ -284,7 +284,7 @@ public partial class ThanhGiongCampaignHUD
             GUI.color=selected?Gold:Paper;
             if(selected)DrawHudArc(pos+new Vector2(0,-10),18,1,Gold,1.5f);
             string text=enemy.IsStuckInGround?"SƠ HỞ · PHẢN CÔNG":warning?"NÉ ĐÒN!":enemy.enemyName;
-            GUI.Label(new Rect(pos.x-100,pos.y+8,200,22),text,adventureWorld);
+            ShadowLabel(new Rect(pos.x-100,pos.y+8,200,22),text,adventureWorld);
             if(selected)ThinBar(new Rect(pos.x-37,pos.y+32,74,3),enemy.HealthRatio,Gold);
         }
         foreach(DamageLabel label in damageLabels)
@@ -293,7 +293,7 @@ public partial class ThanhGiongCampaignHUD
             if(!WorldToHud(label.point+Vector3.up*age*.85f,safe,scale,out Vector2 pos)||pos.x<0||pos.x>w||pos.y<0||pos.y>h)continue;
             GUI.color=new Color(1,1,1,Mathf.Clamp01((1.15f-age)/.35f));
             adventureNumber.normal.textColor=label.critical?Gold:Paper;
-            GUI.Label(new Rect(pos.x-45,pos.y-13,90,30),Mathf.CeilToInt(label.amount).ToString(),adventureNumber);
+            ShadowLabel(new Rect(pos.x-45,pos.y-13,90,30),Mathf.CeilToInt(label.amount).ToString(),adventureNumber);
         }
         // Nearby resources provide context without inventing NPC dialogue.
         ThanhGiongCollectible closest=null;float nearest=4.5f*4.5f;
@@ -307,11 +307,11 @@ public partial class ThanhGiongCampaignHUD
         {
             GUI.color=saved;
             Rect prompt=new Rect(Mathf.Clamp(at.x-230,20,w-240),Mathf.Clamp(at.y+45,160,h-90),220,35);
-            GUI.color=new Color(.015f,.06f,.065f,.66f);GUI.DrawTexture(prompt,Texture2D.whiteTexture);GUI.color=saved;
+            GUI.color=new Color(.075f,.032f,.026f,.66f);GUI.color=saved;
             string resourcePrompt=closest.kind==ThanhGiongCollectible.Kind.Bamboo
                 ?(campaign.IsBattleActive&&campaign.CurrentWeapon==ThanhGiongCampaignController.Weapon.None?"E · NHỔ TRE (3 NHỊP)":"TRE NGÀ")
                 :closest.displayName;
-            GUI.Label(prompt,resourcePrompt,adventureWorld);
+            ShadowLabel(prompt,resourcePrompt,adventureWorld);
         }
         GUI.color=saved;
     }
@@ -355,13 +355,13 @@ public partial class ThanhGiongCampaignHUD
             }
             GUI.DrawTexture(new Rect(center.x-radius,center.y-radius,radius*2,radius*2),mapCircle,ScaleMode.StretchToFill,true);
         }
-        DrawHudArc(center,radius+5,1,Gold,2);DrawHudArc(center,radius-1,1,new Color(Gold.r,Gold.g,Gold.b,.45f),1);
+        DrawHudArc(center,radius+4,1,new Color(Gold.r,Gold.g,Gold.b,.7f),1);
         for(int i=0;i<24;i++)
         {
             float a=i*Mathf.PI/12;Vector2 ray=new Vector2(Mathf.Sin(a),-Mathf.Cos(a));
             DrawHudLine(center+ray*(radius+2),center+ray*(radius+7),new Color(Gold.r,Gold.g,Gold.b,.8f),i%3==0?2:1);
         }
-        GUI.Label(new Rect(center.x-10,center.y-radius-23,20,20),"B",adventureCentered); // Bắc / north.
+        ShadowLabel(new Rect(center.x-10,center.y-radius-23,20,20),"B",adventureCentered); // Bắc / north.
         foreach(ThanhGiongCollectible item in mapResources)
             if(item!=null&&!item.IsCollected&&item.gameObject.activeInHierarchy)DrawMapPin(center,radius,item.transform.position,new Color(.51f,.85f,.44f),3,false);
         foreach(ThanhGiongImprovisedWeapon item in mapThrowables)
@@ -384,8 +384,8 @@ public partial class ThanhGiongCampaignHUD
         DrawHudLine(center-ahead*4-side*4,center-ahead*4+side*4,Paper,2);
         GUI.color=saved;
         Vector3 position=campaign.transform.position;
-        GUI.Label(new Rect(center.x-105,center.y+radius+11,210,18),$"{position.x:0}, {position.z:0} · Cao {position.y:0}m",adventureCentered);
-        GUI.Label(new Rect(center.x-108,center.y+radius+29,216,18),campaign.openWorldCampaign!=null?"Vàng: tài nguyên · Cam: lò rèn":"Đỏ: giặc · Lục: vật phẩm · Lam: cổng",adventureCentered);
+        ShadowLabel(new Rect(center.x-105,center.y+radius+11,210,18),$"{position.x:0}, {position.z:0} · Cao {position.y:0}m",adventureCentered);
+        ShadowLabel(new Rect(center.x-108,center.y+radius+29,216,18),campaign.openWorldCampaign!=null?"Vàng: tài nguyên · Cam: lò rèn":"Đỏ: giặc · Lục: vật phẩm · Lam: cổng",adventureCentered);
     }
 
     void DrawMapPin(Vector2 center,float radius,Vector3 world,Color color,float size,bool clampEdge)
@@ -394,7 +394,7 @@ public partial class ThanhGiongCampaignHUD
         Vector2 offset=new Vector2(delta.x,-delta.z)*(radius/Mathf.Max(15,minimapRange));
         if(offset.magnitude>radius-8){if(!clampEdge)return;offset=offset.normalized*(radius-8);}
         Vector2 point=center+offset;Color saved=GUI.color;
-        GUI.color=new Color(.015f,.025f,.02f,.85f);GUI.DrawTexture(new Rect(point.x-size-1,point.y-size-1,size*2+2,size*2+2),mapDisc);
+        GUI.color=new Color(.06f,.025f,.02f,.85f);GUI.DrawTexture(new Rect(point.x-size-1,point.y-size-1,size*2+2,size*2+2),mapDisc);
         GUI.color=color;GUI.DrawTexture(new Rect(point.x-size,point.y-size,size*2,size*2),mapDisc);GUI.color=saved;
     }
 

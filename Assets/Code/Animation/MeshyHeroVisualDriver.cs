@@ -75,8 +75,12 @@ public sealed class MeshyHeroVisualDriver : MonoBehaviour
 
     private void EnsureMountedCombatPose()
     {
-        if (meshyRoot != null && meshyRoot.GetComponent<MeshyMountedCombatPose>() == null)
+        if (meshyRoot == null) return;
+        if (meshyRoot.GetComponent<MeshyMountedCombatPose>() == null)
             meshyRoot.gameObject.AddComponent<MeshyMountedCombatPose>();
+        MeshyHeroEquipment equipment = meshyRoot.GetComponent<MeshyHeroEquipment>();
+        if (equipment == null) equipment = meshyRoot.gameObject.AddComponent<MeshyHeroEquipment>();
+        if (meshyHero != null) equipment.Build(meshyHero);
     }
 
     public void BindReferences()
