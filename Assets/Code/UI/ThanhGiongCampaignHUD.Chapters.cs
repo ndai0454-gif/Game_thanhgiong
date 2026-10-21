@@ -3,7 +3,7 @@ using UnityEngine;
 // Four narrative chapters share the existing six-scene campaign and actual game state.
 public partial class ThanhGiongCampaignHUD
 {
-    private GUIStyle chapterHeading, chapterKicker, chapterCentered, chapterAction;
+    private GUIStyle chapterHeading, chapterKicker, chapterCentered, chapterAction, chapterSubtitle;
     private static readonly string[] NarrativeTitles = {
         "TIẾNG GỌI PHÙ ĐỔNG", "LỬA RÈN VÀNG SON", "TRE NGÀ GIỮ NƯỚC", "DẤU CHÂN BẤT TỬ"
     };
@@ -32,6 +32,7 @@ public partial class ThanhGiongCampaignHUD
         chapterKicker=Style(16,Gold); chapterKicker.alignment=TextAnchor.MiddleCenter;
         chapterCentered=Style(18,Muted); chapterCentered.alignment=TextAnchor.MiddleCenter;
         chapterAction=Style(20,Paper,true); chapterAction.alignment=TextAnchor.MiddleCenter;
+        chapterSubtitle=Style(15,AncientPaper); chapterSubtitle.alignment=TextAnchor.UpperCenter; chapterSubtitle.wordWrap=true;
     }
 
     private void DrawChapterHUD(float w,float h)
@@ -64,9 +65,15 @@ public partial class ThanhGiongCampaignHUD
             float a = Mathf.Clamp01(elapsed / 0.6f) * Mathf.Clamp01(remaining / 0.6f);
             a = a * a * (3f - 2f * a);
             if (a > 0.001f) {
+                string sub = RegionSubtitle();
+                float subWidth = 780f;
+                float subHeight = Mathf.Max(26f, chapterSubtitle.CalcHeight(new GUIContent(sub), subWidth));
+                float bannerWidth = 840f;
+                float bannerHeight = 132f + subHeight;
                 float startY = h * 0.38f - 40f;
+
                 // Black Myth cinematic chapter banner
-                Rect bannerRect = new Rect((w - 780)/2, startY - 14, 780, 142);
+                Rect bannerRect = new Rect((w - bannerWidth)/2, startY - 14, bannerWidth, bannerHeight);
                 DrawMysticPanel(bannerRect, new Color(Obsidian.r, Obsidian.g, Obsidian.b, a * 0.92f), new Color(MutedBronze.r, MutedBronze.g, MutedBronze.b, a * 0.70f), true);
 
                 GUI.color = new Color(Gold.r, Gold.g, Gold.b, a);
@@ -78,8 +85,8 @@ public partial class ThanhGiongCampaignHUD
                 float lineY = startY + 86f;
                 Color lineCol = new Color(accent.r, accent.g, accent.b, a * 0.85f);
                 Color goldCol = new Color(Gold.r, Gold.g, Gold.b, a);
-                DrawHudLine(new Vector2(w*.5f-220, lineY), new Vector2(w*.5f-18, lineY), lineCol, 1.5f);
-                DrawHudLine(new Vector2(w*.5f+18, lineY), new Vector2(w*.5f+220, lineY), lineCol, 1.5f);
+                DrawHudLine(new Vector2(w*.5f-240, lineY), new Vector2(w*.5f-18, lineY), lineCol, 1.5f);
+                DrawHudLine(new Vector2(w*.5f+18, lineY), new Vector2(w*.5f+240, lineY), lineCol, 1.5f);
                 // Calligraphic diamond center crest
                 DrawHudLine(new Vector2(w*.5f, lineY-5), new Vector2(w*.5f+6, lineY), goldCol, 1.8f);
                 DrawHudLine(new Vector2(w*.5f+6, lineY), new Vector2(w*.5f, lineY+5), goldCol, 1.8f);
@@ -87,7 +94,7 @@ public partial class ThanhGiongCampaignHUD
                 DrawHudLine(new Vector2(w*.5f-6, lineY), new Vector2(w*.5f, lineY-5), goldCol, 1.8f);
 
                 GUI.color = new Color(AncientPaper.r, AncientPaper.g, AncientPaper.b, a * 0.95f);
-                ShadowLabel(new Rect((w-660)/2, lineY + 10, 660, 30), RegionSubtitle(), chapterCentered);
+                ShadowLabel(new Rect((w-subWidth)/2, lineY + 10, subWidth, subHeight + 4), sub, chapterSubtitle);
             }
         }
         GUI.color=saved;

@@ -12,6 +12,12 @@ public static class ThanhGiongWorldSolids
         "NhaTranh_", "CongLang_", "ThapCanh_", "LoRenThep_", "DenThieng_", "LeuTrai_", "SanDinh_"
     };
 
+    [MenuItem("Tools/Thanh Giong/Open World/Them Nha Cua Va Doanh Trai (Populate Settlements)", false, 1)]
+    public static void PopulateSettlementsMenu()
+    {
+        ThanhGiongSettlementPopulator.PopulateMenu();
+    }
+
     [MenuItem("Tools/Thanh Giong/Open World/Enlarge Buildings And Repair Collision")]
     public static void RepairActiveScene()
     {
