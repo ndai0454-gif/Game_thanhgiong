@@ -50,6 +50,9 @@ public class ThanhGiongRibbonCape : MonoBehaviour
     private MountedHorseController horseController;
     private float sparkTimer;
 
+    [Header("Material Override")]
+    public Material customRibbonMaterial;
+
     private void Awake()
     {
         horseController = GetComponent<MountedHorseController>();
@@ -69,7 +72,27 @@ public class ThanhGiongRibbonCape : MonoBehaviour
 
     private void InitializeRibbonMaterial()
     {
-        Shader shader = Shader.Find("Sprites/Default");
+        if (customRibbonMaterial != null)
+        {
+            ribbonMaterial = new Material(customRibbonMaterial)
+            {
+                name = "ThanhGiong_RibbonSilk_Mat_Instance"
+            };
+            return;
+        }
+
+        Material loadedMat = Resources.Load<Material>("Materials/Hero_Scarf_Red");
+        if (loadedMat != null)
+        {
+            ribbonMaterial = new Material(loadedMat)
+            {
+                name = "ThanhGiong_RibbonSilk_Mat_Loaded"
+            };
+            return;
+        }
+
+        Shader shader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+        if (shader == null) shader = Shader.Find("Sprites/Default");
         if (shader == null) shader = Shader.Find("Universal Render Pipeline/Unlit");
         if (shader == null) shader = Shader.Find("Standard");
 
