@@ -31,19 +31,27 @@ namespace ThanhGiong.EditorTools
         public sealed class RoleDefinition
         {
             public readonly string Name, Field, Source, Idle;
-            public readonly float SourceContact, StrikeContact;
-            public float SourceWindupEnd { get { return Mathf.Max(.05f, SourceContact - .14f); } }
-            public float SourceStrikeEnd { get { return Mathf.Min(.92f, SourceContact + .16f); } }
-            public RoleDefinition(string name, string field, string source, string idle, float contact, float strikeContact)
-            { Name = name; Field = field; Source = source; Idle = idle; SourceContact = contact; StrikeContact = strikeContact; }
+            public readonly float WindupStart, SourceWindupEnd, SourceContact, SourceStrikeEnd, StrikeContact;
+            public RoleDefinition(string name, string field, string source, string idle, float windupStart, float windupEnd, float contact, float strikeEnd, float strikeContact)
+            {
+                Name = name;
+                Field = field;
+                Source = source;
+                Idle = idle;
+                WindupStart = windupStart;
+                SourceWindupEnd = windupEnd;
+                SourceContact = contact;
+                SourceStrikeEnd = strikeEnd;
+                StrikeContact = strikeContact;
+            }
         }
-        // Contact estimates are deliberately explicit, allowing Play-mode comparison with damage frames.
+        // Measured directly from Enemy_ActionForge.fbx hand trajectories relative to hips.
         public static readonly RoleDefinition[] Roles = {
-            new RoleDefinition("Spearman", "spearman", "sword_regular_c_fit", "sword_idle_fit", .45f, .10f),
-            new RoleDefinition("ShieldBearer", "shieldBearer", "shield_oneshot_fit", "idle_shield_loop_fit", .45f, .10f),
-            new RoleDefinition("Archer", "archer", "overhandthrow_fit", "idle_loop_fit", .60f, .30f),
-            new RoleDefinition("Raider", "raider", "sword_regular_b_fit", "sword_idle_fit", .45f, .10f),
-            new RoleDefinition("Boss", "boss", "sword_attack_fit", "sword_idle_fit", .40f, .35484f)
+            new RoleDefinition("Spearman", "spearman", "sword_regular_c_fit", "sword_idle_fit", .08f, .30f, .36f, .68f, .25f),
+            new RoleDefinition("ShieldBearer", "shieldBearer", "shield_oneshot_fit", "idle_shield_loop_fit", .00f, .22f, .45f, .78f, .25f),
+            new RoleDefinition("Archer", "archer", "overhandthrow_fit", "idle_loop_fit", .00f, .20f, .32f, .60f, .30f),
+            new RoleDefinition("Raider", "raider", "sword_regular_b_fit", "sword_idle_fit", .00f, .32f, .48f, .72f, .25f),
+            new RoleDefinition("Boss", "boss", "sword_attack_fit", "sword_idle_fit", .00f, .20f, .35f, .65f, .35484f)
         };
 
         [MenuItem("Tools/Thánh Gióng/ActionForge/Build All Enemy Animations")]
@@ -59,6 +67,7 @@ namespace ThanhGiong.EditorTools
             string[] required = { "idle_loop_fit", "walk_loop_fit", "jog_fwd_loop_fit", "sprint_loop_fit", "hit_chest_fit", "death01_fit" };
             foreach (var name in required.Concat(Roles.SelectMany(r => new[] { r.Source, r.Idle })).Distinct())
                 if (!sourceClips.ContainsKey(name)) throw new InvalidOperationException("Missing ActionForge clip: " + name);
+            EnsureEffectMaterials();
             var report = new List<string> { "ActionForge enemy bake: " + DateTime.UtcNow.ToString("O"), "Source: " + SourcePath,
                 "22 bone rotations; no object/root/hip translation or scale tracks. Generic exact-path controllers." };
             for (int family = 0; family < FamilyNames.Length; family++)
@@ -82,7 +91,7 @@ namespace ThanhGiong.EditorTools
                         var action = sourceClips[role.Source];
                         var idle = sourceClips[role.Idle];
                         SaveClip(baker.Bake(idle, role.Name + " Idle", p => p, true), ClipPath(name, role.Name, "Idle"));
-                        SaveClip(baker.Bake(action, role.Name + " Windup", p => p * role.SourceWindupEnd, false), ClipPath(name, role.Name, "Windup"));
+                        SaveClip(baker.Bake(action, role.Name + " Windup", p => Mathf.Lerp(role.WindupStart, role.SourceWindupEnd, p), false), ClipPath(name, role.Name, "Windup"));
                         SaveClip(baker.Bake(action, role.Name + " Strike", p => p <= role.StrikeContact
                             ? Mathf.Lerp(role.SourceWindupEnd, role.SourceContact, p / role.StrikeContact)
                             : Mathf.Lerp(role.SourceContact, role.SourceStrikeEnd, (p - role.StrikeContact) / (1f - role.StrikeContact)), false,
@@ -94,18 +103,85 @@ namespace ThanhGiong.EditorTools
                         SaveClip(baker.Bake(sourceClips["death01_fit"], role.Name + " Death", p => p, false), ClipPath(name, role.Name, "Death"));
                         BuildController(name, role);
                         report.Add(name + "/" + role.Name + ": " + role.Source + "; source contact=" + role.SourceContact.ToString("F5")
-                            + "; strike contact=" + role.StrikeContact.ToString("F5") + "; windup end=" + role.SourceWindupEnd.ToString("F5")
+                            + "; strike contact=" + role.StrikeContact.ToString("F5") + "; windup=" + role.WindupStart.ToString("F5") + "->" + role.SourceWindupEnd.ToString("F5")
                             + "; strike end=" + role.SourceStrikeEnd.ToString("F5"));
                     }
                     report.Add(name + ": maximum sampled rotation alignment error=" + baker.MaxAlignmentError.ToString("F5") + " degrees.");
                 }
                 SaveMotionSet(name);
             }
+            AssignPrefabsAndSceneEnemies();
             AssetDatabase.SaveAssets();
             report.Add(Verify());
             Directory.CreateDirectory(Path.GetDirectoryName(ReportPath));
             File.WriteAllLines(ReportPath, report);
             return string.Join("\n", report);
+        }
+
+        static void EnsureEffectMaterials()
+        {
+            const string folder = "Assets/Resources/ActionForge/EnemyEffects";
+            EnsureFolder(folder);
+            Shader shader = Shader.Find("Sprites/Default") ?? Shader.Find("Universal Render Pipeline/Particles/Unlit") ?? Shader.Find("Unlit/Color");
+            if (shader == null) return;
+            EnsureMaterial(folder + "/Swipe.mat", shader, new Color(1f, 0.72f, 0.28f, 0.92f));
+            EnsureMaterial(folder + "/SoftParticle.mat", shader, Color.white);
+        }
+
+        static void EnsureMaterial(string path, Shader shader, Color color)
+        {
+            var mat = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (mat == null)
+            {
+                mat = new Material(shader) { color = color };
+                AssetDatabase.CreateAsset(mat, path);
+            }
+            else
+            {
+                mat.shader = shader;
+                mat.color = color;
+                EditorUtility.SetDirty(mat);
+            }
+        }
+
+        static void AssignPrefabsAndSceneEnemies()
+        {
+            var barbSpearman = AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath("Barbarian", "Spearman"));
+            var knightBoss = AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath("Knight", "Boss"));
+
+            var barbPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPaths[0]);
+            if (barbPrefab != null && barbSpearman != null)
+            {
+                var anim = barbPrefab.GetComponentInChildren<Animator>(true);
+                if (anim != null && anim.runtimeAnimatorController != barbSpearman)
+                {
+                    anim.runtimeAnimatorController = barbSpearman;
+                    EditorUtility.SetDirty(barbPrefab);
+                }
+            }
+
+            foreach (var bossPrefabPath in new[] { PrefabPaths[1], "Assets/Prefabs/Enemies/KayKit_Knight_Boss_An.prefab" })
+            {
+                var bossPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(bossPrefabPath);
+                if (bossPrefab != null && knightBoss != null)
+                {
+                    var anim = bossPrefab.GetComponentInChildren<Animator>(true);
+                    if (anim != null && anim.runtimeAnimatorController != knightBoss)
+                    {
+                        anim.runtimeAnimatorController = knightBoss;
+                        EditorUtility.SetDirty(bossPrefab);
+                    }
+                }
+            }
+
+            foreach (var enemy in UnityEngine.Object.FindObjectsByType<ThanhGiongEnemy>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                var driver = enemy.GetComponent<ThanhGiongEnemyAnimationDriver>() ?? enemy.gameObject.AddComponent<ThanhGiongEnemyAnimationDriver>();
+                if (enemy.GetComponent<ActionForgeEnemyEffects>() == null)
+                    enemy.gameObject.AddComponent<ActionForgeEnemyEffects>();
+                driver.RebindAnimator();
+                EditorUtility.SetDirty(enemy.gameObject);
+            }
         }
 
         public static string ControllerPath(string family, string role) { return GeneratedFolder + "/" + family + "/" + role + ".controller"; }

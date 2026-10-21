@@ -14,6 +14,7 @@
 *.sln
 *.slnx
 *.user
+.vsconfig
 *.tmp
 *.log
 *.pidb
@@ -49,9 +50,31 @@ IsometricVerification/
 CombatBambooVerification/
 HorseRepairVerification/
 MountedCombatVerification/
+ActionForgeEnemyVerification/
+AdventureVerification/
+CharacterMeshVerification/
+GiacAnGeneralVerification/
+OpenWorldVerification/
+QinSoldierVerification/
+Assets/Generated/OpenWorld/BiomeDecor_blue_forest_0.asset
+Assets/Generated/OpenWorld/BiomeDecor_blue_forest_0.asset.meta
 Assets/Temp/
 Assets/Temp.meta
 Assets/UnitySkillsTests_Temp/
 Assets/UnitySkillsTests_Temp.meta
 Assets/_Recovery/
 Assets/_Recovery.meta
+
+# Claude Code Game Studios local state
+.claude/settings.local.json
+CLAUDE.local.md
+project.local.yaml
+production/session-logs/
+production/session-state/
+.scratch/
+.claude/agent-memory/
+RollbackBackups/
+AudioBackup_Original_*/
+
+# Claude Code worktrees
+.claude/worktrees/

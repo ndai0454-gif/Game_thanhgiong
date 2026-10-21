@@ -6,14 +6,16 @@ using UnityEngine;
 /// <summary>Installer helper: attaches existing KayKit animated art to an existing gameplay actor.</summary>
 public static class LegendEnemyArt
 {
-    public const string SoldierAsset = "Assets/Prefabs/Enemies/KayKit_Barbarian_Soldier.prefab";
-    public const string BossAsset = "Assets/Prefabs/Enemies/KayKitKnightBoss/KayKit_Knight_Boss_Visual.prefab";
+    public const string SoldierAsset = "Assets/Prefabs/Enemies/QinSoldier_Meshy.prefab";
+    public const string BossAsset = "Assets/Prefabs/Enemies/GiacAnGeneral_Meshy.prefab";
     const string ModelName = "Legend Enemy Model";
 
     public static bool Apply(ThanhGiongEnemy enemy)
     {
         if (enemy == null) return false;
         if (EditorApplication.isPlaying) throw new InvalidOperationException("Apply enemy art in Edit mode before gameplay Awake caches its Visual pivot.");
+        if (enemy.isBoss) return ThanhGiong.EditorTools.GiacAnGeneralCampaignInstaller.ApplyBoss(enemy);
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(SoldierAsset) != null) return ThanhGiong.EditorTools.QinSoldierCampaignInstaller.ApplySoldier(enemy);
         Transform visual = enemy.transform.Find("Visual");
         if (visual == null) { GameObject pivot = new GameObject("Visual"); pivot.transform.SetParent(enemy.transform, false); visual = pivot.transform; }
         LegendEnemyPresentation presentation = enemy.GetComponent<LegendEnemyPresentation>();

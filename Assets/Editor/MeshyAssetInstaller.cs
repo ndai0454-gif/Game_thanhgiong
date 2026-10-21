@@ -509,11 +509,16 @@ namespace ThanhGiong.EditorTools
                 GameObject weapon = (GameObject)PrefabUtility.InstantiatePrefab(spearPrefab);
                 weapon.name = "Weapon_GoldenBamboo";
                 weapon.transform.SetParent(rightHand, false);
-                weapon.transform.localPosition = new Vector3(0f, 0.05f, 0.04f);
-                weapon.transform.localRotation = Quaternion.Euler(75f, 0f, 0f);
+                weapon.transform.localPosition = new Vector3(-0.005f, 0.105f, -0.012f);
+                weapon.transform.localRotation = Quaternion.Euler(78f, 0f, 0f);
                 weapon.transform.localScale = Vector3.one * 0.72f;
 
                 AttachSpearTrailVfx(weapon.transform);
+            }
+
+            foreach (SkinnedMeshRenderer heroSmr in inst.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+            {
+                ThanhGiong.EditorTools.HorseSkinRepair.RepairHeroSkin(heroSmr);
             }
 
             AttachHeroDivineAuraVfx(inst.transform);

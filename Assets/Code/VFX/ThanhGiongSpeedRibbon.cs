@@ -63,6 +63,11 @@ public class ThanhGiongSpeedRibbon : MonoBehaviour
 
     private void LateUpdate()
     {
+        if(Time.timeScale<=0) { previousPosition=motionSource.position; return; }
+        if(Vector3.Distance(motionSource.position,previousPosition)>3f) {
+            previousPosition=motionSource.position;
+            silk.emitting=swordLight.emitting=false; silk.Clear(); swordLight.Clear(); return;
+        }
         float speed = Vector3.Distance(motionSource.position, previousPosition) / Mathf.Max(Time.deltaTime, .0001f);
         previousPosition = motionSource.position;
         float intensity = Mathf.InverseLerp(activationSpeed, fullSpeed, speed);

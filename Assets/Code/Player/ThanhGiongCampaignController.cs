@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(MountedHorseController))]
 [DefaultExecutionOrder(90)]
-public class ThanhGiongCampaignController : MonoBehaviour
+public partial class ThanhGiongCampaignController : MonoBehaviour
 {
     public enum Chapter { Prologue, Preparation, Battle, Ascension, Complete }
     public enum Weapon { None, IronSword, Bamboo, Environment }
@@ -17,6 +17,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
     public Transform ascensionTarget;
     public ThanhGiongCampaignVFX vfx;
     public ThanhGiongCampaignHUD hud;
+    public ThanhGiongSeamlessCampaign openWorldCampaign;
 
     [Header("Balance")]
     public float foodPerGrowth = 100f;
@@ -53,7 +54,19 @@ public class ThanhGiongCampaignController : MonoBehaviour
     public string CenterMessage { get; private set; }
     public ThanhGiongImprovisedWeapon CarriedWeapon { get; private set; }
     public int EquipmentStep => qteIndex;
+    public int BambooPullStep => bambooQte;
+    public float BambooPull01 => CurrentChapter == Chapter.Battle && CurrentWeapon == Weapon.None ? Mathf.Clamp01(bambooQte / 3f) : 0f;
     public bool EquipmentBusy => mountedMotion != null && mountedMotion.IsBusy;
+    public int RequiredBattleKills => Mathf.Max(1, battleEnemyGoal > 0 ? battleEnemyGoal : victoryKills);
+    public float StageCompletion01 => CurrentChapter switch
+    {
+        Chapter.Prologue => Mathf.Clamp01(Food / Mathf.Max(1f, foodPerGrowth * 3f)),
+        Chapter.Preparation => Mathf.Clamp01(qteIndex / 4f),
+        Chapter.Battle => Mathf.Clamp01(Kills / (float)RequiredBattleKills),
+        Chapter.Ascension => Mathf.Clamp01(qteIndex / 3f),
+        Chapter.Complete => 1f,
+        _ => 0f
+    };
     public BambooVariant CurrentBambooVariant { get; private set; } = BambooVariant.Standard;
     public string BambooVariantName => CurrentBambooVariant switch { BambooVariant.SwiftYoung => "Tre Non Nhanh", BambooVariant.HeavyRoot => "Tre Gốc Đại Lực", BambooVariant.FireBamboo => "Tre Ngà Hỏa", _ => "Tre Ngà Chuẩn" };
 
@@ -75,11 +88,11 @@ public class ThanhGiongCampaignController : MonoBehaviour
             if (CurrentChapter == Chapter.Preparation)
                 return $"MỤC TIÊU MÀN 2: Hoàn tất 4 bước trang bị vua ban (Bước {Mathf.Min(qteIndex + 1, 4)}/4): Nhấn E (Mặc giáp) → Q (Đội nón) → E (Lên ngựa sắt) → F (Phun lửa kiểm tra vũ khí)!";
             if (CurrentChapter == Chapter.Battle && CurrentWeapon == Weapon.IronSword)
-                return $"MỤC TIÊU MÀN 3: Càn quét tiền tuyến bằng Thương Sắt (Hạ {Kills}/{victoryKills} giặc). Áp lực giặc tăng theo từng đợt; né đúng nhịp và nhặt đá/cây khi bị vây!";
+                return $"MỤC TIÊU MÀN 3: Càn quét tiền tuyến bằng Thương Sắt (Hạ {Kills}/{RequiredBattleKills} giặc). Phải hoàn thành 100% mới được qua màn!";
             if (CurrentChapter == Chapter.Battle && CurrentWeapon == Weapon.None)
                 return $"CẢNH BÁO: Thương sắt đã gãy! Chạy ngay đến khóm tre ngà phát sáng và nhấn [E] {(3 - bambooQte)} lần nữa để NHỔ TRE TIẾP CHIẾN!";
             if (CurrentChapter == Chapter.Battle)
-                return $"MỤC TIÊU MÀN 3: Dùng Khóm Tre Ngà quét sạch tàn quân & Tướng giặc (Hạ {Kills}/{victoryKills} giặc). Càng về cuối giặc càng áp sát nhanh; tích đủ 100% nhiệt rồi nhấn F phun Hỏa Tuyến!";
+                return $"MỤC TIÊU MÀN 3: Dùng Khóm Tre Ngà quét sạch 100% quân địch (Hạ {Kills}/{RequiredBattleKills}). Càng về cuối giặc càng áp sát nhanh!";
             if (CurrentChapter == Chapter.Ascension)
                 return $"MỤC TIÊU MÀN 4: Nghi thức cởi giáp trên đỉnh Núi Sóc (Bước {Mathf.Min(qteIndex + 1, 3)}/3): Nhấn E → Q → E đặt từng mảnh giáp sắt xuống núi rồi bay về trời!";
             return "Hoàn thành đại nghiệp cứu quốc. Non sông thái bình, truyền thuyết Thánh Gióng sống mãi muôn đời.";
@@ -90,7 +103,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
     {
         Chapter.Prologue => $"Tiến độ: Lương thực {Mathf.RoundToInt(Food)}/{foodPerGrowth * 3f}  ·  Thể chất: Bậc {GrowthPhase + 1}/4" + (Food >= foodPerGrowth * 3f ? " [HOÀN THÀNH - ĐANG CHUYỂN MÀN 2...]" : ""),
         Chapter.Preparation => $"Tiến độ: Trang bị {qteIndex}/4 bước  ·  Trạng thái: " + (qteIndex switch { 0 => "Chờ mặc giáp [E]", 1 => "Đã mặc giáp vàng -> Chờ đội nón [Q]", 2 => "Đã đội nón sắt -> Chờ lên ngựa [E]", 3 => "Đã lên ngựa sắt -> Nhấn [F] phun lửa xuất quân!", _ => "Sẵn sàng xuất trận!" }),
-        Chapter.Battle => $"Tiến độ: Hạ địch {Kills}/{victoryKills}  ·  Áp lực: {Mathf.RoundToInt(BattlePressure01 * 100)}%  ·  Vũ khí: {WeaponName}  ·  Nhiệt lượng: {Mathf.RoundToInt(Heat01 * 100)}%" + (CarriedWeapon != null ? "  [Đang vác vật thể]" : ""),
+        Chapter.Battle => $"Tiến độ: Hạ địch {Kills}/{RequiredBattleKills} ({Mathf.RoundToInt(StageCompletion01 * 100f)}%)  ·  Áp lực: {Mathf.RoundToInt(BattlePressure01 * 100)}%  ·  Vũ khí: {WeaponName}" + (CarriedWeapon != null ? "  [Đang vác vật thể]" : ""),
         Chapter.Ascension => $"Tiến độ: Cởi giáp {qteIndex}/3 bước  ·  Địa điểm: Đỉnh Núi Sóc",
         _ => "Hoàn thành đại nghiệp cứu quốc · Đất nước thái bình"
     };
@@ -157,16 +170,20 @@ public class ThanhGiongCampaignController : MonoBehaviour
     private readonly HashSet<ThanhGiongEnemy> struckEnemies = new HashSet<ThanhGiongEnemy>();
     private readonly Dictionary<ThanhGiongEnemy, float> chargeHits = new Dictionary<ThanhGiongEnemy, float>();
     private Vector3 originalScale;
+    private Transform growthVisual;
+    private Vector3 originalGrowthVisualScale;
     private float nextAttackTime;
     private float battleStartedAt;
     private float lotusWardUntil;
     private int comboBeat;
     private float comboUntil;
     private Coroutine pendingStrike;
+    private Coroutine growthScaleRoutine;
     public int ComboBeat => comboBeat;
     public bool AttackPending => pendingStrike != null;
     private int qteIndex;
     private int bambooQte;
+    private int battleEnemyGoal;
     private bool isTransitioning;
     private Coroutine clearMessageRoutine;
     private float hurtUntil;
@@ -182,12 +199,21 @@ public class ThanhGiongCampaignController : MonoBehaviour
         combatFeedback = GetComponent<GodotCombatFeedback>();
         if (combatFeedback == null) combatFeedback = gameObject.AddComponent<GodotCombatFeedback>();
         originalScale = transform.localScale;
+        growthVisual = transform;
+        foreach (Transform child in GetComponentsInChildren<Transform>(true))
+        {
+            if (child.name != "ThanhGiong_Hero_Meshy") continue;
+            growthVisual = child;
+            break;
+        }
+        originalGrowthVisualScale = growthVisual.localScale;
         Health = maxHealth;
         battleSpawn = transform.position;
         battleSpawnRotation = transform.rotation;
         if (vfx == null) vfx = FindAnyObjectByType<ThanhGiongCampaignVFX>();
         if (hud == null) hud = FindAnyObjectByType<ThanhGiongCampaignHUD>();
         if (hud != null) hud.campaign = this;
+        RefreshBattleGoal();
         RegisterSceneBambooGroves();
     }
 
@@ -211,8 +237,11 @@ public class ThanhGiongCampaignController : MonoBehaviour
 
     private void Update()
     {
+        if (openWorldCampaign != null && openWorldCampaign.world != null && openWorldCampaign.world.MapOpen) return;
+        if (openWorldCampaign != null && !openWorldCampaign.CanPerformRitual) return;
         if (isTransitioning || Time.timeScale <= 0) return;
         if (IsDead) {
+            if(openWorldCampaign!=null){if(!openWorldCampaign.world.IsRecovering)openWorldCampaign.world.HandleDefeat();return;}
             if (Input.GetKeyDown(KeyCode.R)) {
                 LegendCheckpoint checkpoint = GetComponent<LegendCheckpoint>();
                 if (checkpoint == null || !checkpoint.RestartCheckpoint()) RestartBattle();
@@ -232,7 +261,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
         if (cc != null) cc.enabled = false;
         transform.position = destinationPosition;
         if (cc != null) cc.enabled = true;
-        IsometricCameraFollow.Instance?.SnapToTarget();
+        if (Time.timeScale > 0f) IsometricCameraFollow.Instance?.SnapToTarget();
     }
 
     public void WarpToChapter(Chapter targetChapter, Vector3? destinationPosition = null)
@@ -263,7 +292,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
 
             case Chapter.Preparation:
                 GrowthPhase = 3;
-                ApplyGrowthScale();
+                ApplyGrowthScale(true);
                 CurrentWeapon = Weapon.None;
                 if (battleRoot != null) battleRoot.SetActive(false);
                 if (bambooRoot != null) bambooRoot.SetActive(false);
@@ -319,12 +348,12 @@ public class ThanhGiongCampaignController : MonoBehaviour
         {
             if (isTransitioning) return false;
 
-            Food += item.foodValue;
+            Food = Mathf.Min(foodPerGrowth * 3f, Food + item.foodValue);
             int phase = Mathf.Clamp(Mathf.FloorToInt(Food / foodPerGrowth), 0, 3);
             if (phase > GrowthPhase)
             {
                 GrowthPhase = phase;
-                ApplyGrowthScale();
+                ApplyGrowthScale(true);
                 vfx?.PlayGrowth(transform);
                 audioFx?.PlayGrowth();
 
@@ -366,6 +395,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
         {
             bambooQte++;
             GetComponentInChildren<MeshyMountedCombatPose>(true)?.PlayBambooPull(item.transform.position);
+            item.GetComponentInChildren<VietnameseBambooMotion>(true)?.ReactToPull(transform.position);
             audioFx?.PlayBambooPull();
             vfx?.PlayFoodBurst(item.transform.position, item.GetAuraColor());
             IsometricCameraFollow.Instance?.Shake(0.25f + bambooQte * 0.08f, 0.45f + bambooQte * 0.08f);
@@ -395,15 +425,16 @@ public class ThanhGiongCampaignController : MonoBehaviour
         ThanhGiongRoofCollapse[] roofs = FindObjectsByType<ThanhGiongRoofCollapse>();
         foreach (var r in roofs)
         {
+            if(openWorldCampaign!=null&&(r.transform.position-openWorldCampaign.world.safeSpawn).sqrMagnitude>80f*80f)continue;
             r.Collapse();
         }
     }
 
-    private void UpdateEquipQte()
+    private void UpdateEquipQte(KeyCode? requestedKey = null)
     {
-        if (isTransitioning) return;
+        if (isTransitioning || EquipmentBusy) return;
 
-        if (qteIndex < equipQte.Length && Input.GetKeyDown(equipQte[qteIndex]))
+        if (qteIndex < equipQte.Length && (requestedKey.HasValue ? requestedKey.Value==equipQte[qteIndex] : Input.GetKeyDown(equipQte[qteIndex])))
         {
             qteIndex++;
             if (qteIndex == 1) mountedMotion?.PlayEquipment("equip_armor");
@@ -423,7 +454,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
             }
         }
 
-        if (qteIndex == equipQte.Length && Input.GetKeyDown(KeyCode.F))
+        if (qteIndex == equipQte.Length && (requestedKey.HasValue ? requestedKey.Value==KeyCode.F : Input.GetKeyDown(KeyCode.F)))
         {
             qteIndex = 4;
             StartCoroutine(CompleteStage2AndTransition());
@@ -434,7 +465,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
     {
         UpdateCharge();
         // Check picking up improvised weapons
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.L))
         {
             if (CurrentWeapon == Weapon.None && TryPullNearestBamboo()) return;
             if (CarriedWeapon == null) TryPickUpImprovisedWeapon();
@@ -445,13 +476,17 @@ public class ThanhGiongCampaignController : MonoBehaviour
         {
             if (CarriedWeapon != null)
             {
-                CarriedWeapon.Throw(transform.forward);
+                var aim = GetComponent<AdventureAimController>();
+                if (aim != null && aim.IsAiming) { aim.UpdateSolution(); CarriedWeapon.Launch(aim.LaunchVelocity, transform); }
+                else CarriedWeapon.Throw(transform.forward);
                 CarriedWeapon = null;
                 audioFx?.PlayStoneSmash();
                 ShowMessage("NÉM VŨ KHÍ MÔI TRƯỜNG!", 1.2f);
                 return;
             }
-            TryMeleeAttack();
+            var bambooAim = GetComponent<AdventureAimController>();
+            if (bambooAim != null && bambooAim.IsAiming && CurrentWeapon == Weapon.Bamboo) bambooAim.TryFireBamboo();
+            else TryMeleeAttack();
         }
 
         if (Input.GetKeyDown(KeyCode.F) && Heat >= maxHeat) CastFireLine();
@@ -482,6 +517,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
             audioFx?.PlayImpact(false);
             applied++;
         }
+        if (applied > 0) IsometricCameraFollow.Instance?.Shake(0.18f, 0.36f);
         return applied;
     }
 
@@ -707,6 +743,25 @@ public class ThanhGiongCampaignController : MonoBehaviour
         }
     }
 
+    private ThanhGiongEnemy FindMeleeSoftLockTarget(float maxDistance, float maxAngle)
+    {
+        ThanhGiongEnemy best = null;
+        float bestScore = float.MaxValue;
+        int count = Physics.OverlapSphereNonAlloc(transform.position + Vector3.up * .8f, maxDistance, hits, ~0, QueryTriggerInteraction.Ignore);
+        for (int i = 0; i < count; i++)
+        {
+            ThanhGiongEnemy enemy = hits[i].GetComponentInParent<ThanhGiongEnemy>();
+            if (enemy == null || enemy.HealthRatio <= 0f || !enemy.gameObject.activeInHierarchy) continue;
+            Vector3 flat = Vector3.ProjectOnPlane(enemy.transform.position - transform.position, Vector3.up);
+            if (flat.sqrMagnitude < .01f) continue;
+            float angle = Vector3.Angle(transform.forward, flat);
+            if (angle > maxAngle) continue;
+            float score = angle + flat.magnitude * 2f;
+            if (score < bestScore) { bestScore = score; best = enemy; }
+        }
+        return best;
+    }
+
     public bool TryMeleeAttack()
     {
         if(!IsBattleActive||Time.timeScale<=0||CurrentWeapon==Weapon.None||EquipmentBusy||movement.IsDodging||Time.time<nextAttackTime)return false;
@@ -716,6 +771,12 @@ public class ThanhGiongCampaignController : MonoBehaviour
     private void Attack()
     {
         if (CurrentWeapon == Weapon.None || movement.IsDodging) return;
+        var softTarget = IsometricCameraFollow.Instance != null ? IsometricCameraFollow.Instance.SoftLockTarget : null;
+        if (softTarget == null) softTarget = FindMeleeSoftLockTarget(7.5f, 42f);
+        if (softTarget != null && Vector3.Distance(transform.position, softTarget.transform.position) < 7f) {
+            Vector3 facing = Vector3.ProjectOnPlane(softTarget.transform.position - transform.position, Vector3.up);
+            if (facing.sqrMagnitude > .01f) transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(facing), 25f);
+        }
         bool bambooAttack = CurrentWeapon == Weapon.Bamboo;
         MeleeProfile profile = GetMeleeProfile(bambooAttack);
         comboBeat=Time.time<=comboUntil?comboBeat%3+1:1;comboUntil=Time.time+1.1f;
@@ -754,6 +815,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
             if (!struckEnemies.Add(enemy)) continue;
 
             float damage = CalculateMeleeDamage(profile, enemy, flatToEnemy.magnitude, radius, beat);
+            if (openWorldCampaign != null && openWorldCampaign.world != null) damage *= openWorldCampaign.world.CombatDamageMultiplier;
             float impactScale = CalculateImpactScale(profile, damage, enemy, flatToEnemy.magnitude, radius, beat);
             enemy.TakeDamage(damage, profile.Stun, transform.position, impactScale, profile.Bamboo);
             if (profile.Bamboo && CurrentBambooVariant == BambooVariant.FireBamboo)
@@ -810,7 +872,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
     public void NotifyEnemyDefeated(ThanhGiongEnemy enemy)
     {
         if (IsDead) return;
-        Kills++;
+        Kills = Mathf.Min(RequiredBattleKills, Kills + 1);
         Heat = Mathf.Min(maxHeat, Heat + (enemy.isBoss ? 35f : 10f));
 
         if (CurrentWeapon == Weapon.IronSword && Kills >= swordBreakKills)
@@ -826,14 +888,57 @@ public class ThanhGiongCampaignController : MonoBehaviour
             ShowMessage("RẮC! THƯƠNG SẮT GÃY — ĐỨNG CẠNH BẤT KỲ BỤI TRE NÀO VÀ NHẤN E ĐỂ NHỔ TRE NGÀ!", 4f);
         }
 
-        if (Kills >= victoryKills && CurrentWeapon == Weapon.Bamboo && !isTransitioning)
+        if (CurrentChapter == Chapter.Battle && CanAdvanceToNextScene(out _) && !isTransitioning)
         {
             StartCoroutine(CompleteStage3AndTransition());
         }
     }
 
+    public bool CanAdvanceToNextScene(out string reason)
+    {
+        bool complete;
+        switch (CurrentChapter)
+        {
+            case Chapter.Prologue:
+                complete = Food >= foodPerGrowth * 3f && GrowthPhase >= 3;
+                reason = $"Lương thực mới đạt {Mathf.RoundToInt(StageCompletion01 * 100f)}%. Hãy thu thập đủ 100%.";
+                break;
+            case Chapter.Preparation:
+                complete = qteIndex >= 4;
+                reason = $"Trang bị mới đạt {Mathf.RoundToInt(StageCompletion01 * 100f)}%. Hãy hoàn tất cả 4 bước.";
+                break;
+            case Chapter.Battle:
+                complete = Kills >= RequiredBattleKills && CurrentWeapon == Weapon.Bamboo;
+                reason = $"Chiến tuyến mới hoàn thành {Mathf.RoundToInt(StageCompletion01 * 100f)}%. Hãy hạ đủ {RequiredBattleKills} quân địch và nhổ tre tiếp chiến.";
+                break;
+            case Chapter.Ascension:
+                complete = qteIndex >= 3;
+                reason = $"Nghi thức mới đạt {Mathf.RoundToInt(StageCompletion01 * 100f)}%. Hãy hoàn tất đủ 3 bước.";
+                break;
+            case Chapter.Complete:
+                complete = true;
+                reason = string.Empty;
+                break;
+            default:
+                complete = false;
+                reason = "Mục tiêu hiện tại chưa hoàn thành 100%.";
+                break;
+        }
+        if (complete) reason = string.Empty;
+        return complete;
+    }
+
+    private void RefreshBattleGoal()
+    {
+        int count = battleRoot != null
+            ? battleRoot.GetComponentsInChildren<ThanhGiongEnemy>(true).Length
+            : FindObjectsByType<ThanhGiongEnemy>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length;
+        battleEnemyGoal = count > 0 ? count : Mathf.Max(1, victoryKills);
+    }
+
     public bool DamagePlayer(float amount, Vector3 source = default)
     {
+        if (openWorldCampaign != null && openWorldCampaign.world != null && !openWorldCampaign.world.CanTakeDamage) return false;
         if (!IsBattleActive || Time.timeScale <= 0 || amount <= 0 || Time.time < hurtUntil || movement.IsDodgeInvulnerable) return false;
         Health = Mathf.Max(0, Health - amount * (LotusWardRemaining > 0f ? .68f : 1f));
         hurtUntil = Time.time + Mathf.Max(0, hurtInvulnerabilitySeconds);
@@ -842,6 +947,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
         IsometricCameraFollow.Instance?.Shake(.14f, .28f);
         if (IsDead) {
             movement.enabled = false;
+            if (openWorldCampaign != null && openWorldCampaign.world != null) { openWorldCampaign.world.HandleDefeat(); return true; }
             ShowMessage("GIÓNG ĐÃ GỤC NGÃ · NHẤN R ĐỂ THỬ LẠI", 99999f);
         } else {
             ShowMessage($"TRÚNG ĐÒN! MÁU {Mathf.RoundToInt(Health)} / {Mathf.RoundToInt(maxHealth)}", 1f);
@@ -879,7 +985,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
     public bool RestoreCheckpointState(CheckpointState state, Vector3 position, Quaternion rotation)
     {
         if (state == null || EquipmentBusy || ThanhGiongSceneTransition.IsTransitioning) return false;
-        StopAllCoroutines(); clearMessageRoutine = null; pendingStrike=null;comboBeat=0;comboUntil=0;
+        StopAllCoroutines(); clearMessageRoutine = null; pendingStrike=null; growthScaleRoutine=null; comboBeat=0;comboUntil=0;
         isTransitioning = false; hurtUntil = 0; nextAttackTime = 0; chargeHits.Clear();
         CurrentChapter = state.chapter; CurrentWeapon = state.weapon;
         battleStartedAt = Time.time;
@@ -912,7 +1018,9 @@ public class ThanhGiongCampaignController : MonoBehaviour
 
     public void RestartBattle()
     {
+        if(openWorldCampaign!=null){if(IsDead)openWorldCampaign.world.HandleDefeat();else openWorldCampaign.ReturnToHub();return;}
         if (CurrentChapter != Chapter.Battle || isTransitioning) return;
+        GetComponent<AdventureStamina>()?.Restore();
         StopAllCoroutines(); clearMessageRoutine = null; pendingStrike=null;comboBeat=0;comboUntil=0;
         Health = maxHealth; hurtUntil = 0; nextAttackTime = 0;
         battleStartedAt = Time.time; lotusWardUntil = 0f;
@@ -935,11 +1043,11 @@ public class ThanhGiongCampaignController : MonoBehaviour
         hud?.RecallPopups();
     }
 
-    private void UpdateAscensionQte()
+    private void UpdateAscensionQte(KeyCode? requestedKey = null)
     {
-        if (isTransitioning) return;
+        if (isTransitioning || EquipmentBusy) return;
 
-        if (qteIndex < equipQte.Length && Input.GetKeyDown(equipQte[qteIndex]))
+        if (qteIndex < equipQte.Length && (requestedKey.HasValue ? requestedKey.Value==equipQte[qteIndex] : Input.GetKeyDown(equipQte[qteIndex])))
         {
             qteIndex++;
             if (qteIndex == 1) mountedMotion?.PlayEquipment("remove_armor");
@@ -961,6 +1069,8 @@ public class ThanhGiongCampaignController : MonoBehaviour
 
     private IEnumerator CompleteStage1AndTransition()
     {
+        if (openWorldCampaign != null) { openWorldCampaign.CompleteGrowth(); yield break; }
+        if (!CanAdvanceToNextScene(out string reason)) { ShowMessage("CHƯA THỂ QUA MÀN · " + reason, 2.5f); yield break; }
         isTransitioning = true;
         ShowMessage("★ HOÀN THÀNH MÀN 1 ★\nGIÓNG ĐÃ LỚN VỌT THÀNH TRÁNG SĨ KHỔNG LỒ!\nĐANG CHUYỂN ĐẾN KHU VỰC SỨ GIẢ & LÒ RÈN TRIỀU ĐÌNH...", 3.2f);
         IsometricCameraFollow.Instance?.Shake(0.6f, 0.7f);
@@ -976,6 +1086,8 @@ public class ThanhGiongCampaignController : MonoBehaviour
 
     private IEnumerator CompleteStage2AndTransition()
     {
+        if (openWorldCampaign != null) { openWorldCampaign.CompletePreparation(); yield break; }
+        if (!CanAdvanceToNextScene(out string reason)) { ShowMessage("CHƯA THỂ QUA MÀN · " + reason, 2.5f); yield break; }
         isTransitioning = true;
         while (mountedMotion != null && mountedMotion.IsBusy) yield return null;
         CastFireLine();
@@ -993,6 +1105,8 @@ public class ThanhGiongCampaignController : MonoBehaviour
 
     private IEnumerator CompleteStage3AndTransition()
     {
+        if (openWorldCampaign != null) { openWorldCampaign.CompleteBattle(); yield break; }
+        if (!CanAdvanceToNextScene(out string reason)) { ShowMessage("CHƯA THỂ QUA MÀN · " + reason, 2.5f); yield break; }
         isTransitioning = true;
         ShowMessage("★ HOÀN THÀNH MÀN 3 ★\nQUÂN ÂN ĐẠI BẠI, TƯỚNG GIẶC ĐÃ BỊ TIÊU DIỆT!\nTIẾN LÊN ĐỈNH NÚI SÓC ĐỂ HÓA THÁNH VỀ TRỜI...", 3.5f);
         IsometricCameraFollow.Instance?.Shake(0.8f, 1.0f);
@@ -1088,6 +1202,7 @@ public class ThanhGiongCampaignController : MonoBehaviour
         mountedMotion?.SyncEquipment((int)CurrentChapter, 0);
         Heat = maxHeat * 0.5f;
         Kills = 0;
+        RefreshBattleGoal();
         if (battleRoot != null)
         {
             battleRoot.SetActive(true);
@@ -1111,16 +1226,53 @@ public class ThanhGiongCampaignController : MonoBehaviour
         ShowMessage("BƯỚC VÀO MÀN 4: HÓA THÁNH VỀ TRỜI!\n[NHẤN 'E': CỞI MẢNH GIÁP ĐẦU TIÊN ĐẶT LÊN ĐỈNH NÚI SÓC]", 4f);
     }
 
-    private void ApplyGrowthScale()
+    private void ApplyGrowthScale(bool animate = false)
     {
-        // Dynamic scale from boy (0.42) to huge titan (1.45)
+        // Four readable growth stages, animated when food advances the prologue.
         float[] scales = { 0.90f, 1.08f, 1.26f, 1.45f };
         float scale = scales[GrowthPhase];
-        transform.localScale = originalScale * scale;
+        Transform scaleTarget = growthVisual != null ? growthVisual : transform;
+        Vector3 baseScale = scaleTarget == transform ? originalScale : originalGrowthVisualScale;
+        Vector3 targetScale = baseScale * scale;
+
+        // The horse, controller and collision body keep their authored size. Only Giong grows.
+        if (scaleTarget != transform) transform.localScale = originalScale;
+
+        if (growthScaleRoutine != null)
+        {
+            StopCoroutine(growthScaleRoutine);
+            growthScaleRoutine = null;
+        }
+
+        if (animate && isActiveAndEnabled && Application.isPlaying)
+            growthScaleRoutine = StartCoroutine(AnimateGrowthScale(targetScale));
+        else
+            scaleTarget.localScale = targetScale;
 
         // Dynamic speed based on scale
         movement.walkSpeed = Mathf.Lerp(3.8f, 6.2f, GrowthPhase / 3f);
         movement.runSpeed = Mathf.Lerp(6.2f, 11.5f, GrowthPhase / 3f);
+    }
+
+    private IEnumerator AnimateGrowthScale(Vector3 targetScale)
+    {
+        Transform scaleTarget = growthVisual != null ? growthVisual : transform;
+        Vector3 startScale = scaleTarget.localScale;
+        const float duration = .75f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            float eased = Mathf.SmoothStep(0f, 1f, t);
+            float heroicPulse = 1f + Mathf.Sin(t * Mathf.PI) * .06f;
+            scaleTarget.localScale = Vector3.LerpUnclamped(startScale, targetScale, eased) * heroicPulse;
+            yield return null;
+        }
+
+        scaleTarget.localScale = targetScale;
+        growthScaleRoutine = null;
     }
 
     public void ShowMessage(string message, float duration)

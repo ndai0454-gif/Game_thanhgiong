@@ -86,6 +86,7 @@ public class MountedHorseController : MonoBehaviour
     private float dodgeTimer, nextDodgeTime, recentDirectionTime = -10f;
     private Vector3 dodgeDirection, recentDirection;
     private Vector3 frameVelocity;
+    private AdventureStamina adventureStamina;
 
     public bool IsDodging => dodgeTimer > 0f;
     public float DodgeRemaining => Mathf.Max(0, dodgeTimer);
@@ -105,6 +106,7 @@ public class MountedHorseController : MonoBehaviour
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
+        adventureStamina = GetComponent<AdventureStamina>();
         godotMotion = GetComponent<GodotMountedMotion>();
         originalHorseMotion = GetComponent<MountedHorseMeshMotion>();
         campaignController = GetComponent<ThanhGiongCampaignController>();
@@ -207,6 +209,7 @@ public class MountedHorseController : MonoBehaviour
     public void DriveMovement(Vector2 input, bool running)
     {
         if (Time.deltaTime <= 0f || controller == null || !controller.enabled) return;
+        if (adventureStamina != null) running &= adventureStamina.SprintAllowed;
         bool equipmentBusy = godotMotion != null && godotMotion.IsBusy;
         Vector3 move = CameraRelativeDirection(equipmentBusy ? Vector2.zero : input);
         float speed = running ? runSpeed : walkSpeed;
@@ -238,6 +241,8 @@ public class MountedHorseController : MonoBehaviour
 
         if (controller.isGrounded)
         {
+            if (verticalVelocity < -7.5f)
+                IsometricCameraFollow.Instance?.Shake(0.18f, Mathf.Clamp01((-verticalVelocity - 7.5f) / 14f) * 0.45f);
             lastGroundedTime = Time.time;
             if (verticalVelocity < 0f) verticalVelocity = -2f;
         }

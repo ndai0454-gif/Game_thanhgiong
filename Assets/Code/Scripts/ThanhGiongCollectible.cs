@@ -14,6 +14,8 @@ public class ThanhGiongCollectible : MonoBehaviour
     private Vector3 baseVisualLocalPos;
     private float bobOffset;
     private bool collected;
+    private TextMesh cachedLabel;
+    private Renderer labelRenderer;
     public bool IsCollected => collected;
 
     private void Awake()
@@ -45,6 +47,9 @@ public class ThanhGiongCollectible : MonoBehaviour
     {
         if (labelText != null && Camera.main != null)
         {
+            // The adventure HUD projects only the nearby resource label; avoid two overlapping labels.
+            if (cachedLabel != labelText) { cachedLabel = labelText; labelRenderer = labelText.GetComponent<Renderer>(); }
+            if(labelRenderer!=null)labelRenderer.enabled=IsometricCameraFollow.Instance==null||!IsometricCameraFollow.Instance.useShoulderCamera;
             labelText.transform.rotation = Camera.main.transform.rotation;
         }
     }
@@ -72,7 +77,6 @@ public class ThanhGiongCollectible : MonoBehaviour
         // Bamboo requires three deliberate E presses; proximity must not consume a pull.
         if (kind == Kind.Bamboo || collected) return;
         ThanhGiongCampaignController campaign = other.GetComponentInParent<ThanhGiongCampaignController>();
-        if (campaign == null) campaign = FindAnyObjectByType<ThanhGiongCampaignController>();
         if (campaign == null || !campaign.TryCollect(this)) return;
         MarkCollected();
         gameObject.SetActive(false);

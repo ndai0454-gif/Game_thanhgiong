@@ -9,13 +9,8 @@ public static class ThanhGiongBuildRelease
 {
     private static readonly string[] BuildScenes =
     {
-        "Assets/Scenes/ThanhGiongWorld/LangGiongTienTuyen.unity",
-        "Assets/Scenes/ThanhGiongWorld/KinhThanhRenThep.unity",
-        "Assets/Scenes/ThanhGiongWorld/PhaoDaiNgamQuanAn.unity",
-        "Assets/Scenes/ThanhGiongWorld/ThungLungVuotSong.unity",
-        "Assets/Scenes/ThanhGiongWorld/TranTuyenNuiSoc.unity",
-        "Assets/Scenes/ThanhGiongWorld/DinhSocHoaThanh.unity",
-        "Assets/Scenes/AlbionForestMap.unity"
+        // Seamless open-world campaign (Docs/SEAMLESS_DAI_VIET_WORLD.md); matches the scene enabled in Build Settings.
+        "Assets/Scenes/ThanhGiongWorld/ThanhGiongDaiViet.unity"
     };
 
     private const string OutputPath = "Builds/Windows/ThanhGiong.exe";

@@ -141,11 +141,39 @@ namespace ThanhGiong.EditorTools
                 MeshyPropVfxAnimator.PropEffectKind.CelestialAscensionAltar,
                 new Color(1.0f, 0.88f, 0.35f, 0.90f),
                 new Color(0.85f, 0.95f, 1.0f, 0.55f),
-                new Color(1.0f, 0.86f, 0.38f, 1f), 4.2f, 20f)
+                new Color(1.0f, 0.86f, 0.38f, 1f), 4.2f, 20f),
+
+            new EnvSpec(
+                "MoQuangSat_PhongChau", 2.4f,
+                MeshyPropVfxAnimator.PropEffectKind.MoltenForge,
+                new Color(1.0f, 0.68f, 0.22f, 0.85f),
+                new Color(1.0f, 0.88f, 0.45f, 0.65f),
+                new Color(1.0f, 0.65f, 0.22f, 1f), 2.2f, 8f),
+
+            new EnvSpec(
+                "CotMocDa_DongSon", 3.6f,
+                MeshyPropVfxAnimator.PropEffectKind.SacredDrumShrine,
+                new Color(1.0f, 0.86f, 0.36f, 0.78f),
+                new Color(0.75f, 0.95f, 0.82f, 0.50f),
+                new Color(1.0f, 0.82f, 0.38f, 1f), 2.0f, 9f),
+
+            new EnvSpec(
+                "CayDaCoThu_LangViet", 8.6f,
+                MeshyPropVfxAnimator.PropEffectKind.GoldenBambooWind,
+                new Color(0.95f, 0.90f, 0.38f, 0.80f),
+                new Color(0.48f, 0.92f, 0.42f, 0.75f),
+                new Color(1.0f, 0.78f, 0.35f, 1f), 2.4f, 12f),
+
+            new EnvSpec(
+                "DamSenCo_VanLang", 1.35f,
+                MeshyPropVfxAnimator.PropEffectKind.RiverBridgeMist,
+                new Color(1.0f, 0.78f, 0.88f, 0.65f),
+                new Color(0.78f, 0.96f, 0.92f, 0.45f),
+                new Color(0.95f, 0.78f, 0.86f, 1f), 1.4f, 7f)
         };
 
-        [MenuItem("Tools/Thánh Gióng/Install & Wire All 12 Meshy 3D Map Props + VFX Across All Scenes", false, 6)]
-        public static string InstallAllEnvironmentAndVfx()
+        [MenuItem("Tools/Thánh Gióng/Build All 16 Meshy Zelda Prefabs & Materials Only", false, 5)]
+        public static Dictionary<string, GameObject> BuildAllPrefabsAndMaterialsOnly()
         {
             EnsureDir(EnvPrefabDir);
             EnsureDir(EnvMaterialDir);
@@ -153,6 +181,7 @@ namespace ThanhGiong.EditorTools
 
             Material particleAdditiveMat = CreateOrUpdateParticleMaterial("Mat_MeshyVfx_Additive", true);
             Material particleAlphaMat = CreateOrUpdateParticleMaterial("Mat_MeshyVfx_Alpha", false);
+            UpdateRiverWaterMaterial();
 
             Dictionary<string, GameObject> prefabs = new Dictionary<string, GameObject>();
 
@@ -177,11 +206,45 @@ namespace ThanhGiong.EditorTools
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+            Debug.Log($"[MeshyEnvironmentInstaller] Built {prefabs.Count}/{Specs.Length} Meshy Zelda 3D Prefabs & Materials.");
+            return prefabs;
+        }
+
+        private static void UpdateRiverWaterMaterial()
+        {
+            const string matPath = "Assets/Materials/Meshy/Environment/Mat_DongSong_NuocBiec.mat";
+            Shader waterShader = Shader.Find("ThanhGiong/Adventure/ZeldaStylizedWater")
+                ?? Shader.Find("Universal Render Pipeline/Lit")
+                ?? Shader.Find("Standard");
+            Material mat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
+            if (mat == null)
+            {
+                mat = new Material(waterShader) { name = "Mat_DongSong_NuocBiec" };
+                AssetDatabase.CreateAsset(mat, matPath);
+            }
+            else
+            {
+                mat.shader = waterShader;
+            }
+            if (mat.HasProperty("_ShallowColor")) mat.SetColor("_ShallowColor", new Color(0.18f, 0.74f, 0.68f, 1f));
+            if (mat.HasProperty("_DeepColor")) mat.SetColor("_DeepColor", new Color(0.08f, 0.40f, 0.58f, 1f));
+            if (mat.HasProperty("_FoamColor")) mat.SetColor("_FoamColor", new Color(0.95f, 0.99f, 1.0f, 1f));
+            if (mat.HasProperty("_CausticColor")) mat.SetColor("_CausticColor", new Color(0.52f, 0.94f, 0.86f, 1f));
+            mat.enableInstancing = true;
+            EditorUtility.SetDirty(mat);
+        }
+
+        [MenuItem("Tools/Thánh Gióng/Install & Wire All 12 Meshy 3D Map Props + VFX Across All Scenes", false, 6)]
+        public static string InstallAllEnvironmentAndVfx()
+        {
+            Dictionary<string, GameObject> prefabs = BuildAllPrefabsAndMaterialsOnly();
+            Material particleAdditiveMat = CreateOrUpdateParticleMaterial("Mat_MeshyVfx_Additive", true);
+            Material particleAlphaMat = CreateOrUpdateParticleMaterial("Mat_MeshyVfx_Alpha", false);
 
             int totalSpawned = PopulateAllScenes(prefabs, particleAdditiveMat, particleAlphaMat);
             AssetDatabase.SaveAssets();
 
-            string summary = $"[MeshyEnvironmentInstaller] Built {prefabs.Count}/12 Meshy 3D Environment Prefabs with VFX & populated {totalSpawned} instances across {AllScenes.Length} scenes.";
+            string summary = $"[MeshyEnvironmentInstaller] Built {prefabs.Count}/{Specs.Length} Meshy 3D Environment Prefabs with VFX & populated {totalSpawned} instances across {AllScenes.Length} scenes.";
             Debug.Log(summary);
             return summary;
         }
@@ -212,8 +275,9 @@ namespace ThanhGiong.EditorTools
         private static Material CreatePbrMaterial(string matName, string texPrefix)
         {
             string matPath = $"{EnvMaterialDir}/{matName}.mat";
-            Shader shader = Shader.Find("Universal Render Pipeline/Lit");
-            if (shader == null) shader = Shader.Find("Standard");
+            Shader shader = Shader.Find("ThanhGiong/Adventure/Cel Rim Lit")
+                ?? Shader.Find("Universal Render Pipeline/Lit")
+                ?? Shader.Find("Standard");
 
             Material mat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
             if (mat == null)
@@ -228,16 +292,17 @@ namespace ThanhGiong.EditorTools
 
             Texture2D albedo = LoadTexture(texPrefix + "_Albedo.png", false);
             Texture2D normal = LoadTexture(texPrefix + "_Normal.png", true);
+            Texture2D metallic = LoadTexture(texPrefix + "_Metallic.png", false);
 
-            mat.SetColor("_BaseColor", Color.white);
+            mat.SetColor("_BaseColor", new Color(1.02f, 1.0f, 0.96f, 1f));
             if (albedo != null)
             {
                 mat.SetTexture("_BaseMap", albedo);
                 mat.mainTexture = albedo;
             }
-            mat.SetTexture("_MetallicGlossMap", null);
-            mat.SetFloat("_Metallic", 0.18f);
-            mat.SetFloat("_Smoothness", 0.52f);
+            mat.SetTexture("_MetallicGlossMap", metallic);
+            mat.SetFloat("_Metallic", metallic != null ? 0.28f : 0.14f);
+            mat.SetFloat("_Smoothness", 0.42f);
 
             if (normal != null)
             {
@@ -245,6 +310,14 @@ namespace ThanhGiong.EditorTools
                 mat.SetFloat("_BumpScale", 1.0f);
                 mat.EnableKeyword("_NORMALMAP");
             }
+
+            if (mat.HasProperty("_ShadowTint")) mat.SetColor("_ShadowTint", new Color(0.56f, 0.63f, 0.72f, 1f));
+            if (mat.HasProperty("_BandThreshold")) mat.SetFloat("_BandThreshold", 0.42f);
+            if (mat.HasProperty("_BandSoftness")) mat.SetFloat("_BandSoftness", 0.16f);
+            if (mat.HasProperty("_RimColor")) mat.SetColor("_RimColor", new Color(1.0f, 0.88f, 0.54f, 1f));
+            if (mat.HasProperty("_RimIntensity")) mat.SetFloat("_RimIntensity", 0.22f);
+            if (mat.HasProperty("_RimPower")) mat.SetFloat("_RimPower", 3.4f);
+            mat.enableInstancing = true;
 
             EditorUtility.SetDirty(mat);
             return mat;

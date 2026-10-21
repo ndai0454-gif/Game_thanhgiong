@@ -4824,7 +4824,15 @@ MonoBehaviour:
   lookAhead: 3.5
   pitch: 52
   targetBody: {fileID: 0}
-  useOrthographicIsometric: 1
+  useShoulderCamera: 1
+  shoulderDistance: 5.8
+  exploreFov: 80
+  aimingFov: 60
+  shoulderOffset: 0.85
+  orbitSensitivity: 2.2
+  orbitPitch: 15
+  collisionRadius: 0.22
+  useOrthographicIsometric: 0
   isometricPitch: 35.26439
   isometricYaw: 45
   cameraDistance: 38
@@ -4875,11 +4883,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.08
   far clip plane: 260
-  field of view: 34
-  orthographic: 1
-  orthographic size: 13
+  field of view: 80
+  orthographic: 0
+  orthographic size: 11
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -4903,8 +4911,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 509151857}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.27984813, y: 0.36470523, z: -0.1159169, w: 0.88047624}
-  m_LocalPosition: {x: -21.939314, y: 23.48931, z: -55.93931}
+  m_LocalRotation: {x: 0.1305262, y: 0, z: 0, w: 0.9914449}
+  m_LocalPosition: {x: 0.85, y: 3.9011507, z: -39.60237}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7228,6 +7236,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2879274389423821418, guid: cf795aacdb77761439b1d5c323035442, type: 3}
       insertIndex: -1
       addedObject: {fileID: 747128298}
+    - targetCorrespondingSourceObject: {fileID: 2879274389423821418, guid: cf795aacdb77761439b1d5c323035442, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 747128301}
+    - targetCorrespondingSourceObject: {fileID: 2879274389423821418, guid: cf795aacdb77761439b1d5c323035442, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 747128300}
+    - targetCorrespondingSourceObject: {fileID: 2879274389423821418, guid: cf795aacdb77761439b1d5c323035442, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 747128299}
   m_SourcePrefab: {fileID: 100100000, guid: cf795aacdb77761439b1d5c323035442, type: 3}
 --- !u!4 &747128288 stripped
 Transform:
@@ -7381,6 +7398,56 @@ MonoBehaviour:
   meshyHorse: {fileID: 1634292518}
   meshySpear: {fileID: 1634292516}
   heroAnimator: {fileID: 1634292517}
+--- !u!114 &747128299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 747128289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 789e5399d9c726a4ead30490e34c3d7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AdventureVisualBootstrap
+  characterCelRim: 1
+  interactiveFoliage: 1
+  ambientParticles: 1
+  warmAtmosphere: 1
+  gradingWeight: 0.65
+  celShader: {fileID: 4800000, guid: 3ca61ca71c7f2df40bf0d08f7cb1b05e, type: 3}
+  foliageShader: {fileID: 4800000, guid: c074e0350b4c23048be082b859b5de25, type: 3}
+  particleShader: {fileID: 4800000, guid: 0406db5a14f94604a8c57ccfbc9f3b46, type: 3}
+--- !u!114 &747128300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 747128289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e02f4fd97a07135489f01c4d035b242e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AdventureStamina
+  capacity: 100
+  sprintCostPerSecond: 18
+  regenerationPerSecond: 24
+--- !u!114 &747128301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 747128289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d31f3801c2f27054e9f04ae7a1345c8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AdventureAimController
+  throwSpeed: 22
+  maximumRange: 40
+  lockAngle: 12
 --- !u!21 &749100744
 Material:
   serializedVersion: 8
@@ -9812,6 +9879,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ed88568a3a0d7448a5c28d4a6051be6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThanhGiongCampaignHUD
+  showAdventureMinimap: 1
+  minimapRange: 40
   campaign: {fileID: 747128291}
   panelFrame: {fileID: 2800000, guid: 0d4388ba47826964ab9daafdafd1c72d, type: 3}
   bannerFrame: {fileID: 2800000, guid: 21ec72391cf626b48ab8721e09075bc2, type: 3}

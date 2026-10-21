@@ -41,6 +41,17 @@ public sealed class ThanhGiongCampaignAudio : MonoBehaviour
         "DinhSocHoaThanh" => "sacred", _ => "village"
     };
 
+    public void SetOpenWorldRegion(string value)
+    {
+        if(string.IsNullOrEmpty(value)||Region==value||music==null||ambience==null)return;
+        Region=value;
+        music.Stop(); ambience.Stop();
+        music.clip=Clip(value=="sacred"?"music_sacred_full":"music_"+(value=="battle"?"camp":value));
+        ambience.clip=Clip("ambient_"+value);
+        if(music.clip!=null)music.Play();
+        if(ambience.clip!=null)ambience.Play();
+    }
+
     private void Awake()
     {
         Region = RegionForScene(SceneManager.GetActiveScene().name);
@@ -111,6 +122,8 @@ public sealed class ThanhGiongCampaignAudio : MonoBehaviour
             foreach (AudioSource voice in voices) SetPaused(voice);
         }
         if (paused) return;
+        // Regional loops can be stopped during scene start-up (e.g. a disable/enable cycle); keep them running.
+        EnsureLooping(music); EnsureLooping(ambience); EnsureLooping(combatMusic);
         age += Time.deltaTime;
         float fade = Mathf.Clamp01(age / 1.3f);
         ascensionMix = Mathf.MoveTowards(ascensionMix, ascensionMusic != null && ascensionMusic.isPlaying ? 1f : 0f, Time.deltaTime * .9f);
@@ -173,6 +186,11 @@ public sealed class ThanhGiongCampaignAudio : MonoBehaviour
     {
         if (index < 0 || index > 4 || Time.timeScale <= 0) return;
         SeedCueCount++; PlayCue("seed_" + index, bloom ? .32f : .60f);
+    }
+
+    private static void EnsureLooping(AudioSource source)
+    {
+        if (source != null && source.loop && source.clip != null && !source.isPlaying) source.Play();
     }
 
     private void SetPaused(AudioSource source)

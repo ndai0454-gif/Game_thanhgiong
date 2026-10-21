@@ -2541,7 +2541,7 @@ SkinnedMeshRenderer:
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: -6734620852318575487, guid: f2e436bea44fab042862be74e4f01bd1, type: 3}
+  m_Mesh: {fileID: 4300000, guid: baa2eade05f598b4eaf37022b5ec076e, type: 2}
   m_Bones:
   - {fileID: 7514332037749899041}
   - {fileID: 3977903330954647171}
@@ -3444,23 +3444,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 579833450898495897, guid: 2763c0b5809bed447b47b61441d77b8b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.005
       objectReference: {fileID: 0}
     - target: {fileID: 579833450898495897, guid: 2763c0b5809bed447b47b61441d77b8b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.05
+      value: 0.105
       objectReference: {fileID: 0}
     - target: {fileID: 579833450898495897, guid: 2763c0b5809bed447b47b61441d77b8b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.04
+      value: -0.012
       objectReference: {fileID: 0}
     - target: {fileID: 579833450898495897, guid: 2763c0b5809bed447b47b61441d77b8b, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7933533
+      value: 0.777146
       objectReference: {fileID: 0}
     - target: {fileID: 579833450898495897, guid: 2763c0b5809bed447b47b61441d77b8b, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.6087614
+      value: 0.62932044
       objectReference: {fileID: 0}
     - target: {fileID: 579833450898495897, guid: 2763c0b5809bed447b47b61441d77b8b, type: 3}
       propertyPath: m_LocalRotation.y

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29d8a9bdf24f1964ea05f33d95ce64a2, type: 3}
+  m_Name: Barbarian
+  m_EditorClassIdentifier: Assembly-CSharp::ActionForgeEnemyMotionSet
+  spearman: {fileID: 9100000, guid: cdc53d57286991948b4289c213ff9f81, type: 2}
+  shieldBearer: {fileID: 9100000, guid: 1b05bd7d38884724eb49a5d106202c0f, type: 2}
+  archer: {fileID: 9100000, guid: 9402a042185b3104dbf8cfa01261b1bb, type: 2}
+  raider: {fileID: 9100000, guid: 3918f36a89e5f4942a073a4d6d8e6de1, type: 2}
+  boss: {fileID: 9100000, guid: a0aa3fb49019c37439ddcfba418c5e96, type: 2}

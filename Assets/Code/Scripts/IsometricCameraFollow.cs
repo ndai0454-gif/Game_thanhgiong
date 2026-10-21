@@ -14,6 +14,32 @@ public class IsometricCameraFollow : MonoBehaviour
     public float pitch = 35.26439f;
     public Rigidbody targetBody;
 
+    [Header("Third person adventure")]
+    public bool useShoulderCamera = true;
+    [Range(5f, 6f)] public float shoulderDistance = 5.8f;
+    [Range(75f, 85f)] public float exploreFov = 80f;
+    public float aimingFov = 60f;
+    public float shoulderOffset = .85f;
+    public float orbitSensitivity = 2.2f;
+    [Tooltip("Turn the camera with the mouse alone (cursor locked while playing). Hold the release key to use the cursor.")]
+    public bool mouseLook = true;
+    public KeyCode releaseCursorKey = KeyCode.LeftAlt;
+    public float orbitPitch = 15f;
+    public float collisionRadius = .22f;
+    public bool IsAiming => useShoulderCamera && aim != null && aim.IsAiming;
+    public ThanhGiongEnemy SoftLockTarget => aim != null ? aim.SoftLockTarget : null;
+    public float ActualBoomDistance { get; private set; }
+    public Vector3 ShoulderPivot { get; private set; }
+    public float OrbitYaw => orbitYaw;
+    public Vector3 BodyFocus { get; private set; }
+    MeshyHeroVisualDriver visualDriver;
+    AdventureAimController aim;
+    float orbitYaw, boomDistance;
+    bool orbitInitialized;
+    readonly RaycastHit[] cameraHits = new RaycastHit[96];
+    ThanhGiongCampaignController campaign;
+    bool cursorCaptured;
+
     [Header("2.5D isometric framing")]
     public bool useOrthographicIsometric = true;
     public float isometricPitch = 35.26439f;
@@ -25,8 +51,6 @@ public class IsometricCameraFollow : MonoBehaviour
     public float maximumShake = .32f;
 
     [Header("Mouse Look & Remote Parsec Settings")]
-    [Tooltip("If false, cursor remains free for Parsec; right-click drag rotates camera. If true, cursor is locked.")]
-    public bool mouseLook = false;
     public float mouseSensitivity = 2.5f;
     public KeyCode toggleMouseLookKey = KeyCode.F2;
 
@@ -73,7 +97,36 @@ public class IsometricCameraFollow : MonoBehaviour
     }
 #endif
 
-    void OnDestroy() { if (Instance == this) Instance = null; }
+    void OnDestroy() { if (Instance == this) Instance = null; ReleaseCursor(); }
+    void OnDisable() { ReleaseCursor(); }
+
+    void ReleaseCursor()
+    {
+        if (!cursorCaptured) return;
+        cursorCaptured = false;
+        Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
+    }
+
+    /// <summary>True while gameplay should own the mouse: no pause, map, death or released-cursor key.</summary>
+    bool WantsMouseLook()
+    {
+        if (!mouseLook || !useShoulderCamera || isOverview || Application.isBatchMode || !Application.isFocused) return false;
+        if (Time.timeScale <= 0f || Input.GetKey(releaseCursorKey)) return false;
+        if (campaign == null || campaign.transform != target) campaign = target != null ? target.GetComponent<ThanhGiongCampaignController>() : null;
+        if (campaign == null) return true;
+        if (campaign.IsDead) return false;
+        var world = campaign.openWorldCampaign != null ? campaign.openWorldCampaign.world : null;
+        return world == null || !world.MapOpen;
+    }
+
+    void UpdateCursorCapture(bool capture)
+    {
+        if (capture == cursorCaptured) return;
+        cursorCaptured = capture;
+        Cursor.lockState = capture ? CursorLockMode.Locked : CursorLockMode.None;
+        Cursor.visible = !capture;
+    }
+
     float ShotSize => currentShot == Shot.Combat ? combatSize : currentShot == Shot.Vista ? vistaSize : currentShot == Shot.Boss ? bossSize : currentShot == Shot.Close ? closeSize : exploreSize;
     Quaternion IsometricRotation => Quaternion.Euler(isometricPitch, isometricYaw, 0f);
 
@@ -81,8 +134,8 @@ public class IsometricCameraFollow : MonoBehaviour
     {
         if (view == null) view = GetComponent<Camera>();
         if (view == null) return;
-        if (view.orthographic != useOrthographicIsometric) view.orthographic = useOrthographicIsometric;
-        if (!Mathf.Approximately(view.fieldOfView, fieldOfView)) view.fieldOfView = fieldOfView;
+        view.orthographic = !useShoulderCamera && useOrthographicIsometric;
+        if (!useShoulderCamera) view.fieldOfView = fieldOfView;
         if (!initialized) view.orthographicSize = Mathf.Max(1f, ShotSize);
     }
 
@@ -105,6 +158,13 @@ public class IsometricCameraFollow : MonoBehaviour
     {
         isOverview = false;
         if (target == null) return;
+        ApplyProjection();
+        if (useShoulderCamera) {
+            orbitYaw = target.eulerAngles.y; orbitInitialized = true;
+            boomDistance = shoulderDistance; initialized = false;
+            UpdateShoulder(1f, true); shakeTimer = shakeIntensity = shakeAge = 0;
+            return;
+        }
         smoothLead = Vector3.zero; ApplyProjection();
         Quaternion rotation = useOrthographicIsometric ? IsometricRotation : Quaternion.LookRotation(Vector3.up * lookHeight - offset, Vector3.up);
         smoothPosition = useOrthographicIsometric ? target.position + Vector3.up * lookHeight - rotation * Vector3.forward * cameraDistance : target.position + offset;
@@ -115,6 +175,8 @@ public class IsometricCameraFollow : MonoBehaviour
 
     void Update()
     {
+        if (useShoulderCamera) return;
+
         if (Input.GetKeyDown(toggleMouseLookKey))
         {
             mouseLook = !mouseLook;
@@ -155,9 +217,10 @@ public class IsometricCameraFollow : MonoBehaviour
     void LateUpdate()
     {
         float dt = Time.deltaTime;
-        if (dt <= 0f) return;
+        if (dt <= 0f || Time.timeScale <= 0f) { UpdateCursorCapture(false); return; }
         ApplyProjection();
         if (!isOverview && target == null) return;
+        if (useShoulderCamera && !isOverview) { UpdateShoulder(dt, false); return; }
         Vector3 focus, desiredPosition;
         Quaternion desiredRotation;
         float size = ShotSize;
@@ -194,5 +257,78 @@ public class IsometricCameraFollow : MonoBehaviour
             shakeIntensity = Mathf.MoveTowards(shakeIntensity, 0f, dt * 3.5f);
         }
         transform.position = smoothPosition + shake;
+    }
+
+    public void SetOrbit(float yaw, float elevation)
+    {
+        orbitYaw = yaw; orbitPitch = Mathf.Clamp(elevation, -20f, 65f); orbitInitialized = true;
+    }
+
+    void UpdateShoulder(float dt, bool snap)
+    {
+        if (target == null || view == null) return;
+        if (aim == null || aim.transform != target) aim = target.GetComponent<AdventureAimController>();
+        if (!orbitInitialized) { orbitYaw = target.eulerAngles.y; orbitInitialized = true; }
+        bool capture = !snap && WantsMouseLook();
+        UpdateCursorCapture(capture);
+        if (!snap && (capture || Input.GetMouseButton(1) || Input.GetMouseButton(2))) {
+            orbitYaw += Input.GetAxis("Mouse X") * orbitSensitivity;
+            orbitPitch = Mathf.Clamp(orbitPitch - Input.GetAxis("Mouse Y") * orbitSensitivity, -20f, 65f);
+        }
+        if (!snap && Input.GetKeyDown(KeyCode.V)) shoulderOffset = -shoulderOffset;
+        Quaternion rotation = Quaternion.Euler(orbitPitch, orbitYaw, 0);
+        // The pivot follows the rider's real seated height, while boom length stays in world metres.
+        var cc = target.GetComponent<CharacterController>();
+        float height = cc != null ? Mathf.Max(1.4f, (cc.center.y + cc.height * .35f) * target.lossyScale.y) : 1.8f;
+        if (visualDriver == null || visualDriver.transform != target) visualDriver = target.GetComponent<MeshyHeroVisualDriver>();
+        // Mounted art has an authored offset from its gameplay capsule. Frame the visible horse/rider.
+        Vector3 body = visualDriver != null && visualDriver.meshyHorse != null && visualDriver.meshyHorse.gameObject.activeInHierarchy
+            ? visualDriver.meshyHorse.position : target.position;
+        BodyFocus = new Vector3(body.x, target.position.y + height, body.z);
+        Vector3 focus = BodyFocus;
+        float side = shoulderOffset * (IsAiming ? 1.35f : 1f);
+        Vector3 proposedPivot = focus + rotation * Vector3.right * side;
+        // Sweep the lateral shoulder offset as well as the boom, so wall hugging cannot place the pivot behind a wall.
+        float lateral = ClearDistance(focus, proposedPivot - focus, Mathf.Abs(side));
+        ShoulderPivot = focus + (proposedPivot - focus).normalized * lateral;
+        float requested = IsAiming ? 4.3f : shoulderDistance;
+        float clear = ClearDistance(ShoulderPivot, -(rotation * Vector3.forward), requested);
+        if (snap || clear < boomDistance) boomDistance = clear;
+        else boomDistance = Mathf.Lerp(boomDistance, clear, 1f - Mathf.Exp(-4f * dt));
+        ActualBoomDistance = boomDistance;
+        Vector3 desired = ShoulderPivot - rotation * Vector3.forward * boomDistance;
+        // Smooth only the focus, not collision correction: walls must retract the camera immediately.
+        float blend = snap || !initialized ? 1f : 1f - Mathf.Exp(-followSmoothness * dt);
+        smoothPosition = Vector3.Lerp(smoothPosition, desired, blend);
+        float safe = ClearDistance(ShoulderPivot, smoothPosition - ShoulderPivot, Vector3.Distance(ShoulderPivot, smoothPosition));
+        smoothPosition = ShoulderPivot + (smoothPosition - ShoulderPivot).normalized * safe;
+        transform.SetPositionAndRotation(smoothPosition, rotation);
+        view.orthographic = false;
+        view.nearClipPlane = .08f;
+        view.fieldOfView = Mathf.Lerp(view.fieldOfView, IsAiming ? aimingFov : exploreFov, snap ? 1f : 1f - Mathf.Exp(-8f * dt));
+        if (shakeTimer > 0) {
+            shakeTimer = Mathf.Max(0, shakeTimer - dt); shakeAge += dt;
+            float strength = maximumShake * shakeIntensity * shakeIntensity * .45f;
+            Vector3 shaken = smoothPosition + (rotation * Vector3.right * Mathf.Sin(shakeAge * 67) + rotation * Vector3.up * Mathf.Sin(shakeAge * 83)) * strength;
+            float shakeClear = ClearDistance(ShoulderPivot, shaken - ShoulderPivot, Vector3.Distance(ShoulderPivot, shaken));
+            transform.position = ShoulderPivot + (shaken - ShoulderPivot).normalized * shakeClear;
+            shakeIntensity = Mathf.MoveTowards(shakeIntensity, 0, dt * 3.5f);
+        }
+        initialized = true;
+    }
+
+    float ClearDistance(Vector3 origin, Vector3 direction, float maximum)
+    {
+        if (maximum <= .001f) return 0;
+        int count = Physics.SphereCastNonAlloc(origin, collisionRadius, direction.normalized, cameraHits, maximum, ~0, QueryTriggerInteraction.Ignore);
+        float safe = maximum;
+        for (int i = 0; i < count; i++) {
+            var hit = cameraHits[i];
+            if (target != null && hit.transform.IsChildOf(target)) continue;
+            // Enemies should not make the view pump in and out during melee.
+            if (hit.transform.GetComponentInParent<ThanhGiongEnemy>() != null) continue;
+            safe = Mathf.Min(safe, Mathf.Max(.05f, hit.distance - .08f));
+        }
+        return safe;
     }
 }

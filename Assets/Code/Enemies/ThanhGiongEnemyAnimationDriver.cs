@@ -8,7 +8,7 @@ using UnityEngine;
 [DefaultExecutionOrder(50)]
 public class ThanhGiongEnemyAnimationDriver : MonoBehaviour
 {
-    public float speedBlendTime = .12f;
+    public float speedBlendTime = .22f;
     public float stateBlendTime = .1f;
     public ActionForgeEnemyMotionSet actionForgeMotions;
 
@@ -67,6 +67,7 @@ public class ThanhGiongEnemyAnimationDriver : MonoBehaviour
     {
         if (enemy == null) enemy = GetComponent<ThanhGiongEnemy>();
         if (body == null) body = GetComponent<Rigidbody>();
+        LegendEnemyPresentation presentation = GetComponent<LegendEnemyPresentation>();
         GetComponentsInChildren(false, candidates);
         Animator best = null;
         int bestScore = -1;
@@ -74,12 +75,37 @@ public class ThanhGiongEnemyAnimationDriver : MonoBehaviour
         {
             if (!candidate.isActiveAndEnabled) continue;
             candidate.GetComponentsInChildren(false, skins);
-            int score = skins.Count > 0 ? 20 : 0;
+            int enabledSkins = 0;
+            for (int i = 0; i < skins.Count; i++)
+            {
+                SkinnedMeshRenderer s = skins[i];
+                if (s != null && s.enabled && !s.forceRenderingOff && s.gameObject.activeInHierarchy)
+                    enabledSkins++;
+            }
+            int score = enabledSkins > 0 ? 100 + enabledSkins * 10 : (skins.Count > 0 ? 10 : 0);
+            if (presentation != null && presentation.model != null && candidate.transform.IsChildOf(presentation.model))
+                score += 200;
             if (candidate.runtimeAnimatorController != null) score += 5;
             if (candidate == animator) score++;
             if (score <= bestScore) continue;
             best = candidate;
             bestScore = score;
+        }
+        if (best != null)
+        {
+            foreach (Animator candidate in candidates)
+            {
+                if (candidate == null || candidate == best || !candidate.enabled) continue;
+                candidate.GetComponentsInChildren(false, skins);
+                bool anyVisible = false;
+                for (int i = 0; i < skins.Count; i++)
+                {
+                    SkinnedMeshRenderer s = skins[i];
+                    if (s != null && s.enabled && !s.forceRenderingOff && s.gameObject.activeInHierarchy)
+                    { anyVisible = true; break; }
+                }
+                if (!anyVisible) candidate.enabled = false;
+            }
         }
         if (animator != best)
         {
@@ -115,7 +141,9 @@ public class ThanhGiongEnemyAnimationDriver : MonoBehaviour
         {
             fallbackChecked = true;
             string skeletonName = animator.avatar != null ? animator.avatar.name : animator.name;
-            string family = skeletonName.IndexOf("Knight", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+            string family = skeletonName.IndexOf("Qin", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                animator.name.IndexOf("Qin", System.StringComparison.OrdinalIgnoreCase) >= 0 ? "QinSoldier" :
+                skeletonName.IndexOf("Knight", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
                 animator.name.IndexOf("Knight", System.StringComparison.OrdinalIgnoreCase) >= 0 ? "Knight" : "Barbarian";
             selectedSet = Resources.Load<ActionForgeEnemyMotionSet>("ActionForge/EnemyMotionSets/" + family);
         }
@@ -182,9 +210,16 @@ public class ThanhGiongEnemyAnimationDriver : MonoBehaviour
 
         if (UsesActionForge)
         {
+            int targetState = (int)state;
+            float targetPhase = enemy.AnimationStatePhase;
+            if (enemy.IsFlinching && (state == ThanhGiongEnemy.EnemyState.Idle || state == ThanhGiongEnemy.EnemyState.Chasing))
+            {
+                targetState = (int)ThanhGiongEnemy.EnemyState.Stunned;
+                targetPhase = enemy.FlinchPhase;
+            }
             animator.speed = 1f;
-            animator.SetInteger(StateHash, (int)state);
-            animator.SetFloat(PhaseHash, enemy.AnimationStatePhase);
+            animator.SetInteger(StateHash, targetState);
+            animator.SetFloat(PhaseHash, targetPhase);
         }
         else
         {
