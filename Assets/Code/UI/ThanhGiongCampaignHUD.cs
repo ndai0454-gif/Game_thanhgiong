@@ -39,11 +39,11 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
     private Font serifRegular, serifBold;
     private readonly Collider[] nearby = new Collider[32];
     private float nextNearScan;
-    private static readonly Color Paper = new Color(.94f, .87f, .73f);
-    private static readonly Color Gold = new Color(.83f, .65f, .33f);
-    private static readonly Color Muted = new Color(.71f, .63f, .52f);
-    private static readonly Color PanelTeal = new Color(.025f, .12f, .11f, .78f);
-    private static readonly Color Forest = new Color(.025f, .15f, .13f);
+    private static readonly Color Paper = ThanhGiongUITheme.Paper;
+    private static readonly Color Gold = ThanhGiongUITheme.Brass;
+    private static readonly Color Muted = ThanhGiongUITheme.Muted;
+    private static readonly Color PanelTeal = ThanhGiongUITheme.Ink;
+    private static readonly Color Forest = new Color(.13f, .05f, .04f);
     private static readonly Color Spring = new Color(.55f, .88f, .27f);
 
     private void Start()
@@ -90,6 +90,29 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
         paused=false;Time.timeScale=1;
         if(checkpoint.RestartCheckpoint()){guidesVisible=false;return true;}
         paused=true;Time.timeScale=0;pauseNotice="Chờ động tác hiện tại kết thúc rồi thử lại.";return false;
+    }
+
+    private float quitWithoutSaveUntil = -1f;
+
+    /// <summary>Saves the journey, then closes the game. If saving is not possible right now,
+    /// a second press within a few seconds quits anyway.</summary>
+    public void SaveAndQuit()
+    {
+        bool openWorld = campaign != null && campaign.openWorldCampaign != null;
+        bool saved = !openWorld || campaign.openWorldCampaign.SaveCheckpoint();
+        if (!saved && Time.unscaledTime > quitWithoutSaveUntil)
+        {
+            quitWithoutSaveUntil = Time.unscaledTime + 4f;
+            pauseNotice = "Chưa lưu được lúc này (đang chiến đấu, trang bị hoặc bay). Nhấn THOÁT lần nữa để thoát không lưu.";
+            return;
+        }
+        PlayerPrefs.Save();
+        pauseNotice = saved ? "Đã lưu hành trình. Đang thoát…" : "Đang thoát…";
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 
     private bool LoadFromPause(string sceneName, string message)
@@ -142,7 +165,7 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
 
     private void UpdatePauseNavigation()
     {
-        int choices = 6 + ChapterScenes.Length;
+        int choices = 7 + ChapterScenes.Length;
         if(Input.GetKeyDown(KeyCode.DownArrow))PauseSelection=(PauseSelection+1)%choices;
         if(Input.GetKeyDown(KeyCode.UpArrow))PauseSelection=(PauseSelection+choices-1)%choices;
         float step=Input.GetKeyDown(KeyCode.RightArrow)?.05f:Input.GetKeyDown(KeyCode.LeftArrow)?-.05f:0;
@@ -153,29 +176,26 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
         }
         if(!Input.GetKeyDown(KeyCode.Return)&&!Input.GetKeyDown(KeyCode.KeypadEnter))return;
         if(PauseSelection==0)TogglePause();else if(PauseSelection==1)RestartCheckpoint();
-        else if(PauseSelection==2)RestartCurrentMap();else if(PauseSelection>=6)SelectChapter(PauseSelection-6);
+        else if(PauseSelection==2)RestartCurrentMap();else if(PauseSelection==6+ChapterScenes.Length)SaveAndQuit();else if(PauseSelection>=6)SelectChapter(PauseSelection-6);
     }
 
     private void EnsureStyles()
     {
         if (title != null) return;
-        serifRegular = Resources.Load<Font>("ThanhGiongUI/OldStandard-Regular");
-        serifBold = Resources.Load<Font>("ThanhGiongUI/OldStandard-Bold");
-        title = Style(23, Paper, true); body = Style(15, Muted); caption = Style(13, Gold);
-        small = Style(12, Muted); centered = Style(19, Paper, true); centered.alignment = TextAnchor.MiddleCenter;
-        hudTitle = Style(16, Paper, true); hudBody = Style(13, Paper);
-        tile = Style(11, Paper); tile.alignment = TextAnchor.MiddleCenter;
-        frame = new GUIStyle(GUI.skin.box);
-        frame.normal.background = panelFrame;
-        frame.border = new RectOffset(8, 8, 8, 8);
-        button = new GUIStyle(GUI.skin.button) { font = serifBold, fontSize = 14, wordWrap = true };
-        button.normal.textColor = Paper; button.hover.textColor = Gold;
-        button.active.textColor = Gold;
+        serifRegular = ThanhGiongUITheme.Regular;
+        serifBold = ThanhGiongUITheme.Medium;
+        title = Style(30, Paper); title.font = ThanhGiongUITheme.Light;
+        body = Style(17, Muted); caption = Style(15, Gold);
+        small = Style(14, Muted, true); centered = Style(24, Paper); centered.alignment = TextAnchor.MiddleCenter;
+        hudTitle = Style(21, Paper); hudBody = Style(16, Paper);
+        tile = Style(13, Paper); tile.alignment = TextAnchor.MiddleCenter;
+        frame = new GUIStyle(GUIStyle.none);
+        button = ThanhGiongUITheme.Button();
     }
 
     private GUIStyle Style(int size, Color color, bool bold = false)
     {
-        GUIStyle result = new GUIStyle(GUI.skin.label) { fontSize = size, wordWrap = true,
+        GUIStyle result = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(size * ThanhGiongUITheme.FontScale), wordWrap = true,
             font = bold ? serifBold : serifRegular,
             fontStyle = bold && serifBold == null ? FontStyle.Bold : FontStyle.Normal };
         result.normal.textColor = color; return result;
@@ -184,7 +204,7 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
     private void OnGUI()
     {
         if (campaign != null && campaign.openWorldCampaign != null && campaign.openWorldCampaign.world.MapOpen) return;
-        if (campaign == null || (ThanhGiongTrailerDirector.Instance != null && ThanhGiongTrailerDirector.Instance.IsPlayingTrailer)) return;
+        if (campaign == null || (ThanhGiongTrailerDirector.Instance != null && ThanhGiongTrailerDirector.Instance.IsPlayingTrailer) || ThanhGiongStartScreen.IsWaitingActive) return;
         EnsureStyles();
         Matrix4x4 oldMatrix = GUI.matrix;
         Color oldColor = GUI.color;
@@ -200,8 +220,7 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
         if (ControlsVisible && !paused && !guidesVisible && !ChapterRitualVisible) {
             GUI.color = new Color(1, 1, 1, PopupAlpha(controlsUntil,controlsPopupSeconds));
             Rect actions = new Rect((w - 500) / 2, h - 112, 500, 26);
-            Box(actions);
-            GUI.Label(new Rect(actions.x + 10, actions.y + 4, 480, 18), ControlHint(), small);
+            ShadowLabel(new Rect(actions.x + 10, actions.y + 4, 480, 18), ControlHint(), small);
         }
         GUI.color = Color.white;
         DrawBoss(w);
@@ -209,19 +228,29 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
             string notice=campaign.IsDead ? "GIÓNG ĐÃ GỤC NGÃ · R: VỀ ĐIỂM DỪNG CHÂN" : ShortNotice(campaign.CenterMessage);
             float noticeHeight=Mathf.Max(40,hudBody.CalcHeight(new GUIContent(notice),396)+12);
             Rect message = new Rect((w - 420) / 2, h - (ChapterRitualVisible ? 168 : 126) - noticeHeight, 420, noticeHeight);
-            Box(message); GUI.Label(new Rect(message.x + 12, message.y + 6, 396, noticeHeight-12), notice, hudBody);
+            Box(message); ShadowLabel(new Rect(message.x + 12, message.y + 6, 396, noticeHeight-12), notice, hudBody);
         }
         if (guidesVisible || paused) {
             float guideHeight = paused ? 640 : 350;
             Rect guide = new Rect((w - 560) / 2, (h - guideHeight) / 2, 560, guideHeight);
-            Box(guide, true);
-            GUI.Label(new Rect(guide.x + 24, guide.y + 20, 512, 40), paused ? "TẠM DỪNG" : "BINH PHÁP PHÙ ĐỔNG", title);
+            ShadowLabel(new Rect(guide.x + 24, guide.y + 20, 512, 40), paused ? "Tạm dừng" : "Binh pháp Phù Đổng", title);
             string help=paused ? "WASD đi · Shift phi ngựa · Space nhảy · C/Alt né\nChuột phải ngắm · Chuột giữa xoay · V đổi vai\n1–5 chọn hạt · Q gieo · R về điểm dừng chân\nMenu: ↑↓ chọn · ←→ âm lượng · Enter xác nhận" :
                 "WASD: di chuyển · Shift: phi ngựa · Space: nhảy · C / Alt: lăn né\nChuột trái: đánh / ném đá · Giữ chuột phải + trái: phóng tre\nChuột giữa: xoay máy · V: đổi vai · Chuột phải: ngắm khóa mềm\n1 Quang: trói, phá khiên · 2 Tre: gai chậm · 3 Sen: hồi máu, hộ thể\n4 Lửa: thiêu, lộ giáp · 5 Gió: ngắt đòn, đẩy lùi · Q: gieo hạt\nE / L: nhổ tre · E: vác đá / nhặt lương · F: Hỏa Tuyến\nE → Q → E → F: trang bị · E → Q → E: đặt giáp, hóa thánh\nNé vòng đỏ của tướng giặc; phản công khi đao mắc kẹt.\nR: về điểm dừng chân khi gục ngã · Tab: nhiệm vụ · F1: trợ giúp";
-            GUI.Label(new Rect(guide.x+24,guide.y+(paused?66:76),512,paused?82:246),help,body);
+            ShadowLabel(new Rect(guide.x+24,guide.y+(paused?66:76),512,paused?90:246),help,body);
             if (paused) DrawPauseButtons(guide);
         }
         GUI.color = oldColor; GUI.matrix = oldMatrix;
+    }
+
+    // Text-only panels: no surrounding box, a soft dark outline keeps the text readable on any background.
+    private static void ShadowLabel(Rect rect, string text, GUIStyle style)
+    {
+        Color keep = GUI.color;
+        GUI.color = new Color(.05f, .02f, .02f, keep.a * .85f);
+        foreach (Vector2 o in new[] { new Vector2(-1, 0), new Vector2(1, 0), new Vector2(0, -1), new Vector2(0, 1), new Vector2(1, 1) })
+            GUI.Label(new Rect(rect.x + o.x, rect.y + o.y, rect.width, rect.height), text, style);
+        GUI.color = keep;
+        GUI.Label(rect, text, style);
     }
 
     private float PopupAlpha(float until,float duration) => Mathf.Clamp01((until-Time.time)/popupFadeSeconds)*Mathf.Clamp01((duration-until+Time.time)/popupFadeSeconds);
@@ -236,30 +265,30 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
             GUI.color=selected?Color.white:new Color(1,1,1,seeds.ReadyFor(i)?.72f:.40f);
             Rect slot=new Rect(x+4+i*84,y,76,34);Box(slot);
             GUI.color=selected?Gold:new Color(Paper.r,Paper.g,Paper.b,.75f);
-            GUI.Label(new Rect(slot.x+2,slot.y+2,72,28),$"{i+1} {names[i]}",tile);
+            ShadowLabel(new Rect(slot.x+2,slot.y+2,72,28),$"{i+1} {names[i]}",tile);
             if(seeds.CooldownFor(i)>0)ThinBar(new Rect(slot.x+5,slot.yMax-4,66,2),Mathf.Clamp01(seeds.CooldownFor(i)/11),Muted);
             if(selected)GUI.DrawTexture(new Rect(slot.x+8,slot.yMax-2,60,1),Texture2D.whiteTexture);
         }
         GUI.color=previous;
         string cooldown=seeds.CooldownRemaining>0?$"{seeds.CooldownRemaining:0.0}s":"Q gieo";
         string[] effects={"Trói chân + phá khiên: đánh mục tiêu phát sáng", "Gai tre gây thương + làm chậm đường tiến", "Gieo dưới chân: hồi máu + giảm 32% sát thương", "Thiêu đốt + mở giáp cho đòn kế tiếp", "Ngắt đòn báo hiệu + đẩy lùi vòng vây"};
-        GUI.Label(new Rect(x,y+38,420,18),effects[(int)seeds.SelectedSeed],small);
+        ShadowLabel(new Rect(x,y+38,420,18),effects[(int)seeds.SelectedSeed],small);
         string ward=campaign.LotusWardRemaining>0?$" · Hộ thể {campaign.LotusWardRemaining:0.0}s":"";
-        GUI.Label(new Rect(x,y+57,420,18),$"Linh lực {seeds.Mana:0}/{seeds.MaxMana:0} · giá {seeds.ManaCost:0} · {seeds.ChargesRemaining} hạt · {cooldown}{ward}",small);
+        ShadowLabel(new Rect(x,y+57,420,18),$"Linh lực {seeds.Mana:0}/{seeds.MaxMana:0} · giá {seeds.ManaCost:0} · {seeds.ChargesRemaining} hạt · {cooldown}{ward}",small);
     }
 
     private void DrawVitals(float h)
     {
         Rect rect=new Rect(16,h-108,278,92);Box(rect);
-        GUI.Label(new Rect(rect.x+12,rect.y+5,245,23),$"SINH LỰC  {Mathf.RoundToInt(campaign.Health01*100)}%",hudTitle);
+        ShadowLabel(new Rect(rect.x+12,rect.y+5,245,23),$"SINH LỰC  {Mathf.RoundToInt(campaign.Health01*100)}%",hudTitle);
         DrawEnchantedHealthBar(new Rect(rect.x+12,rect.y+31,254,23),campaign.Health01,false);
         string resource=campaign.CurrentChapter==ThanhGiongCampaignController.Chapter.Prologue
             ? $"Lương {Mathf.RoundToInt(campaign.FoodProgress*100)}% · lớn {campaign.GrowthPhase+1}/4"
             : campaign.IsBattleActive ? $"Hạ {campaign.Kills}/{campaign.RequiredBattleKills} · hoàn thành {Mathf.RoundToInt(campaign.StageCompletion01*100)}% · hỏa {Mathf.RoundToInt(campaign.Heat01*100)}%"
             : campaign.CurrentChapter==ThanhGiongCampaignController.Chapter.Preparation ? $"Trang bị {Mathf.Min(campaign.EquipmentStep,4)}/4" : "Phù Đổng Thiên Vương";
-        GUI.Label(new Rect(rect.x+12,rect.y+59,254,17),resource,small);
+        ShadowLabel(new Rect(rect.x+12,rect.y+59,254,17),resource,small);
         if (campaign.CurrentChapter == ThanhGiongCampaignController.Chapter.Battle && campaign.CurrentWeapon == ThanhGiongCampaignController.Weapon.Bamboo)
-            GUI.Label(new Rect(rect.x+12,rect.y+75,254,15),campaign.BambooVariantName,small);
+            ShadowLabel(new Rect(rect.x+12,rect.y+75,254,15),campaign.BambooVariantName,small);
     }
 
     private string ControlHint()
@@ -283,27 +312,32 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
         bool wasEnabled = GUI.enabled;
         GUI.enabled = !ThanhGiongSceneTransition.IsTransitioning;
         if (GUI.Button(new Rect(guide.x + 24, guide.y + 158, 250, 32), "TIẾP TỤC  [ESC]", button)) TogglePause();
-        if (GUI.Button(new Rect(guide.x + 286, guide.y + 158, 250, 32), "🎬 TRAILER DEMO [F10]", button)) { TogglePause(); ThanhGiongTrailerDirector.Instance?.PlayTrailer(false); }
-        if (GUI.Button(new Rect(guide.x + 24, guide.y + 200, 250, 32), campaign.openWorldCampaign!=null?"LƯU HÀNH TRÌNH [F9]":"VỀ ĐIỂM DỪNG CHÂN", button)) RestartCheckpoint();
+        if (GUI.Button(new Rect(guide.x + 286, guide.y + 158, 250, 32), "XEM ĐOẠN GIỚI THIỆU [F10]", button)) { TogglePause(); ThanhGiongTrailerDirector.Instance?.PlayTrailer(false); }
+        if (GUI.Button(new Rect(guide.x + 24, guide.y + 200, 250, 32), "🏛️ MÀN HÌNH CHỜ", button)) { TogglePause(); ThanhGiongStartScreen.OpenWaitingScreen(); }
         if (GUI.Button(new Rect(guide.x + 286, guide.y + 200, 250, 32), campaign.openWorldCampaign!=null?"VỀ LÀNG AN TOÀN":"CHƠI LẠI TOÀN MÀN", button)) RestartCurrentMap();
-        GUI.Label(new Rect(guide.x+24,guide.y+251,512,22),"ÂM THANH",caption);
+        ShadowLabel(new Rect(guide.x+24,guide.y+251,512,22),"ÂM THANH",caption);
         float master=MixSlider(guide,282,"TỔNG",LegendAudioMix.Master);
         float music=MixSlider(guide,311,"NHẠC",LegendAudioMix.Music);
         float effects=MixSlider(guide,340,"HIỆU ỨNG",LegendAudioMix.Effects);
         if(!Mathf.Approximately(master,LegendAudioMix.Master)||!Mathf.Approximately(music,LegendAudioMix.Music)||!Mathf.Approximately(effects,LegendAudioMix.Effects))LegendAudioMix.SetMix(master,music,effects);
-        GUI.Label(new Rect(guide.x + 24, guide.y + 383, 512, 24), campaign.openWorldCampaign!=null?"ĐỊA DANH · MỞ BẢN ĐỒ, CƯỠI NGỰA ĐẾN VÙNG":"CHỌN CHƯƠNG", caption);
+        ShadowLabel(new Rect(guide.x + 24, guide.y + 383, 512, 24), campaign.openWorldCampaign!=null?"ĐỊA DANH · MỞ BẢN ĐỒ, CƯỠI NGỰA ĐẾN VÙNG":"CHỌN CHƯƠNG", caption);
         for (int i = 0; i < ChapterScenes.Length; i++) {
             int row = i / 2, column = i % 2;
             Rect rect = new Rect(guide.x + 24 + column * 262, guide.y + 414 + row * 40, 250, 34);
             if (GUI.Button(rect, ChapterLabels[i], button)) SelectChapter(i);
         }
+        int chapterRows = (ChapterScenes.Length + 1) / 2;
+        Rect quitRect = new Rect(guide.x + 24, guide.y + 414 + chapterRows * 40 + 10, 512, 34);
+        GUI.enabled = true; // closing the game must stay possible even during a scene fade
+        if (GUI.Button(quitRect, campaign.openWorldCampaign != null ? "LƯU & THOÁT GAME" : "THOÁT GAME", button)) SaveAndQuit();
         GUI.enabled = wasEnabled;
         if (!string.IsNullOrEmpty(pauseNotice))
-            GUI.Label(new Rect(guide.x + 24, guide.y + 584, 512, 38), pauseNotice, small);
+            ShadowLabel(new Rect(guide.x + 24, quitRect.yMax + 6, 512, 38), pauseNotice, small);
         Rect focus;
         if(PauseSelection==0)focus=new Rect(guide.x+24,guide.y+158,512,32);
         else if(PauseSelection<=2)focus=new Rect(guide.x+24+(PauseSelection-1)*262,guide.y+200,250,32);
         else if(PauseSelection<=5)focus=new Rect(guide.x+20,guide.y+273+(PauseSelection-3)*29,520,25);
+        else if(PauseSelection==6+ChapterScenes.Length)focus=quitRect;
         else {int i=PauseSelection-6;focus=new Rect(guide.x+24+i%2*262,guide.y+414+i/2*40,250,34);}
         Color saved=GUI.color;GUI.color=Gold;
         GUI.DrawTexture(new Rect(focus.x-3,focus.y-2,focus.width+6,2),Texture2D.whiteTexture);
@@ -313,12 +347,12 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
 
     private float MixSlider(Rect guide,float y,string label,float value)
     {
-        GUI.Label(new Rect(guide.x+24,guide.y+y-3,130,22),label,small);
-        float result=GUI.HorizontalSlider(new Rect(guide.x+156,guide.y+y+3,328,18),value,0,1);
-        GUI.Label(new Rect(guide.x+490,guide.y+y-3,46,22),Mathf.RoundToInt(result*100)+"%",small);return result;
+        ShadowLabel(new Rect(guide.x+24,guide.y+y-3,130,22),label,small);
+        float result=ThanhGiongUITheme.Slider(new Rect(guide.x+156,guide.y+y+3,328,18),value);
+        ShadowLabel(new Rect(guide.x+490,guide.y+y-3,46,22),Mathf.RoundToInt(result*100)+"%",small);return result;
     }
 
-    private string SceneTitle() => campaign.openWorldCampaign != null && campaign.openWorldCampaign.world.CurrentZone != null ? campaign.openWorldCampaign.world.CurrentZone.displayName.ToUpperInvariant() : SceneManager.GetActiveScene().name switch {
+    private string SceneTitle() => campaign.openWorldCampaign != null && campaign.openWorldCampaign.world.CurrentZone != null ? campaign.openWorldCampaign.world.CurrentZone.displayName : SceneManager.GetActiveScene().name switch {
         "LangGiongTienTuyen" => "LÀNG PHÙ ĐỔNG", "KinhThanhRenThep" => "KINH THÀNH RÈN THÉP",
         "PhaoDaiNgamQuanAn" => "PHÁO ĐÀI QUÂN ÂN", "ThungLungVuotSong" => "THUNG LŨNG VƯỢT SÔNG",
         "TranTuyenNuiSoc" => "TRẬN TUYẾN NÚI SÓC", "DinhSocHoaThanh" => "ĐỈNH SÓC HÓA THÁNH", _ => "THÁNH GIÓNG"
@@ -373,37 +407,13 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
         if (cachedBoss == null || !cachedBoss.gameObject.activeInHierarchy || cachedBoss.HealthRatio <= 0) return;
         Rect rect = new Rect(w - 294, 16, 278, 67);
         Box(rect);
-        GUI.Label(new Rect(rect.x + 12, rect.y + 5, 254, 23), cachedBoss.IsStuckInGround ? "TƯỚNG ÂN · ĐAO MẮC KẸT!" : "TƯỚNG GIẶC ÂN",hudTitle);
+        ShadowLabel(new Rect(rect.x + 12, rect.y + 5, 254, 23), cachedBoss.IsStuckInGround ? "TƯỚNG ÂN · ĐAO MẮC KẸT!" : "TƯỚNG GIẶC ÂN",hudTitle);
         DrawEnchantedHealthBar(new Rect(rect.x + 12, rect.y + 32, 254, 23), cachedBoss.HealthRatio, true);
     }
 
     private void Box(Rect rect,bool expanded=false)
     {
-        Color previous = GUI.color;
-        GUI.color = new Color(PanelTeal.r, PanelTeal.g, PanelTeal.b, previous.a * (expanded?.94f:PanelTeal.a));
-        GUI.DrawTexture(rect, Texture2D.whiteTexture);
-        GUI.color = new Color(Gold.r, Gold.g, Gold.b, previous.a * (expanded?1:.6f));
-        if (panelFrame != null) {
-            // Draw only Kenney's border: its opaque texture center must not obscure the world.
-            float sourceX=Mathf.Min(.25f,8f/panelFrame.width),sourceY=Mathf.Min(.25f,8f/panelFrame.height);
-            float border=expanded?8:4;
-            GUI.DrawTextureWithTexCoords(new Rect(rect.x+border,rect.y,rect.width-2*border,border),panelFrame,new Rect(sourceX,1-sourceY,1-2*sourceX,sourceY));
-            GUI.DrawTextureWithTexCoords(new Rect(rect.x+border,rect.yMax-border,rect.width-2*border,border),panelFrame,new Rect(sourceX,0,1-2*sourceX,sourceY));
-            GUI.DrawTextureWithTexCoords(new Rect(rect.x,rect.y+border,border,rect.height-2*border),panelFrame,new Rect(0,sourceY,sourceX,1-2*sourceY));
-            GUI.DrawTextureWithTexCoords(new Rect(rect.xMax-border,rect.y+border,border,rect.height-2*border),panelFrame,new Rect(1-sourceX,sourceY,sourceX,1-2*sourceY));
-            for(int corner=0;corner<4;corner++) {
-                bool right=(corner&1)!=0,bottom=(corner&2)!=0;
-                GUI.DrawTextureWithTexCoords(new Rect(right?rect.xMax-border:rect.x,bottom?rect.yMax-border:rect.y,border,border),panelFrame,
-                    new Rect(right?1-sourceX:0,bottom?0:1-sourceY,sourceX,sourceY));
-            }
-        }
-        else {
-            GUI.DrawTexture(new Rect(rect.x, rect.y, rect.width, 2), Texture2D.whiteTexture);
-            GUI.DrawTexture(new Rect(rect.x, rect.yMax - 2, rect.width, 2), Texture2D.whiteTexture);
-            GUI.DrawTexture(new Rect(rect.x, rect.y, 2, rect.height), Texture2D.whiteTexture);
-            GUI.DrawTexture(new Rect(rect.xMax - 2, rect.y, 2, rect.height), Texture2D.whiteTexture);
-        }
-        GUI.color = previous;
+        // Text-only HUD: panels draw no background box or border rules.
     }
 
     private void ThinBar(Rect rect,float value,Color fill)
@@ -416,29 +426,13 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
 
     private void DrawEnchantedHealthBar(Rect rect, float value, bool boss)
     {
-        float alpha = GUI.color.a;
-        Color previous = GUI.color;
-        value = Mathf.Clamp01(value);
-        GUI.color = new Color(Gold.r, Gold.g, Gold.b, alpha);
+        // A quiet matte strip: no moving glint, bevel or bright highlight.
+        Color saved = GUI.color;
+        GUI.color = new Color(.12f, .13f, .11f, saved.a);
         GUI.DrawTexture(rect, Texture2D.whiteTexture);
-        Rect track = new Rect(rect.x + 2, rect.y + 2, rect.width - 4, rect.height - 4);
-        GUI.color = new Color(Forest.r, Forest.g, Forest.b, alpha);
-        GUI.DrawTexture(track, Texture2D.whiteTexture);
-        float fillWidth = (track.width - 4) * value;
-        if (fillWidth > 0.1f) {
-            Rect fill = new Rect(track.x + 2, track.y + 2, fillWidth, track.height - 4);
-            Color core = boss ? new Color(.89f, .52f, .25f) : Color.Lerp(new Color(.98f, .42f, .24f), Spring, Mathf.Clamp01(value * 2f));
-            GUI.color = new Color(core.r, core.g, core.b, alpha);
-            GUI.DrawTexture(fill, Texture2D.whiteTexture);
-            GUI.color = new Color(1f, .97f, .68f, alpha * .65f);
-            GUI.DrawTexture(new Rect(fill.x, fill.y, fill.width, 4), Texture2D.whiteTexture);
-            float shimmer = Mathf.Repeat(Time.unscaledTime * 34f, Mathf.Max(1f, fillWidth));
-            GUI.color = new Color(1f, 1f, .78f, alpha * .55f);
-            GUI.DrawTexture(new Rect(fill.x + shimmer, fill.y + 2, Mathf.Min(3f, fill.xMax - fill.x - shimmer), fill.height - 4), Texture2D.whiteTexture);
-        }
-        GUI.color = new Color(Paper.r, Paper.g, Paper.b, alpha * .85f);
-        GUI.DrawTexture(new Rect(rect.x + rect.width * .5f - 1, rect.y - 2, 2, 4), Texture2D.whiteTexture);
-        GUI.color = previous;
+        GUI.color = boss ? new Color(.64f, .39f, .30f, saved.a) : new Color(.55f, .62f, .43f, saved.a);
+        GUI.DrawTexture(new Rect(rect.x + 1, rect.y + 1, (rect.width - 2) * Mathf.Clamp01(value), rect.height - 2), Texture2D.whiteTexture);
+        GUI.color = saved;
     }
 
     private void Bar(Rect rect, float value, Color fill, string label)
@@ -447,7 +441,7 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
         GUI.color = new Color(.09f, .045f, .035f); GUI.DrawTexture(rect, Texture2D.whiteTexture);
         GUI.color = fill; GUI.DrawTexture(new Rect(rect.x + 2, rect.y + 2, (rect.width - 4) * Mathf.Clamp01(value), rect.height - 4), Texture2D.whiteTexture);
         GUI.color = previous;
-        GUI.Label(new Rect(rect.x + 8, rect.y + 2, rect.width - 16, rect.height), label + "  " + Mathf.RoundToInt(value * 100) + "%", small);
+        ShadowLabel(new Rect(rect.x + 8, rect.y + 2, rect.width - 16, rect.height), label + "  " + Mathf.RoundToInt(value * 100) + "%", small);
     }
 
     private void OnDisable()

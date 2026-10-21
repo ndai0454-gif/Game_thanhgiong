@@ -27,9 +27,17 @@ public sealed class MeshyMountedCombatPose : MonoBehaviour
     Vector3[] frozenPositions;
     Quaternion[] frozenRotations;
     bool hasFrozenPose;
+    MeshyHeroEquipment equipment;
+    Transform leftUpLeg, leftLeg, leftFoot, leftToe, rightUpLeg, rightLeg, rightFoot, rightToe, heroHead;
+    // Horse barrel half-width at knee and stirrup height, in Mount space.
+    const float KneeClearance = .36f, StirrupClearance = .38f;
     public bool IsReady => leftHand != null && rightHand != null && head != null && mount != null;
     public float ReinGripError { get; private set; }
     public bool IsPulling => pullRemaining > 0f;
+    [Header("Held Bamboo Sizing")]
+    [Tooltip("Tỉ lệ kích thước cây tre trên tay: X, Z là độ to (thân tre), Y là chiều dài.")]
+    public Vector3 bambooScale = new Vector3(1.3f, 2.0f, 1.3f);
+
     public bool IsBreaking => breakRemaining > 0f;
     public bool HeldBambooVisible => bamboo != null && bamboo.gameObject.activeInHierarchy;
     public float HeldBambooSwayDegrees { get; private set; }
@@ -56,8 +64,12 @@ public sealed class MeshyMountedCombatPose : MonoBehaviour
         }
         if (!IsReady) return;
         Transform hero = fbxDriver != null ? fbxDriver.meshyHero : rig != null ? rig.heroAnimator.transform : null;
+        equipment = GetComponent<MeshyHeroEquipment>();
         if (hero != null)
         {
+            leftUpLeg = HeroBone(hero, "LeftUpLeg"); leftLeg = HeroBone(hero, "LeftLeg"); leftFoot = HeroBone(hero, "LeftFoot"); leftToe = HeroBone(hero, "LeftToeBase");
+            rightUpLeg = HeroBone(hero, "RightUpLeg"); rightLeg = HeroBone(hero, "RightLeg"); rightFoot = HeroBone(hero, "RightFoot"); rightToe = HeroBone(hero, "RightToeBase");
+            heroHead = HeroBone(hero, "Head");
             EnsureCleanHeroSkin(hero);
             poseBones = hero.GetComponentsInChildren<Transform>(true);
             frozenPositions = new Vector3[poseBones.Length]; frozenRotations = new Quaternion[poseBones.Length];
@@ -194,6 +206,7 @@ public sealed class MeshyMountedCombatPose : MonoBehaviour
     void ConfigureHeldBamboo()
     {
         if (bamboo == null) return;
+        bamboo.localScale = bambooScale;
         if (bamboo.parent == rightHand)
         {
             bamboo.localPosition = new Vector3(-.005f, .105f, -.012f);
@@ -262,6 +275,59 @@ public sealed class MeshyMountedCombatPose : MonoBehaviour
         return null;
     }
 
+    static Transform HeroBone(Transform hero, string name)
+    {
+        foreach (Transform t in hero.GetComponentsInChildren<Transform>(true)) if (t.name == name) return t;
+        return null;
+    }
+
+    static float Smooth01(float v) { v = Mathf.Clamp01(v); return v * v * (3f - 2f * v); }
+
+    void SeatLegs()
+    {
+        SeatLeg(leftUpLeg, leftLeg, leftFoot, leftToe, -1f);
+        SeatLeg(rightUpLeg, rightLeg, rightFoot, rightToe, 1f);
+    }
+
+    // Thighs wrap the barrel, knees forward and out, heels down in the stirrups. The stirrup
+    // stays fixed to the horse, so the knees absorb the gallop bounce and the two-point rise.
+    void SeatLeg(Transform hip, Transform knee, Transform foot, Transform toe, float side)
+    {
+        if (hip == null || knee == null || foot == null) return;
+        float scale = Mathf.Max(Mathf.Abs(mount.lossyScale.x), 1e-4f);
+        float thigh = Vector3.Distance(hip.position, knee.position) / scale;
+        float shin = Vector3.Distance(knee.position, foot.position) / scale;
+        Vector3 hipLocal = mount.InverseTransformPoint(hip.position);
+        Vector3 kneeLocal = hipLocal + new Vector3(side * .50f, -.48f, .72f).normalized * thigh;
+        kneeLocal.x = side * Mathf.Max(Mathf.Abs(kneeLocal.x), KneeClearance);
+        Vector3 footLocal = kneeLocal + new Vector3(0f, -.86f, -.50f).normalized * (shin * .96f);
+        footLocal.x = side * Mathf.Max(Mathf.Abs(footLocal.x), StirrupClearance);
+        Vector3 pole = mount.TransformDirection(new Vector3(side * .75f, .1f, 1f)).normalized;
+        SolveTwoBone(hip, knee, foot, mount.TransformPoint(footLocal), pole);
+        if (toe != null)
+        {
+            Vector3 desired = mount.TransformDirection(new Vector3(side * .28f, -.12f, 1f)).normalized;
+            Vector3 current = toe.position - foot.position;
+            if (current.sqrMagnitude > 1e-8f) foot.rotation = Quaternion.FromToRotation(current, desired) * foot.rotation;
+        }
+    }
+
+    static void SolveTwoBone(Transform upper, Transform lower, Transform end, Vector3 target, Vector3 pole)
+    {
+        Vector3 origin = upper.position;
+        float a = Vector3.Distance(origin, lower.position), b = Vector3.Distance(lower.position, end.position);
+        if (a < 1e-4f || b < 1e-4f) return;
+        Vector3 delta = target - origin;
+        float d = Mathf.Clamp(delta.magnitude, Mathf.Abs(a - b) + 1e-3f, (a + b) * .985f);
+        Vector3 dir = delta.sqrMagnitude > 1e-8f ? delta.normalized : Vector3.down;
+        Vector3 side = Vector3.ProjectOnPlane(pole, dir).normalized;
+        if (side.sqrMagnitude < 1e-3f) side = Vector3.Cross(dir, Vector3.right).normalized;
+        float along = (a * a - b * b + d * d) / (2f * d);
+        Vector3 joint = origin + dir * along + side * Mathf.Sqrt(Mathf.Max(0f, a * a - along * along));
+        upper.rotation = Quaternion.FromToRotation(lower.position - origin, joint - origin) * upper.rotation;
+        lower.rotation = Quaternion.FromToRotation(end.position - lower.position, origin + dir * d - lower.position) * lower.rotation;
+    }
+
     public void PlayBreak() { breakRemaining = .65f; pullRemaining = 0f; }
     public void PlayBambooPull(Vector3 worldTarget) { pullRemaining = .6f; pullTarget = worldTarget; }
 
@@ -285,33 +351,51 @@ public sealed class MeshyMountedCombatPose : MonoBehaviour
         bool armed = iron || campaign.CurrentWeapon == ThanhGiongCampaignController.Weapon.Bamboo;
         bool actionPlaying = rig != null ? rig.IsActionPlaying : movement.AttackProgress >= 0f;
 
-        // Square the rider's upper torso forward when seated so the left shoulder
-        // isn't twisted backward by the standing side-stance idle clip.
-        if (!campaign.EquipmentBusy && (iron || !actionPlaying))
+        float windup = motion != null ? motion.AttackWindup : 0f;
+        float strike = motion != null ? motion.AttackStrike : 0f;
+        float gait = motion != null ? motion.GaitPhase * Mathf.PI * 2f : 0f;
+        float pull = IsPulling ? 1f - pullRemaining / .6f : -1f;
+        float pullReach = pull >= 0f ? Smooth01(pull / .25f) * (1f - Smooth01((pull - .85f) / .15f)) : 0f;
+        float heave = pull >= 0f ? Smooth01((pull - .4f) / .45f) * (1f - Smooth01((pull - .85f) / .15f)) : 0f;
+        float pullSide = IsPulling && mount.InverseTransformPoint(pullTarget).x < 0f ? -1f : 1f;
+
+        // Square the rider's upper torso forward when seated so the left shoulder isn't twisted
+        // backward by the standing side-stance idle clip. The lean deepens into a gallop crouch
+        // that pumps with the stride; a spear thrust coils on the wind-up and drives the chest
+        // forward on contact; a bamboo pull leans out to the stalk, then heaves back.
+        if (iron || !actionPlaying || IsPulling || campaign.EquipmentBusy)
         {
-            float lean = 5f + 7f * speed;
-            if (spine02 != null) spine02.localRotation = Quaternion.Euler(lean * .30f, 0f, 0f);
-            if (spine01 != null) spine01.localRotation = Quaternion.Euler(lean * .40f, 0f, 0f);
-            if (spine != null) spine.localRotation = Quaternion.Euler(lean * .30f, 0f, 0f);
+            float lean = 5f + 15f * speed + Mathf.Sin(gait * 2f) * 2.2f * speed;
+            float twist = 0f, roll = 0f;
+            if (iron && actionPlaying) { lean += 12f * strike - 7f * windup; twist = -18f * windup + 24f * strike; }
+            if (IsPulling) { lean += 10f * pullReach - 8f * heave; roll = 12f * pullSide * pullReach; twist += 12f * pullSide * pullReach; }
+            if (campaign.EquipmentBusy) lean = 3f;
+            if (spine02 != null) spine02.localRotation = Quaternion.Euler(lean * .30f, twist * .25f, roll * .30f);
+            if (spine01 != null) spine01.localRotation = Quaternion.Euler(lean * .40f, twist * .35f, roll * .35f);
+            if (spine != null) spine.localRotation = Quaternion.Euler(lean * .30f, twist * .40f, roll * .35f);
+            // Keep the eyes on the road while the chest leans.
+            if (heroHead != null) heroHead.localRotation *= Quaternion.Euler(-lean * .45f, -twist * .3f, -roll * .4f);
         }
+        SeatLegs();
 
         // Keep the grip in saddle space with a comfortable bent elbow above the withers.
         Vector3 leftTarget = leftArm.position + mount.TransformVector(new Vector3(.08f, -.33f + bob, .22f));
         Vector3 rightTarget = rightArm.position + mount.TransformVector(new Vector3(-.04f, -.31f + bob, .20f));
-        float windup = motion != null ? motion.AttackWindup : 0f;
-        float strike = motion != null ? motion.AttackStrike : 0f;
         if (iron)
-            rightTarget += mount.TransformVector(new Vector3(.08f * windup, .12f * windup, -.16f * windup + .22f * strike));
+            rightTarget += mount.TransformVector(new Vector3(.10f * windup - .04f * strike, .20f * windup + .04f * strike, -.24f * windup + .46f * strike));
         else if (!armed) rightTarget = rightArm.position + mount.TransformVector(new Vector3(-.08f, -.33f + bob, .22f));
         if (IsBreaking)
             rightTarget += mount.TransformVector(new Vector3(.16f, .12f, -.18f)) * Mathf.Sin((1f - breakRemaining / .65f) * Mathf.PI);
         if (IsPulling)
         {
-            float p = 1f - pullRemaining / .6f;
-            Vector3 reach = Vector3.ClampMagnitude(pullTarget - rightArm.position, .46f * Mathf.Abs(mount.lossyScale.x));
-            Vector3 target = rightArm.position + reach;
-            target += mount.up * (.28f * Mathf.SmoothStep(0f, 1f, p));
-            rightTarget = Vector3.Lerp(rightTarget, target, Mathf.Sin(p * Mathf.PI));
+            // Both hands close on the stalk, then heave it up and back toward the saddle.
+            float mountScale = Mathf.Abs(mount.lossyScale.x);
+            float armLength = (Vector3.Distance(rightArm.position, rightElbow.position) + Vector3.Distance(rightElbow.position, rightHand.position)) * .95f;
+            Vector3 shoulder = pullSide > 0f ? rightArm.position : leftArm.position;
+            Vector3 grip = shoulder + Vector3.ClampMagnitude(pullTarget - shoulder, armLength);
+            grip += mount.up * (.30f * heave * mountScale) + (shoulder - grip) * (.40f * heave);
+            rightTarget = Vector3.Lerp(rightTarget, grip + mount.up * (.05f * mountScale), pullReach);
+            leftTarget = Vector3.Lerp(leftTarget, grip - mount.up * (.09f * mountScale), pullReach);
         }
         if (!gripsInitialized) { leftGrip = leftTarget; rightGrip = rightTarget; gripsInitialized = true; }
         float blend = 1f - Mathf.Exp(-22f * dt);
@@ -334,6 +418,15 @@ public sealed class MeshyMountedCombatPose : MonoBehaviour
                     socket.rotation = Quaternion.FromToRotation(mount.up, direction) * mount.rotation;
                 }
             }
+        }
+        else if (equipment != null && motion != null &&
+                 equipment.Animate(motion.CurrentEquipmentAction, motion.EquipmentProgress, mount, out Vector3 leftItem, out Vector3 rightItem, out float itemReach))
+        {
+            // Both hands carry the helmet or breastplate along its path.
+            Vector3 leftPole = (-mount.up * .5f - mount.right * .8f).normalized;
+            Vector3 rightPole = (-mount.up * .5f + mount.right * .8f).normalized;
+            Solve(leftArm, leftElbow, leftHand, Vector3.Lerp(leftGrip, leftItem, itemReach), leftPole, mount, mount.right);
+            Solve(rightArm, rightElbow, rightHand, Vector3.Lerp(rightGrip, rightItem, itemReach), rightPole, mount, -mount.right);
         }
         ReinGripError = Vector3.Distance(leftHand.position, leftGrip);
         DrawReins(speed);
@@ -366,6 +459,7 @@ public sealed class MeshyMountedCombatPose : MonoBehaviour
         HeldBambooSwayDegrees = idleSway + strikeFlex;
         bamboo.localPosition = bambooBasePosition + Vector3.up * (Mathf.Sin(gait * .5f) * .006f * speed);
         bamboo.localRotation = bambooBaseRotation * Quaternion.Euler(HeldBambooSwayDegrees, 0f, -idleSway * .35f);
+        bamboo.localScale = bambooScale;
     }
 
     static void Solve(Transform upper, Transform lower, Transform hand, Vector3 target, Vector3 pole, Transform mount, Vector3 palmNormal)
