@@ -3,13 +3,27 @@ using UnityEngine;
 /// <summary>Đông Hồ / sơn mài typography and palette shared by the HUD, map and scene overlays.</summary>
 public static class ThanhGiongUITheme
 {
-    // Bảng màu Đông Hồ: nền sơn mài nâu đen, giấy điệp, vàng kim, đỏ son, xanh ngọc.
+    // Bảng màu Đông Hồ kết hợp Huyền Thiết & Đồng Cổ Black Myth: Wukong
     public static readonly Color Ink = new Color(.105f, .055f, .045f, .92f);
     public static readonly Color Paper = new Color(.99f, .94f, .80f);
     public static readonly Color Muted = new Color(.84f, .75f, .60f);
     public static readonly Color Brass = new Color(.96f, .74f, .24f);
     public static readonly Color Moss = new Color(.27f, .62f, .52f);
     public static readonly Color Vermilion = new Color(.80f, .17f, .12f);
+
+    // Tông màu Huyền Thiết & Đồng Cổ Black Myth: Wukong
+    public static readonly Color Obsidian = new Color(.055f, .038f, .035f, .92f);      // Huyền thạch ám khói sâu
+    public static readonly Color ObsidianSoft = new Color(.09f, .065f, .058f, .82f);   // Nền đá mờ bán trong suốt
+    public static readonly Color AntiqueGold = new Color(.88f, .72f, .38f, 1f);        // Hoàng kim đồng cổ (viền & tiêu đề)
+    public static readonly Color PaleGold = new Color(.96f, .88f, .68f, 1f);           // Ánh kim vàng nhạt
+    public static readonly Color MutedBronze = new Color(.62f, .48f, .34f, .85f);     // Đồng thau cổ
+    public static readonly Color Cinnabar = new Color(.86f, .18f, .14f, 1f);           // Đỏ chu sa thẫm (Sinh Lực Gióng)
+    public static readonly Color BossCrimson = new Color(.78f, .12f, .10f, 1f);       // Đỏ huyết quỷ giặc Ân
+    public static readonly Color JadeStamina = new Color(.32f, .78f, .58f, 1f);       // Ngọc bích sương mù (Thể Lực)
+    public static readonly Color SpiritMana = new Color(.38f, .70f, .76f, 1f);        // Lam ngọc khói thiêng (Linh Lực)
+    public static readonly Color EmberFlame = new Color(1.0f, .56f, .18f, 1f);         // Hỏa khí linh thiêng
+    public static readonly Color GhostAmber = new Color(.96f, .76f, .32f, .85f);      // Vệt sát thương trễ hổ phách
+    public static readonly Color AncientPaper = new Color(.94f, .90f, .82f, 1f);      // Giấy ngà cổ điệp
     /// <summary>Be Vietnam Pro có x-height lớn hơn Cormorant, nên thu cỡ chữ để giữ bố cục cũ.</summary>
     public const float FontScale = .86f;
     private static Font regular, medium, light;

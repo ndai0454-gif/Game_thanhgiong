@@ -46,12 +46,22 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
     private Font serifRegular, serifBold;
     private readonly Collider[] nearby = new Collider[32];
     private float nextNearScan;
-    private static readonly Color Paper = ThanhGiongUITheme.Paper;
-    private static readonly Color Gold = ThanhGiongUITheme.Brass;
+    private static readonly Color Paper = ThanhGiongUITheme.AncientPaper;
+    private static readonly Color Gold = ThanhGiongUITheme.AntiqueGold;
     private static readonly Color Muted = ThanhGiongUITheme.Muted;
-    private static readonly Color PanelTeal = ThanhGiongUITheme.Ink;
+    private static readonly Color PanelTeal = ThanhGiongUITheme.Obsidian;
     private static readonly Color Forest = new Color(.13f, .05f, .04f);
     private static readonly Color Spring = new Color(.55f, .88f, .27f);
+    private static readonly Color Obsidian = ThanhGiongUITheme.Obsidian;
+    private static readonly Color ObsidianSoft = ThanhGiongUITheme.ObsidianSoft;
+    private static readonly Color AntiqueGold = ThanhGiongUITheme.AntiqueGold;
+    private static readonly Color MutedBronze = ThanhGiongUITheme.MutedBronze;
+    private static readonly Color Cinnabar = ThanhGiongUITheme.Cinnabar;
+    private static readonly Color BossCrimson = ThanhGiongUITheme.BossCrimson;
+    private static readonly Color JadeStamina = ThanhGiongUITheme.JadeStamina;
+    private static readonly Color EmberFlame = ThanhGiongUITheme.EmberFlame;
+    private static readonly Color GhostAmber = ThanhGiongUITheme.GhostAmber;
+    private static readonly Color AncientPaper = ThanhGiongUITheme.AncientPaper;
 
     private void Start()
     {
@@ -419,32 +429,64 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
         float x = (w - barWidth) * 0.5f;
         float y = 14f;
 
-        string titleText = cachedBoss.IsStuckInGround ? "★  SƠ HỞ CHÍ MẠNG · PHẢN CÔNG!  ★" : "⚔  TƯỚNG GIẶC ÂN  ⚔";
-        Color previousColor = GUI.color;
-        GUI.color = cachedBoss.IsStuckInGround ? Color.Lerp(Gold, Color.white, Mathf.PingPong(Time.time * 6f, 1f)) : Paper;
-        GUIStyle bossTitleStyle = chapterAction != null ? chapterAction : (hudTitle != null ? hudTitle : GUI.skin.label);
-        ShadowLabel(new Rect(x - 40, y, barWidth + 80, 24), titleText, bossTitleStyle);
+        // Smoked obsidian banner background behind boss header
+        Rect bannerRect = new Rect(x - 20, y - 4, barWidth + 40, 58);
+        DrawMysticPanel(bannerRect, ObsidianSoft, new Color(MutedBronze.r, MutedBronze.g, MutedBronze.b, 0.45f), false);
 
-        GUI.color = Muted;
-        string phaseInfo = $"GIAI ĐOẠN {cachedBoss.BossPhase}   ·   {Mathf.RoundToInt(cachedBoss.HealthRatio * 100)}% MÁU";
+        string titleText = cachedBoss.IsStuckInGround ? "★  SƠ HỞ HUYỀN CƠ · PHẢN CÔNG LIÊN HOÀN!  ★" : "❖  ĐẠI TƯỚNG GIẶC ÂN  ❖";
+        Color previousColor = GUI.color;
+        GUI.color = cachedBoss.IsStuckInGround ? Color.Lerp(Gold, Color.white, Mathf.PingPong(Time.time * 6f, 1f)) : Gold;
+        GUIStyle bossTitleStyle = chapterAction != null ? chapterAction : (hudTitle != null ? hudTitle : GUI.skin.label);
+        ShadowLabel(new Rect(x - 40, y, barWidth + 80, 22), titleText, bossTitleStyle);
+
+        GUI.color = AncientPaper;
+        string phaseInfo = $"GIAI ĐOẠN {cachedBoss.BossPhase}   ·   {Mathf.RoundToInt(cachedBoss.HealthRatio * 100)}% HUYẾT KHÍ";
         GUIStyle subStyle = chapterCentered != null ? chapterCentered : (small != null ? small : GUI.skin.label);
-        ShadowLabel(new Rect(x, y + 22, barWidth, 16), phaseInfo, subStyle);
+        ShadowLabel(new Rect(x, y + 21, barWidth, 16), phaseInfo, subStyle);
         GUI.color = previousColor;
 
-        DrawModernHealthBar(new Rect(x, y + 40, barWidth, 14), cachedBoss.HealthRatio, ref bossGhostHealth01, ref bossLastDamageTime, ref previousBossHealth01, true, 3);
+        DrawModernHealthBar(new Rect(x, y + 38, barWidth, 14), cachedBoss.HealthRatio, ref bossGhostHealth01, ref bossLastDamageTime, ref previousBossHealth01, true, 3);
     }
 
-    private void Box(Rect rect,bool expanded=false)
+    public static void DrawMysticPanel(Rect rect, Color bg, Color border, bool cornerDecorations = true)
     {
-        // Text-only HUD: panels draw no background box or border rules.
+        Color oldColor = GUI.color;
+        // Deep soft drop shadow
+        GUI.color = new Color(0.01f, 0.005f, 0.005f, 0.55f);
+        GUI.DrawTexture(new Rect(rect.x + 2, rect.y + 2, rect.width, rect.height), Texture2D.whiteTexture);
+
+        // Thin antique bronze / gold filigree border
+        GUI.color = border;
+        GUI.DrawTexture(new Rect(rect.x - 1, rect.y - 1, rect.width + 2, rect.height + 2), Texture2D.whiteTexture);
+
+        // Smoked obsidian inner background
+        GUI.color = bg;
+        GUI.DrawTexture(rect, Texture2D.whiteTexture);
+
+        // 4 diamond/rhombus corner ornaments (Black Myth signature)
+        if (cornerDecorations)
+        {
+            GUI.color = border;
+            GUI.DrawTexture(new Rect(rect.x - 2, rect.y - 2, 4, 4), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(rect.xMax - 2, rect.y - 2, 4, 4), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(rect.x - 2, rect.yMax - 2, 4, 4), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(rect.xMax - 2, rect.yMax - 2, 4, 4), Texture2D.whiteTexture);
+        }
+
+        GUI.color = oldColor;
     }
 
-    private void ThinBar(Rect rect,float value,Color fill)
+    private void Box(Rect rect, bool expanded = false)
     {
-        Color previous=GUI.color;
-        GUI.color=new Color(.09f,.045f,.035f,.6f);GUI.DrawTexture(rect,Texture2D.whiteTexture);
-        GUI.color=fill;GUI.DrawTexture(new Rect(rect.x,rect.y,rect.width*Mathf.Clamp01(value),rect.height),Texture2D.whiteTexture);
-        GUI.color=previous;
+        DrawMysticPanel(rect, Obsidian, MutedBronze, true);
+    }
+
+    private void ThinBar(Rect rect, float value, Color fill)
+    {
+        Color previous = GUI.color;
+        GUI.color = new Color(.06f, .04f, .035f, .75f); GUI.DrawTexture(rect, Texture2D.whiteTexture);
+        GUI.color = fill; GUI.DrawTexture(new Rect(rect.x, rect.y, rect.width * Mathf.Clamp01(value), rect.height), Texture2D.whiteTexture);
+        GUI.color = previous;
     }
 
     private void DrawEnchantedHealthBar(Rect rect, float value, bool boss)
@@ -474,13 +516,13 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
             GUI.DrawTexture(new Rect(rect.x - 3, rect.y - 3, rect.width + 6, rect.height + 6), Texture2D.whiteTexture);
         }
 
-        // Lacquer / bronze frame border
-        Color borderColor = hasShield ? new Color(0.96f, 0.82f, 0.35f, 0.95f) : (isBoss ? new Color(0.72f, 0.52f, 0.32f, 0.95f) : new Color(0.68f, 0.55f, 0.35f, 0.85f));
+        // Lacquer / antique bronze frame border
+        Color borderColor = hasShield ? new Color(0.96f, 0.85f, 0.45f, 0.95f) : (isBoss ? AntiqueGold : MutedBronze);
         GUI.color = borderColor;
         GUI.DrawTexture(new Rect(rect.x - 1, rect.y - 1, rect.width + 2, rect.height + 2), Texture2D.whiteTexture);
 
-        // Deep dark background
-        GUI.color = new Color(0.08f, 0.04f, 0.035f, 0.94f);
+        // Deep dark obsidian background
+        GUI.color = Obsidian;
         GUI.DrawTexture(rect, Texture2D.whiteTexture);
 
         float innerX = rect.x + 1;
@@ -492,7 +534,7 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
         float ghostW = innerW * Mathf.Clamp01(ghost01);
         if (ghostW > 0.5f)
         {
-            GUI.color = isBoss ? new Color(0.96f, 0.65f, 0.25f, 0.82f) : new Color(0.98f, 0.75f, 0.32f, 0.85f);
+            GUI.color = isBoss ? GhostAmber : new Color(0.98f, 0.80f, 0.42f, 0.85f);
             GUI.DrawTexture(new Rect(innerX, innerY, ghostW, innerH), Texture2D.whiteTexture);
         }
 
@@ -501,8 +543,8 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
         if (fillW > 0.5f)
         {
             Color mainColor = isBoss
-                ? Color.Lerp(new Color(0.75f, 0.14f, 0.12f, 1f), new Color(0.90f, 0.28f, 0.18f, 1f), health01)
-                : Color.Lerp(new Color(0.82f, 0.18f, 0.14f, 1f), new Color(0.95f, 0.40f, 0.22f, 1f), health01);
+                ? Color.Lerp(BossCrimson, new Color(0.92f, 0.25f, 0.15f, 1f), health01)
+                : Color.Lerp(Cinnabar, new Color(0.96f, 0.42f, 0.22f, 1f), health01);
 
             if (!isBoss && health01 < 0.25f)
             {
@@ -512,8 +554,8 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
             GUI.color = mainColor;
             GUI.DrawTexture(new Rect(innerX, innerY, fillW, innerH), Texture2D.whiteTexture);
 
-            // Subtle 1.5px bevel highlight on top edge
-            GUI.color = new Color(1f, 1f, 1f, 0.35f);
+            // Subtle 1.5px bevel highlight on top edge (gilded sheen)
+            GUI.color = new Color(1f, 0.96f, 0.88f, 0.38f);
             GUI.DrawTexture(new Rect(innerX, innerY, fillW, 2f), Texture2D.whiteTexture);
         }
 
@@ -523,9 +565,9 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
             for (int i = 1; i < phaseSegments; i++)
             {
                 float divX = innerX + (innerW * i / phaseSegments);
-                GUI.color = new Color(0.06f, 0.03f, 0.02f, 0.85f);
+                GUI.color = new Color(0.04f, 0.02f, 0.02f, 0.9f);
                 GUI.DrawTexture(new Rect(divX - 1, innerY, 2, innerH), Texture2D.whiteTexture);
-                GUI.color = isBoss ? new Color(0.92f, 0.74f, 0.38f, 0.9f) : new Color(0.85f, 0.75f, 0.5f, 0.7f);
+                GUI.color = isBoss ? AntiqueGold : MutedBronze;
                 GUI.DrawTexture(new Rect(divX, innerY, 1, innerH), Texture2D.whiteTexture);
             }
         }

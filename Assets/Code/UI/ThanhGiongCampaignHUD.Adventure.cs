@@ -134,55 +134,139 @@ public partial class ThanhGiongCampaignHUD
     void DrawRiceVitals()
     {
         Color saved = GUI.color;
-        ShadowLabel(new Rect(23, 14, 240, 24), "THÁNH GIÓNG", hudTitle);
-
         bool hasWard = campaign != null && campaign.LotusWardRemaining > 0;
         float h01 = campaign != null ? campaign.Health01 : 1f;
         float curHp = campaign != null ? campaign.Health : 100f;
         float maxHp = campaign != null ? campaign.maxHealth : 100f;
 
-        DrawModernHealthBar(new Rect(23, 40, 216, 13), h01, ref heroGhostHealth01, ref heroLastDamageTime, ref previousHeroHealth01, false, 4, hasWard);
+        // Vitals frame (Obsidian & Antique Gold panel)
+        bool hasStamina = adventureStamina != null;
+        bool hasHeat = campaign != null && campaign.Heat01 > 0.01f;
+        float panelHeight = 62f + (hasStamina ? 8f : 0f) + (hasHeat ? 7f : 0f) + (hasWard ? 18f : 0f);
+        Rect vitalsRect = new Rect(18, 12, 332, panelHeight);
+        DrawMysticPanel(vitalsRect, ObsidianSoft, new Color(MutedBronze.r, MutedBronze.g, MutedBronze.b, 0.40f), true);
 
-        ShadowLabel(new Rect(246, 37, 120, 18), $"{Mathf.CeilToInt(curHp)} / {Mathf.CeilToInt(maxHp)}", small);
+        // Header: "❖ THÁNH GIÓNG ❖"
+        GUI.color = Gold;
+        ShadowLabel(new Rect(26, 16, 216, 20), "❖  THÁNH GIÓNG  ❖", hudTitle);
+
+        // HP numbers on the right
+        GUI.color = AncientPaper;
+        ShadowLabel(new Rect(242, 17, 100, 18), $"{Mathf.CeilToInt(curHp)} / {Mathf.CeilToInt(maxHp)}", small);
+
+        // Health bar: Cinnabar red with gold trims
+        float currentY = 38f;
+        DrawModernHealthBar(new Rect(26, currentY, 216, 12), h01, ref heroGhostHealth01, ref heroLastDamageTime, ref previousHeroHealth01, false, 4, hasWard);
+        currentY += 15f;
+
+        // Jade Stamina Bar (Thể lực)
+        if (hasStamina)
+        {
+            float stamRatio = adventureStamina.Ratio;
+            ThinBar(new Rect(26, currentY, 216, 4), stamRatio, JadeStamina);
+            ShadowLabel(new Rect(244, currentY - 5, 95, 14), $"KHÍ {Mathf.RoundToInt(stamRatio * 100)}%", small);
+            currentY += 8f;
+        }
+
+        // Ember Flame Bar (Hỏa khí)
+        if (hasHeat)
+        {
+            float heatRatio = campaign.Heat01;
+            Color heatColor = heatRatio >= 0.99f ? Color.Lerp(EmberFlame, Gold, Mathf.PingPong(Time.time * 4f, 1f)) : EmberFlame;
+            ThinBar(new Rect(26, currentY, 216, 3), heatRatio, heatColor);
+            string heatLabel = heatRatio >= 0.99f ? "HỎA [F]!" : $"HỎA {Mathf.RoundToInt(heatRatio * 100)}%";
+            ShadowLabel(new Rect(244, currentY - 6, 95, 14), heatLabel, small);
+            currentY += 7f;
+        }
 
         if (hasWard)
         {
-            GUI.color = Gold;
-            ShadowLabel(new Rect(23, 58, 300, 18), $"★ SEN HỘ THỂ {campaign.LotusWardRemaining:0.0}s  ·  -32% SÁT THƯƠNG", small);
+            GUI.color = Color.Lerp(Gold, new Color(0.7f, 1f, 0.85f), Mathf.PingPong(Time.time * 2.5f, 1f));
+            ShadowLabel(new Rect(26, currentY, 310, 18), $"★ SEN HỘ THỂ  {campaign.LotusWardRemaining:0.0}s  ·  -32% SÁT THƯƠNG", small);
         }
         GUI.color = saved;
     }
 
     void DrawAdventureQuickSlots()
     {
-        Color saved=GUI.color;
-        // There is no switchable sword/bamboo inventory: the current weapon is displayed honestly.
-        string weapon=campaign.CarriedWeapon!=null ? (campaign.CarriedWeapon.type==ThanhGiongImprovisedWeapon.WeaponType.Boulder?"ĐÁ NÉM":"GỐC CÂY")
-            :campaign.CurrentWeapon==ThanhGiongCampaignController.Weapon.IronSword?"THƯƠNG SẮT"
-            :campaign.CurrentWeapon==ThanhGiongCampaignController.Weapon.Bamboo?campaign.BambooVariantName.ToUpperInvariant():"TAY KHÔNG";
-        ShadowLabel(new Rect(22,88,320,23),weapon+"  ·  "+(campaign.CarriedWeapon!=null?"CHUỘT: NÉM":"CHUỘT: ĐÁNH"),small);
-        if(seeds!=null&&seeds.IsPlantingContext)
+        Color saved = GUI.color;
+        bool hasWard = campaign != null && campaign.LotusWardRemaining > 0;
+        bool hasStamina = adventureStamina != null;
+        bool hasHeat = campaign != null && campaign.Heat01 > 0.01f;
+        float startY = 12f + 62f + (hasStamina ? 8f : 0f) + (hasHeat ? 7f : 0f) + (hasWard ? 18f : 0f) + 6f;
+
+        // Weapon badge with obsidian stone panel
+        string weapon = campaign.CarriedWeapon != null ? (campaign.CarriedWeapon.type == ThanhGiongImprovisedWeapon.WeaponType.Boulder ? "ĐÁ NÉM" : "GỐC CÂY")
+            : campaign.CurrentWeapon == ThanhGiongCampaignController.Weapon.IronSword ? "THƯƠNG SẮT"
+            : campaign.CurrentWeapon == ThanhGiongCampaignController.Weapon.Bamboo ? campaign.BambooVariantName.ToUpperInvariant() : "TAY KHÔNG";
+        string action = campaign.CarriedWeapon != null ? "CHUỘT: NÉM" : "CHUỘT: ĐÁNH";
+
+        Rect weaponRect = new Rect(18, startY, 332, 22);
+        DrawMysticPanel(weaponRect, ObsidianSoft, new Color(MutedBronze.r, MutedBronze.g, MutedBronze.b, 0.35f), false);
+        ShadowLabel(new Rect(24, startY + 2, 320, 18), $"❖  {weapon}  ·  {action}", small);
+
+        float itemsY = startY + 26f;
+        if (seeds != null && seeds.IsPlantingContext)
         {
-            string[] names={"SÁNG","TRE","SEN","LỬA","GIÓ"};
-            for(int i=0;i<5;i++)
+            string[] names = { "SÁNG", "TRE", "SEN", "LỬA", "GIÓ" };
+            Color[] seedColors = {
+                new Color(1f, 0.95f, 0.75f),
+                new Color(0.45f, 0.82f, 0.45f),
+                new Color(0.4f, 0.85f, 0.85f),
+                new Color(1f, 0.45f, 0.25f),
+                new Color(0.65f, 0.75f, 1f)
+            };
+
+            for (int i = 0; i < 5; i++)
             {
-                bool selected=(int)seeds.SelectedSeed==i;
-                Rect r=new Rect(22+i*50,118,44,42);
-                GUI.color=Color.clear;
-                GUI.color=selected?Gold:Muted;
-                DrawHudLine(new Vector2(r.x+3,r.yMax),new Vector2(r.xMax-3,r.yMax),selected?Gold:Muted,1);
-                ShadowLabel(new Rect(r.x+1,r.y+1,r.width-2,22),$"{i+1} {names[i]}",tile);
-                ShadowLabel(new Rect(r.x+1,r.y+21,r.width-2,21),seeds.CooldownFor(i)>0?$"{seeds.CooldownFor(i):0}s":$"×{seeds.ChargesFor(i)}",tile);
+                bool selected = (int)seeds.SelectedSeed == i;
+                Rect r = new Rect(18 + i * 50, itemsY, 46, 44);
+                Color border = selected ? Gold : new Color(MutedBronze.r, MutedBronze.g, MutedBronze.b, 0.4f);
+                Color bg = selected ? Obsidian : ObsidianSoft;
+                DrawMysticPanel(r, bg, border, selected);
+
+                // Element top accent mark
+                GUI.color = seedColors[i];
+                GUI.DrawTexture(new Rect(r.x + 3, r.y + 2, r.width - 6, 2), Texture2D.whiteTexture);
+
+                // Slot index & Name
+                GUI.color = selected ? Gold : Paper;
+                ShadowLabel(new Rect(r.x + 1, r.y + 4, r.width - 2, 20), $"{i + 1} {names[i]}", tile);
+
+                // Cooldown or Charges
+                float cd = seeds.CooldownFor(i);
+                if (cd > 0)
+                {
+                    GUI.color = new Color(0.02f, 0.02f, 0.02f, 0.65f);
+                    GUI.DrawTexture(new Rect(r.x + 1, r.y + 1, r.width - 2, r.height - 2), Texture2D.whiteTexture);
+                    GUI.color = GhostAmber;
+                    ShadowLabel(new Rect(r.x + 1, r.y + 22, r.width - 2, 19), $"{cd:0}s", tile);
+                }
+                else
+                {
+                    GUI.color = selected ? AntiqueGold : Muted;
+                    ShadowLabel(new Rect(r.x + 1, r.y + 22, r.width - 2, 19), $"×{seeds.ChargesFor(i)}", tile);
+                }
             }
-            GUI.color=saved;
-            ShadowLabel(new Rect(278,117,270,49),$"Q gieo · {seeds.Mana:0}/{seeds.MaxMana:0} linh lực\n{seeds.SelectedName}",small);
+
+            // Mana / Linh lực indicator
+            Rect manaRect = new Rect(272, itemsY, 150, 44);
+            DrawMysticPanel(manaRect, ObsidianSoft, new Color(MutedBronze.r, MutedBronze.g, MutedBronze.b, 0.35f), false);
+            GUI.color = saved;
+            ShadowLabel(new Rect(276, itemsY + 4, 142, 38), $"[Q] Gieo  ·  {seeds.Mana:0}/{seeds.MaxMana:0} Linh\n{seeds.SelectedName}", small);
         }
         else
         {
-            string status=campaign.CurrentChapter==ThanhGiongCampaignController.Chapter.Prologue?$"Lương thực {campaign.Food:0}/{campaign.foodPerGrowth*3:0} · Lớn {campaign.GrowthPhase+1}/4":campaign.IsBattleActive?$"Hạ giặc {campaign.Kills}/{campaign.RequiredBattleKills}":Sequence();
-            ShadowLabel(new Rect(22,115,330,27),status,small);
+            string status = campaign.CurrentChapter == ThanhGiongCampaignController.Chapter.Prologue
+                ? $"Lương thực {campaign.Food:0}/{campaign.foodPerGrowth * 3:0}  ·  Lớn {campaign.GrowthPhase + 1}/4"
+                : campaign.IsBattleActive
+                    ? $"Hạ giặc {campaign.Kills}/{campaign.RequiredBattleKills}"
+                    : Sequence();
+            Rect statusRect = new Rect(18, itemsY, 332, 24);
+            DrawMysticPanel(statusRect, ObsidianSoft, new Color(MutedBronze.r, MutedBronze.g, MutedBronze.b, 0.35f), false);
+            ShadowLabel(new Rect(24, itemsY + 3, 320, 18), $"❖  {status}", small);
         }
-        GUI.color=saved;
+        GUI.color = saved;
     }
 
     void DrawContextualEnergy(float w,float h,Rect safe,float scale)
@@ -202,7 +286,7 @@ public partial class ThanhGiongCampaignHUD
         float x=Mathf.Clamp(anchor.x+42,320,w-210),y=Mathf.Clamp(anchor.y-22,170,h-180);
         if(stamina)
         {
-            DrawEnergyCells(x,y,adventureStamina.Ratio,new Color(.57f,.64f,.43f),$"THỂ LỰC  {adventureStamina.Current:0}/{adventureStamina.capacity:0}",12);
+            DrawEnergyCells(x,y,adventureStamina.Ratio,JadeStamina,$"THỂ LỰC  {adventureStamina.Current:0}/{adventureStamina.capacity:0}",12);
             y+=40;
         }
         if(bambooCharge)
@@ -212,7 +296,7 @@ public partial class ThanhGiongCampaignHUD
         }
         if(heat)
         {
-            DrawEnergyCells(x,y,campaign.Heat01,new Color(1,.61f,.25f),campaign.Heat01>=.99f?"HỎA KHÍ ĐẦY · F":"HỎA KHÍ  "+Mathf.RoundToInt(campaign.Heat01*100)+"%");
+            DrawEnergyCells(x,y,campaign.Heat01,EmberFlame,campaign.Heat01>=.99f?"HỎA KHÍ ĐẦY · F":"HỎA KHÍ  "+Mathf.RoundToInt(campaign.Heat01*100)+"%");
             y+=40;
         }
         if(mana)DrawEnergyCells(x,y,seeds.Mana/Mathf.Max(1,seeds.MaxMana),new Color(.53f,.65f,.64f),$"LINH LỰC  {seeds.Mana:0}/{seeds.MaxMana:0}");
@@ -221,12 +305,19 @@ public partial class ThanhGiongCampaignHUD
     void DrawEnergyCells(float x,float y,float value,Color color,string label,int cellCount=8)
     {
         Color saved=GUI.color;
-        GUI.color=new Color(.075f,.032f,.026f,.66f);
-        // no backing box
+        Rect bgRect = new Rect(x - 4, y - 3, cellCount * 13 + 8, 28);
+        DrawMysticPanel(bgRect, ObsidianSoft, new Color(MutedBronze.r, MutedBronze.g, MutedBronze.b, 0.35f), false);
+
         for(int i=0;i<cellCount;i++)
         {
-            Rect cell=new Rect(x+i*13,y,10,8);GUI.color=new Color(.075f,.032f,.026f,.78f);GUI.DrawTexture(cell,Texture2D.whiteTexture);
-            GUI.color=color;float fill=Mathf.Clamp01(value*cellCount-i);GUI.DrawTexture(new Rect(cell.x,cell.y,cell.width*fill,cell.height),Texture2D.whiteTexture);
+            Rect cell=new Rect(x+i*13,y,10,8);
+            GUI.color=new Color(.03f,.02f,.02f,.85f);
+            GUI.DrawTexture(new Rect(cell.x-1, cell.y-1, cell.width+2, cell.height+2), Texture2D.whiteTexture);
+            GUI.color=new Color(.08f,.06f,.05f,.90f);
+            GUI.DrawTexture(cell,Texture2D.whiteTexture);
+            GUI.color=color;
+            float fill=Mathf.Clamp01(value*cellCount-i);
+            GUI.DrawTexture(new Rect(cell.x,cell.y,cell.width*fill,cell.height),Texture2D.whiteTexture);
         }
         GUI.color=saved;
         ShadowLabel(new Rect(x,y+11,Mathf.Max(180,cellCount*13+20),24),label,small);
@@ -340,7 +431,9 @@ public partial class ThanhGiongCampaignHUD
         const float radius=88;
         Vector2 center=new Vector2(w-119,h-132);
         Color saved=GUI.color;
-        GUI.color=new Color(.06f,.10f,.075f,.94f);GUI.DrawTexture(new Rect(center.x-radius-8,center.y-radius-8,(radius+8)*2,(radius+8)*2),mapDisc);
+        GUI.color=new Color(.04f,.03f,.03f,.95f);
+        GUI.DrawTexture(new Rect(center.x-radius-10,center.y-radius-10,(radius+10)*2,(radius+10)*2),mapDisc);
+
         GUI.color=Color.white;
         if(mapRender!=null&&mapCircle!=null&&mapMask!=null)
         {
@@ -352,19 +445,36 @@ public partial class ThanhGiongCampaignHUD
             }
             GUI.DrawTexture(new Rect(center.x-radius,center.y-radius,radius*2,radius*2),mapCircle,ScaleMode.StretchToFill,true);
         }
-        DrawHudArc(center,radius+4,1,new Color(Gold.r,Gold.g,Gold.b,.7f),1);
+
+        // Antique bronze outer compass rings (Dong Son / Bagua astrolabe style)
+        DrawHudArc(center,radius+7,1,MutedBronze,1.5f);
+        DrawHudArc(center,radius+4,1,new Color(AntiqueGold.r,AntiqueGold.g,AntiqueGold.b,.85f),1.2f);
+        DrawHudArc(center,radius-1,1,new Color(MutedBronze.r,MutedBronze.g,MutedBronze.b,.45f),1f);
+
+        // 24 Astrological / Bagua dial marks around compass
         for(int i=0;i<24;i++)
         {
-            float a=i*Mathf.PI/12;Vector2 ray=new Vector2(Mathf.Sin(a),-Mathf.Cos(a));
-            DrawHudLine(center+ray*(radius+2),center+ray*(radius+7),new Color(Gold.r,Gold.g,Gold.b,.8f),i%3==0?2:1);
+            float a=i*Mathf.PI/12;
+            Vector2 ray=new Vector2(Mathf.Sin(a),-Mathf.Cos(a));
+            bool isCardinal = i%6==0; // 4 main directions (N, E, S, W)
+            bool isSemi = i%3==0;     // 8 directions
+            float tickLen = isCardinal ? 8f : (isSemi ? 5f : 3f);
+            Color tickCol = isCardinal ? AntiqueGold : (isSemi ? MutedBronze : new Color(MutedBronze.r, MutedBronze.g, MutedBronze.b, 0.4f));
+            DrawHudLine(center+ray*(radius+2),center+ray*(radius+2+tickLen),tickCol,isCardinal?2f:1.2f);
         }
-        ShadowLabel(new Rect(center.x-10,center.y-radius-23,20,20),"B",adventureCentered); // Bắc / north.
+
+        // Cardinal Direction Labels: B (Bắc / North) in antique gold, with diamond accents for E, S, W
+        ShadowLabel(new Rect(center.x-10,center.y-radius-24,20,20),"B",adventureCentered); // Bắc / north.
+        ShadowLabel(new Rect(center.x+radius+3,center.y-10,20,20),"Đ",adventureCentered);   // Đông / east.
+        ShadowLabel(new Rect(center.x-10,center.y+radius+5,20,20),"N",adventureCentered);   // Nam / south.
+        ShadowLabel(new Rect(center.x-radius-23,center.y-10,20,20),"T",adventureCentered);  // Tây / west.
+
         foreach(ThanhGiongCollectible item in mapResources)
             if(item!=null&&!item.IsCollected&&item.gameObject.activeInHierarchy)DrawMapPin(center,radius,item.transform.position,new Color(.51f,.85f,.44f),3,false);
         foreach(ThanhGiongImprovisedWeapon item in mapThrowables)
             if(item!=null&&!item.IsCarried&&item.gameObject.activeInHierarchy)DrawMapPin(center,radius,item.transform.position,new Color(.65f,.77f,.75f),3,false);
         foreach(ThanhGiongEnemy enemy in mapEnemies)
-            if(enemy!=null&&enemy.HealthRatio>0&&enemy.gameObject.activeInHierarchy)DrawMapPin(center,radius,enemy.transform.position,enemy.isBoss?new Color(1,.40f,.22f):new Color(.91f,.27f,.25f),enemy.isBoss?5:2.5f,false);
+            if(enemy!=null&&enemy.HealthRatio>0&&enemy.gameObject.activeInHierarchy)DrawMapPin(center,radius,enemy.transform.position,enemy.isBoss?new Color(1,.35f,.18f):BossCrimson,enemy.isBoss?5.5f:2.5f,false);
         foreach(Transform exit in mapExits)
             if(exit!=null&&exit.gameObject.activeInHierarchy)DrawMapPin(center,radius,exit.position,new Color(.4f,.85f,1),5,true);
         if(campaign.openWorldCampaign!=null){
@@ -373,16 +483,22 @@ public partial class ThanhGiongCampaignHUD
             foreach(var forge in ThanhGiongForgeStation.ActiveStations)
                 if(forge!=null)DrawMapPin(center,radius,forge.transform.position,new Color(1,.5f,.16f),5,true);
         }
-        if(checkpoint!=null&&checkpoint.HasCheckpoint)DrawMapPin(center,radius,checkpoint.CheckpointPosition,Gold,4,false);
+        if(checkpoint!=null&&checkpoint.HasCheckpoint)DrawMapPin(center,radius,checkpoint.CheckpointPosition,AntiqueGold,4,false);
+
+        // Player orientation arrowhead in antique gold / bronze
         float angle=-campaign.transform.eulerAngles.y*Mathf.Deg2Rad;
         Vector2 ahead=new Vector2(-Mathf.Sin(angle),-Mathf.Cos(angle)),side=new Vector2(-ahead.y,ahead.x);
-        DrawHudLine(center+ahead*8,center-ahead*4+side*4,Paper,2);
-        DrawHudLine(center+ahead*8,center-ahead*4-side*4,Paper,2);
-        DrawHudLine(center-ahead*4-side*4,center-ahead*4+side*4,Paper,2);
+        DrawHudLine(center+ahead*9,center-ahead*4+side*4,AntiqueGold,2f);
+        DrawHudLine(center+ahead*9,center-ahead*4-side*4,AntiqueGold,2f);
+        DrawHudLine(center-ahead*4-side*4,center-ahead*4+side*4,MutedBronze,1.5f);
+
         GUI.color=saved;
         Vector3 position=campaign.transform.position;
-        ShadowLabel(new Rect(center.x-105,center.y+radius+11,210,18),$"{position.x:0}, {position.z:0} · Cao {position.y:0}m",adventureCentered);
-        ShadowLabel(new Rect(center.x-108,center.y+radius+29,216,18),campaign.openWorldCampaign!=null?"Vàng: tài nguyên · Cam: lò rèn":"Đỏ: giặc · Lục: vật phẩm · Lam: cổng",adventureCentered);
+        // Position info panel
+        Rect coordRect = new Rect(center.x-105,center.y+radius+25,210,38);
+        DrawMysticPanel(coordRect, ObsidianSoft, new Color(MutedBronze.r, MutedBronze.g, MutedBronze.b, 0.35f), false);
+        ShadowLabel(new Rect(center.x-100,center.y+radius+27,200,16),$"{position.x:0}, {position.z:0} · Cao {position.y:0}m",adventureCentered);
+        ShadowLabel(new Rect(center.x-105,center.y+radius+43,210,16),campaign.openWorldCampaign!=null?"Vàng: quặng · Cam: rèn":"Đỏ: giặc · Lục: ngọc · Lam: cổng",adventureCentered);
     }
 
     void DrawMapPin(Vector2 center,float radius,Vector3 world,Color color,float size,bool clampEdge)
