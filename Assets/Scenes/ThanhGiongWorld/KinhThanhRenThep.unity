@@ -7430,9 +7430,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e02f4fd97a07135489f01c4d035b242e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AdventureStamina
-  capacity: 100
-  sprintCostPerSecond: 18
-  regenerationPerSecond: 24
+  capacity: 150
+  sprintCostPerSecond: 5
+  regenerationPerSecond: 35
 --- !u!114 &747128301
 MonoBehaviour:
   m_ObjectHideFlags: 0

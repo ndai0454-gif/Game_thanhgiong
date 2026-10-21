@@ -202,10 +202,10 @@ public partial class ThanhGiongCampaignHUD
         if(capsule!=null)point.y=Mathf.Lerp(capsule.bounds.center.y,capsule.bounds.max.y,.7f);
         if(IsometricCameraFollow.Instance!=null&&IsometricCameraFollow.Instance.useShoulderCamera) point=IsometricCameraFollow.Instance.BodyFocus;
         if(!WorldToHud(point,safe,scale,out Vector2 anchor))return;
-        float x=Mathf.Clamp(anchor.x+42,320,w-190),y=Mathf.Clamp(anchor.y-22,170,h-180);
+        float x=Mathf.Clamp(anchor.x+42,320,w-210),y=Mathf.Clamp(anchor.y-22,170,h-180);
         if(stamina)
         {
-            DrawEnergyCells(x,y,adventureStamina.Ratio,new Color(.57f,.64f,.43f),$"THỂ LỰC  {adventureStamina.Current:0}/{adventureStamina.capacity:0}");
+            DrawEnergyCells(x,y,adventureStamina.Ratio,new Color(.57f,.64f,.43f),$"THỂ LỰC  {adventureStamina.Current:0}/{adventureStamina.capacity:0}",12);
             y+=40;
         }
         if(bambooCharge)
@@ -221,18 +221,18 @@ public partial class ThanhGiongCampaignHUD
         if(mana)DrawEnergyCells(x,y,seeds.Mana/Mathf.Max(1,seeds.MaxMana),new Color(.53f,.65f,.64f),$"LINH LỰC  {seeds.Mana:0}/{seeds.MaxMana:0}");
     }
 
-    void DrawEnergyCells(float x,float y,float value,Color color,string label)
+    void DrawEnergyCells(float x,float y,float value,Color color,string label,int cellCount=8)
     {
         Color saved=GUI.color;
         GUI.color=new Color(.075f,.032f,.026f,.66f);
         // no backing box
-        for(int i=0;i<8;i++)
+        for(int i=0;i<cellCount;i++)
         {
             Rect cell=new Rect(x+i*13,y,10,8);GUI.color=new Color(.075f,.032f,.026f,.78f);GUI.DrawTexture(cell,Texture2D.whiteTexture);
-            GUI.color=color;float fill=Mathf.Clamp01(value*8-i);GUI.DrawTexture(new Rect(cell.x,cell.y,cell.width*fill,cell.height),Texture2D.whiteTexture);
+            GUI.color=color;float fill=Mathf.Clamp01(value*cellCount-i);GUI.DrawTexture(new Rect(cell.x,cell.y,cell.width*fill,cell.height),Texture2D.whiteTexture);
         }
         GUI.color=saved;
-        ShadowLabel(new Rect(x,y+11,180,24),label,small);
+        ShadowLabel(new Rect(x,y+11,Mathf.Max(180,cellCount*13+20),24),label,small);
     }
 
     bool WorldToHud(Vector3 point,Rect safe,float scale,out Vector2 result)
