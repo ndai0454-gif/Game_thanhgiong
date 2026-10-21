@@ -226,9 +226,11 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
         DrawBoss(w);
         if (campaign.IsDead || !string.IsNullOrEmpty(campaign.CenterMessage)) {
             string notice=campaign.IsDead ? "GIÓNG ĐÃ GỤC NGÃ · R: VỀ ĐIỂM DỪNG CHÂN" : ShortNotice(campaign.CenterMessage);
-            float noticeHeight=Mathf.Max(40,hudBody.CalcHeight(new GUIContent(notice),396)+12);
-            Rect message = new Rect((w - 420) / 2, h - (ChapterRitualVisible ? 168 : 126) - noticeHeight, 420, noticeHeight);
-            Box(message); ShadowLabel(new Rect(message.x + 12, message.y + 6, 396, noticeHeight-12), notice, hudBody);
+            float noticeWidth=Mathf.Min(w-80,700);
+            var noticeStyle=new GUIStyle(hudBody){alignment=TextAnchor.MiddleCenter,wordWrap=true};
+            float noticeHeight=Mathf.Max(40,noticeStyle.CalcHeight(new GUIContent(notice),noticeWidth-24)+12);
+            Rect message = new Rect((w - noticeWidth) / 2, h - (ChapterRitualVisible ? 168 : 126) - noticeHeight, noticeWidth, noticeHeight);
+            Box(message); ShadowLabel(new Rect(message.x + 12, message.y + 6, noticeWidth-24, noticeHeight-12), notice, noticeStyle);
         }
         if (guidesVisible || paused) {
             float guideHeight = paused ? 640 : 350;
@@ -302,9 +304,7 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
 
     private static string ShortNotice(string text)
     {
-        string flat=text.Replace('\n',' ').Replace('\r',' ').Trim();
-        if(flat.Length<=110)return flat;
-        int end=flat.LastIndexOf(' ',106,106);return flat.Substring(0,end>70?end:106)+"…";
+        return text.Replace('\n',' ').Replace('\r',' ').Trim(); // never cut text off: the notice box wraps instead
     }
 
     private void DrawPauseButtons(Rect guide)
@@ -405,10 +405,11 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
             }
         }
         if (cachedBoss == null || !cachedBoss.gameObject.activeInHierarchy || cachedBoss.HealthRatio <= 0) return;
-        Rect rect = new Rect(w - 294, 16, 278, 67);
-        Box(rect);
-        ShadowLabel(new Rect(rect.x + 12, rect.y + 5, 254, 23), cachedBoss.IsStuckInGround ? "TƯỚNG ÂN · ĐAO MẮC KẸT!" : "TƯỚNG GIẶC ÂN",hudTitle);
-        DrawEnchantedHealthBar(new Rect(rect.x + 12, rect.y + 32, 254, 23), cachedBoss.HealthRatio, true);
+        Rect rect = new Rect((w - 560) / 2, 14, 560, 64);
+        var bossName = new GUIStyle(hudTitle) { alignment = TextAnchor.MiddleCenter };
+        ShadowLabel(new Rect(rect.x, rect.y, rect.width, 26), cachedBoss.IsStuckInGround ? "TƯỚNG ÂN · ĐAO MẮC KẸT!" : "TƯỚNG GIẶC ÂN", bossName);
+        DrawEnchantedHealthBar(new Rect(rect.x, rect.y + 30, rect.width, 22), cachedBoss.HealthRatio, true,
+            Mathf.CeilToInt(cachedBoss.HealthRatio * cachedBoss.maxHealth) + " / " + Mathf.CeilToInt(cachedBoss.maxHealth));
     }
 
     private void Box(Rect rect,bool expanded=false)
@@ -424,14 +425,34 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
         GUI.color=previous;
     }
 
-    private void DrawEnchantedHealthBar(Rect rect, float value, bool boss)
+    private void DrawEnchantedHealthBar(Rect rect, float value, bool boss, string label = null)
     {
-        // A quiet matte strip: no moving glint, bevel or bright highlight.
-        Color saved = GUI.color;
-        GUI.color = new Color(.12f, .13f, .11f, saved.a);
+        // Lacquer health bar: dark track, gold hairline frame, fill that shifts green -> amber -> red,
+        // a soft top highlight and the exact numbers centred on the bar.
+        value = Mathf.Clamp01(value);
+        Color saved = GUI.color; float a = saved.a;
+        GUI.color = new Color(.04f, .02f, .02f, .88f * a);
+        GUI.DrawTexture(new Rect(rect.x - 2, rect.y - 2, rect.width + 4, rect.height + 4), Texture2D.whiteTexture);
+        GUI.color = new Color(.24f, .17f, .10f, a);
         GUI.DrawTexture(rect, Texture2D.whiteTexture);
-        GUI.color = boss ? new Color(.64f, .39f, .30f, saved.a) : new Color(.55f, .62f, .43f, saved.a);
-        GUI.DrawTexture(new Rect(rect.x + 1, rect.y + 1, (rect.width - 2) * Mathf.Clamp01(value), rect.height - 2), Texture2D.whiteTexture);
+        Color fill = boss ? Color.Lerp(new Color(.62f, .10f, .08f), new Color(.92f, .28f, .14f), value)
+            : value > .5f ? Color.Lerp(new Color(.95f, .72f, .22f), new Color(.40f, .74f, .34f), (value - .5f) * 2f)
+            : Color.Lerp(new Color(.82f, .16f, .12f), new Color(.95f, .72f, .22f), value * 2f);
+        Rect fillRect = new Rect(rect.x, rect.y, rect.width * value, rect.height);
+        GUI.color = new Color(fill.r, fill.g, fill.b, a);
+        GUI.DrawTexture(fillRect, Texture2D.whiteTexture);
+        GUI.color = new Color(1f, 1f, 1f, .18f * a);
+        GUI.DrawTexture(new Rect(fillRect.x, fillRect.y, fillRect.width, rect.height * .35f), Texture2D.whiteTexture);
+        GUI.color = new Color(Gold.r, Gold.g, Gold.b, .85f * a);
+        GUI.DrawTexture(new Rect(rect.x - 2, rect.y - 2, rect.width + 4, 1), Texture2D.whiteTexture);
+        GUI.DrawTexture(new Rect(rect.x - 2, rect.yMax + 1, rect.width + 4, 1), Texture2D.whiteTexture);
+        GUI.DrawTexture(new Rect(rect.x - 2, rect.y - 2, 1, rect.height + 4), Texture2D.whiteTexture);
+        GUI.DrawTexture(new Rect(rect.xMax + 1, rect.y - 2, 1, rect.height + 4), Texture2D.whiteTexture);
+        GUI.color = new Color(1f, 1f, 1f, a);
+        if (!string.IsNullOrEmpty(label)) {
+            var numbers = new GUIStyle(small) { alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold, wordWrap = false, normal = { textColor = Paper } };
+            ShadowLabel(rect, label, numbers);
+        }
         GUI.color = saved;
     }
 

@@ -135,23 +135,12 @@ public partial class ThanhGiongCampaignHUD
     {
         Color saved=GUI.color;
         ShadowLabel(new Rect(21,14,300,31),"Thánh Gióng",hudTitle);
-        for(int i=0;i<10;i++)
-        {
-            Rect grain=new Rect(23+i*22,40,16,23);
-            GUI.color=new Color(.16f,.12f,.09f,.82f); GUI.DrawTexture(grain,riceGrain);
-            float fill=Mathf.Clamp01(campaign.Health01*10-i);
-            if(fill>0)
-            {
-                GUI.color=Color.Lerp(new Color(.96f,.30f,.19f),Paper,campaign.Health01);
-                GUI.DrawTextureWithTexCoords(new Rect(grain.x,grain.y+grain.height*(1-fill),grain.width,grain.height*fill),riceGrain,new Rect(0,0,1,fill));
-            }
-        }
         GUI.color=Color.white;
-        ShadowLabel(new Rect(23,65,235,23),$"SINH LỰC  {campaign.Health:0} / {campaign.maxHealth:0}",small);
+        DrawEnchantedHealthBar(new Rect(24,42,250,22),campaign.Health01,false,$"SINH LỰC  {Mathf.CeilToInt(campaign.Health)} / {Mathf.CeilToInt(campaign.maxHealth)}");
         if(campaign.LotusWardRemaining>0)
         {
-            GUI.color=Gold;GUI.DrawTexture(new Rect(251,40,16,23),riceGrain);GUI.color=saved;
-            ShadowLabel(new Rect(276,38,260,36),$"SEN HỘ THỂ {campaign.LotusWardRemaining:0.0}s\nGiảm 32% sát thương",small);
+            GUI.color=Gold;GUI.DrawTexture(new Rect(292,40,16,23),riceGrain);GUI.color=saved;
+            ShadowLabel(new Rect(316,38,260,36),$"SEN HỘ THỂ {campaign.LotusWardRemaining:0.0}s\nGiảm 32% sát thương",small);
         }
         GUI.color=saved;
     }
@@ -285,7 +274,7 @@ public partial class ThanhGiongCampaignHUD
             if(selected)DrawHudArc(pos+new Vector2(0,-10),18,1,Gold,1.5f);
             string text=enemy.IsStuckInGround?"SƠ HỞ · PHẢN CÔNG":warning?"NÉ ĐÒN!":enemy.enemyName;
             ShadowLabel(new Rect(pos.x-100,pos.y+8,200,22),text,adventureWorld);
-            if(selected)ThinBar(new Rect(pos.x-37,pos.y+32,74,3),enemy.HealthRatio,Gold);
+            if(selected)DrawEnchantedHealthBar(new Rect(pos.x-42,pos.y+32,84,7),enemy.HealthRatio,true);
         }
         foreach(DamageLabel label in damageLabels)
         {
@@ -306,7 +295,7 @@ public partial class ThanhGiongCampaignHUD
         if(!RegionIntroVisible&&closest!=null&&WorldToHud(closest.transform.position+Vector3.up*1.3f,safe,scale,out Vector2 at)&&at.x>90&&at.x<w-90&&at.y>150&&at.y<h-100)
         {
             GUI.color=saved;
-            Rect prompt=new Rect(Mathf.Clamp(at.x-230,20,w-240),Mathf.Clamp(at.y+45,160,h-90),220,35);
+            Rect prompt=new Rect(Mathf.Clamp(at.x-170,20,w-360),Mathf.Clamp(at.y+45,160,h-90),340,48);
             GUI.color=new Color(.075f,.032f,.026f,.66f);GUI.color=saved;
             string resourcePrompt=closest.kind==ThanhGiongCollectible.Kind.Bamboo
                 ?(campaign.IsBattleActive&&campaign.CurrentWeapon==ThanhGiongCampaignController.Weapon.None?"E · NHỔ TRE (3 NHỊP)":"TRE NGÀ")

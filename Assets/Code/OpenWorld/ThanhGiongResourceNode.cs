@@ -31,13 +31,19 @@ public sealed class ThanhGiongResourceNode : MonoBehaviour
     public bool TryHarvest(ThanhGiongOpenWorld world)
     {
         if (world == null || !IsReady || !world.IsWithinInteractionRange(transform.position)) return false;
+        if (!ThanhGiongVillagerProgress.IsUnlocked(resource, world))
+        {
+            var teacher = ThanhGiongNpcLore.TeacherOf(resource);
+            world.ShowNotice("Bạn chưa biết cách thu thập " + ThanhGiongOpenWorld.ResourceLabel(resource) + ". Hãy hỏi " + (teacher != null ? teacher.name + " (" + teacher.title + ")" : "dân làng") + " ở làng Phù Đổng (nhấn F để nói chuyện).", 4.5f);
+            return true;
+        }
         var zone = world.FindZone(transform.position);
-        if (zone == null || zone != world.CurrentZone) return false;
+        if (zone == null) return false;
         int baseYield = ThanhGiongOpenWorld.BaseGatherYield(zone.biome, resource);
         if (baseYield == 0) return false;
         int tierBonus = zone.risk == OpenWorldRisk.Black ? 4 : zone.risk == OpenWorldRisk.Red ? 3 : zone.risk == OpenWorldRisk.Yellow ? 2 : 1;
         int amount = yieldOverride > 0 ? yieldOverride : baseYield * tierBonus;
-        if (!world.TryGather(resource, amount)) return false;
+        if (!world.TryGather(resource, amount, zone)) return false;
         availableAt = Time.time + respawnSeconds;
         return true;
     }

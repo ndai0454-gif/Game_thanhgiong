@@ -83,6 +83,9 @@ public sealed class ThanhGiongOpenWorld : MonoBehaviour
         new Color(.40f, .55f, .44f), new Color(.40f, .52f, .60f), new Color(.65f, .57f, .37f),
         new Color(.63f, .37f, .31f), new Color(.47f, .41f, .53f)
     };
+    public OpenWorldZone Destination { get; private set; }
+    public IReadOnlyList<OpenWorldZone> Route => route;
+    private readonly List<OpenWorldZone> route = new List<OpenWorldZone>();
     private bool recovering;
     private Coroutine recoveryRoutine;
     private float mapPreviousTimeScale = 1f;
@@ -105,6 +108,7 @@ public sealed class ThanhGiongOpenWorld : MonoBehaviour
     private void Update()
     {
         RefreshCurrentZone();
+        ClearDestinationIfReached();
         if (Input.GetKeyDown(KeyCode.M)) SetMapOpen(!MapOpen);
         if (Time.unscaledTime > noticeUntil) Notice = string.Empty;
         if (recovering || Time.timeScale <= 0f || (campaign != null && campaign.EquipmentBusy)) return;
@@ -112,7 +116,8 @@ public sealed class ThanhGiongOpenWorld : MonoBehaviour
         if (MapOpen) return;
         if (Input.GetKeyDown(KeyCode.G)) {
             if (nearestForge != null) nearestForge.TryInteract(this);
-            else if (nearestNode != null) nearestNode.TryHarvest(this);
+            else if (nearestNode != null && !nearestNode.TryHarvest(this)) ShowNotice("Chưa thu thập được. Đến sát điểm tài nguyên rồi nhấn G lại.", 2.5f);
+            else if (nearestNode == null) ShowNotice("Không có tài nguyên hay lò rèn gần đây.", 2f);
         }
         if (Input.GetKeyDown(KeyCode.B) && nearestForge != null) TryStoreCarriedResources();
     }
@@ -151,7 +156,7 @@ public sealed class ThanhGiongOpenWorld : MonoBehaviour
         var zone = FindZone(player.position);
         if (zone == CurrentZone) return;
         CurrentZone = zone;
-        if (zone != null) ShowNotice(zone.displayName + " · " + RiskLabel(zone.risk), 4f);
+        RebuildRoute();
         ZoneChanged?.Invoke(zone);
     }
 
@@ -192,10 +197,12 @@ public sealed class ThanhGiongOpenWorld : MonoBehaviour
         return rank == 0 ? 6 : rank == 1 ? 3 : rank == 2 ? 1 : 0;
     }
 
-    public bool TryGather(OpenWorldResource resource, int amount)
+    public bool TryGather(OpenWorldResource resource, int amount) => TryGather(resource, amount, CurrentZone);
+
+    public bool TryGather(OpenWorldResource resource, int amount, OpenWorldZone zone)
     {
-        if (CurrentZone == null || CurrentZone.risk == OpenWorldRisk.Safe || recovering || amount <= 0 ||
-            ResourceAbundance(CurrentZone.biome, resource) < 0) return false;
+        if (zone == null || zone.risk == OpenWorldRisk.Safe || recovering || amount <= 0 ||
+            ResourceAbundance(zone.biome, resource) < 0) return false;
         EnsureInventory();
         if (carriedResources[(int)resource] > 9999 - amount) return false;
         carriedResources[(int)resource] += amount;
@@ -289,6 +296,62 @@ public sealed class ThanhGiongOpenWorld : MonoBehaviour
         ShowNotice("ĐÃ HỒI PHỤC TẠI LÀNG · Độ bền " + Mathf.RoundToInt(durability) + "% · G tại lò rèn để sửa / B cất tài nguyên.", 5f);
     }
 
+    // ---- Route guidance: breadth-first search over the zone graph from the current zone to Destination.
+    public void SetDestination(OpenWorldZone zone)
+    {
+        Destination = zone == Destination ? null : zone;
+        RebuildRoute();
+        ShowNotice(Destination == null ? "Đã hủy chỉ đường." : "Chỉ đường đến " + Destination.displayName + " · theo mũi tên và vạch vàng trên bản đồ.", 4f);
+    }
+
+    public void ClearDestinationIfReached()
+    {
+        if (Destination != null && CurrentZone == Destination && player != null && Flat(Destination.center - player.position).magnitude < 28f) {
+            ShowNotice("Đã đến " + Destination.displayName + ".", 3f); Destination = null; RebuildRoute();
+        }
+    }
+
+    private static Vector3 Flat(Vector3 v) { v.y = 0f; return v; }
+
+    private void RebuildRoute()
+    {
+        route.Clear();
+        if (Destination == null || CurrentZone == null) return;
+        var previous = new Dictionary<string, OpenWorldZone>();
+        var queue = new Queue<OpenWorldZone>();
+        queue.Enqueue(CurrentZone); previous[CurrentZone.id] = null;
+        while (queue.Count > 0) {
+            var zone = queue.Dequeue();
+            if (zone == Destination) break;
+            foreach (var link in connections) {
+                if (link == null) continue;
+                string other = link.from == zone.id ? link.to : link.to == zone.id ? link.from : null;
+                if (other == null || previous.ContainsKey(other)) continue;
+                var next = zones.Find(z => z != null && z.id == other);
+                if (next == null) continue;
+                previous[other] = zone; queue.Enqueue(next);
+            }
+        }
+        if (!previous.ContainsKey(Destination.id)) return;
+        for (var z = Destination; z != null; z = previous[z.id]) route.Insert(0, z);
+    }
+
+    /// <summary>World position the player should head to next (next zone on the route, or the destination itself).</summary>
+    public bool TryGetGuidanceTarget(out Vector3 target)
+    {
+        target = default;
+        if (Destination == null || player == null) return false;
+        target = Destination.center;
+        if (route.Count >= 2) {
+            // Skip waypoints already close behind us; route[0] is the current zone.
+            for (int i = 1; i < route.Count; i++) {
+                target = route[i].center;
+                if (Flat(target - player.position).sqrMagnitude > 22f * 22f) break;
+            }
+        }
+        return true;
+    }
+
     public void ShowNotice(string message, float duration = 3f) { Notice = message; noticeUntil = Time.unscaledTime + duration; }
     public void CancelPendingRecovery()
     {
@@ -324,7 +387,7 @@ public sealed class ThanhGiongOpenWorld : MonoBehaviour
             return;
         }
         foreach (var node in ThanhGiongResourceNode.ActiveNodes) {
-            if (node == null || !node.isActiveAndEnabled || !node.IsReady || FindZone(node.transform.position) != CurrentZone) continue;
+            if (node == null || !node.isActiveAndEnabled || !node.IsReady) continue;
             float distance = (node.transform.position - player.position).sqrMagnitude;
             if (distance >= closest) continue;
             closest = distance; nearestNode = node;
@@ -376,15 +439,38 @@ public sealed class ThanhGiongOpenWorld : MonoBehaviour
         ThanhGiongUITheme.ShadowLabel(new Rect(30f, 635f, 250f, 21f), CurrentZone != null ? CurrentZone.displayName : "Đường liên vùng", bodyStyle);
         GUI.color = RiskColor(risk); ThanhGiongUITheme.ShadowLabel(new Rect(30f, 657f, 250f, 19f), RiskLabel(risk) + " · Bền " + Mathf.RoundToInt(durability) + "%", smallStyle); GUI.color = Color.white;
         ThanhGiongUITheme.ShadowLabel(new Rect(30f, 677f, 250f, 19f), "[M] Bản đồ · [G] Thu thập / rèn", smallStyle);
+        DrawGuidanceArrow();
         if (!string.IsNullOrEmpty(InteractionPrompt)) {
             bool ritual = campaign != null && (campaign.CurrentChapter == ThanhGiongCampaignController.Chapter.Preparation || campaign.CurrentChapter == ThanhGiongCampaignController.Chapter.Ascension);
             float promptY = ritual ? 510f : 621f;
             ThanhGiongUITheme.ShadowLabel(new Rect(325f, promptY + 6f, 630f, 25f), InteractionPrompt, new GUIStyle(bodyStyle) { alignment = TextAnchor.MiddleCenter });
         }
         if (!string.IsNullOrEmpty(Notice)) {
-            Fill(new Rect(350f, 160f, 570f, 42f), new Color(.075f, .085f, .073f, .94f));
-            ThanhGiongUITheme.ShadowLabel(new Rect(362f, 165f, 546f, 34f), Notice, new GUIStyle(bodyStyle) { alignment = TextAnchor.MiddleCenter });
+            // Full text is always shown: the box grows with wrapped lines instead of clipping long notices.
+            var noticeStyle = new GUIStyle(bodyStyle) { alignment = TextAnchor.UpperCenter, wordWrap = true };
+            float noticeHeight = Mathf.Max(30f, noticeStyle.CalcHeight(new GUIContent(Notice), 760f) + 6f);
+            ThanhGiongUITheme.ShadowLabel(new Rect(260f, 118f, 760f, noticeHeight), Notice, noticeStyle);
         }
+    }
+
+    private void DrawGuidanceArrow()
+    {
+        if (!TryGetGuidanceTarget(out Vector3 target) || Camera.main == null) return;
+        Vector3 toTarget = Flat(target - player.position);
+        float distance = toTarget.magnitude;
+        Vector3 forward = Flat(Camera.main.transform.forward);
+        if (forward.sqrMagnitude < .0001f) forward = Vector3.forward;
+        float angle = Vector3.SignedAngle(forward, toTarget, Vector3.up); // + = clockwise on the screen
+        Vector2 centre = new Vector2(640f, 92f);
+        Color guide = new Color(1f, .86f, .30f);
+        Matrix4x4 old = GUI.matrix;
+        GUI.matrix = old * Matrix4x4.TRS(new Vector3(centre.x, centre.y, 0f), Quaternion.Euler(0f, 0f, angle), Vector3.one);
+        Fill(new Rect(-3f, -6f, 6f, 30f), guide);                       // shaft (points to -y = up when angle is 0)
+        DrawLine(new Vector2(0f, -22f), new Vector2(-13f, -4f), guide, 5f);
+        DrawLine(new Vector2(0f, -22f), new Vector2(13f, -4f), guide, 5f);
+        GUI.matrix = old;
+        var style = new GUIStyle(centeredStyle) { fontSize = 15, wordWrap = false };
+        ThanhGiongUITheme.ShadowLabel(new Rect(centre.x - 150f, centre.y + 28f, 300f, 22f), Destination.displayName + " · " + Mathf.RoundToInt(distance) + " m", style);
     }
 
     private void DrawWorldMap()
@@ -407,11 +493,20 @@ public sealed class ThanhGiongOpenWorld : MonoBehaviour
             GUI.Label(new Rect(918f, 312f, 310f, 26f), zone.risk == OpenWorldRisk.Safe ? "LÒ RÈN · KHO LÀNG · LƯƠNG THỰC" : "PHÂN BỔ TÀI NGUYÊN 6 : 3 : 1", bodyStyle);
             for (int i = 0; i < 3; i++) GUI.Label(new Rect(918f, 346f + i * 25f, 310f, 25f),
                 (i == 0 ? "Chính  " : i == 1 ? "Phụ     " : "Hiếm   ") + ResourceLabel(ResourceFor(zone.biome, i)), bodyStyle);
-            GUI.Label(new Rect(918f, 426f, 310f, 48f), "CHẶNG " + (zone.chapter + 1) + " · " + new[] { "Làng Phù Đổng", "Rèn thép", "Đánh giặc Ân", "Núi Sóc hóa thánh" }[Mathf.Clamp(zone.chapter, 0, 3)], bodyStyle);
+            GUI.Label(new Rect(918f, 420f, 310f, 28f), "CHẶNG " + (zone.chapter + 1) + " · " + new[] { "Làng Phù Đổng", "Rèn thép", "Đánh giặc Ân", "Núi Sóc hóa thánh" }[Mathf.Clamp(zone.chapter, 0, 3)], bodyStyle);
+            if (zone != CurrentZone && GUI.Button(new Rect(918f, 450f, 310f, 30f), Destination == zone ? "HỦY CHỈ ĐƯỜNG" : "CHỈ ĐƯỜNG ĐẾN ĐÂY", buttonStyle)) SetDestination(zone);
         }
-        GUI.Label(new Rect(918f, 483f, 310f, 28f), "TÚI MANG THEO        KHO LÀNG", bodyStyle);
-        for (int i = 0; i < 5; i++) GUI.Label(new Rect(918f, 515f + i * 24f, 310f, 25f),
-            ResourceLabels[i] + ":  " + GetCarriedAmount((OpenWorldResource)i) + "          " + GetStoredAmount((OpenWorldResource)i), bodyStyle);
+        var rightStyle = new GUIStyle(bodyStyle) { alignment = TextAnchor.MiddleRight, wordWrap = false };
+        var headStyle = new GUIStyle(smallStyle) { alignment = TextAnchor.MiddleRight, wordWrap = false };
+        GUI.Label(new Rect(918f, 486f, 120f, 24f), "TÚI ĐỒ", smallStyle);
+        GUI.Label(new Rect(1040f, 486f, 90f, 24f), "MANG THEO", headStyle);
+        GUI.Label(new Rect(1134f, 486f, 94f, 24f), "KHO LÀNG", headStyle);
+        for (int i = 0; i < 5; i++) {
+            float rowY = 513f + i * 24f;
+            GUI.Label(new Rect(918f, rowY, 130f, 24f), ResourceLabels[i], new GUIStyle(bodyStyle) { wordWrap = false });
+            GUI.Label(new Rect(1040f, rowY, 90f, 24f), GetCarriedAmount((OpenWorldResource)i).ToString(), rightStyle);
+            GUI.Label(new Rect(1134f, rowY, 94f, 24f), GetStoredAmount((OpenWorldResource)i).ToString(), rightStyle);
+        }
         GUI.Label(new Rect(918f, 646f, 310f, 30f), "Độ bền " + Mathf.RoundToInt(durability) + "% · [B] cất tại lò rèn", smallStyle);
     }
 
@@ -447,6 +542,19 @@ public sealed class ThanhGiongOpenWorld : MonoBehaviour
                 string mapName=zone.id=="hub"?"PHÙ ĐỔNG · PHONG CHÂU":zone.displayName;
                 GUI.Label(new Rect(rect.x + 3f, rect.y + 3f, rect.width - 6f, rect.height - 6f), mapName + "\n" + BiomeLabel(zone.biome), centeredStyle);
             }
+        }
+        if (Destination != null) {
+            Color guide = new Color(1f, .86f, .30f);
+            Vector2 previousPoint = player != null ? MapPoint(player.position, area) : MapPoint(CurrentZone != null ? CurrentZone.center : Destination.center, area);
+            for (int i = 1; i < route.Count; i++) {
+                Vector2 next = MapPoint(route[i].center, area);
+                DrawLine(previousPoint, next, guide, interactive ? 5f : 2f);
+                previousPoint = next;
+            }
+            if (route.Count < 2 && player != null) DrawLine(previousPoint, MapPoint(Destination.center, area), guide, interactive ? 5f : 2f);
+            Vector2 dest = MapPoint(Destination.center, area);
+            DrawBorder(new Rect(dest.x - 11f, dest.y - 11f, 22f, 22f), guide, 3f);
+            if (interactive) GUI.Label(new Rect(dest.x - 30f, dest.y - 34f, 60f, 20f), "ĐÍCH", centeredStyle);
         }
         foreach (var node in ThanhGiongResourceNode.ActiveNodes) {
             if (node == null || !node.gameObject.activeInHierarchy) continue;

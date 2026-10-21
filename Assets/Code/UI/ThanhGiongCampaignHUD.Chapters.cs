@@ -40,7 +40,9 @@ public partial class ThanhGiongCampaignHUD
         Color saved=GUI.color;
         Color accent=ChapterAccent;
         // Right anchor leaves the actor and the existing upper-left vitality/skills clear.
-        Rect quest=new Rect(w-314,104,294,MissionVisible?152:91);
+        string objectiveText=MissionVisible?ShortObjective():string.Empty;
+        float objectiveHeight=MissionVisible?Mathf.Max(42,hudBody.CalcHeight(new GUIContent(objectiveText),265)):0;
+        Rect quest=new Rect(w-314,104,294,MissionVisible?110+objectiveHeight:91);
         GUI.color=new Color(.105f,.055f,.045f,.86f);
         // text-only panel
         GUI.color=saved;
@@ -53,12 +55,12 @@ public partial class ThanhGiongCampaignHUD
         ShadowLabel(new Rect(quest.x+14,quest.y+43,265,24),ChapterProgressLabel(),hudBody);
         ThinBar(new Rect(quest.x+15,quest.y+73,264,3),campaign.StageCompletion01,accent);
         if(MissionVisible) {
-            ShadowLabel(new Rect(quest.x+14,quest.y+85,265,42),ShortObjective(),hudBody);
-            ShadowLabel(new Rect(quest.x+14,quest.y+130,265,18),"TAB nhắc nhiệm vụ   ·   ESC tạm dừng",small);
+            ShadowLabel(new Rect(quest.x+14,quest.y+85,265,objectiveHeight),objectiveText,hudBody);
+            ShadowLabel(new Rect(quest.x+14,quest.y+88+objectiveHeight,265,18),"TAB nhắc nhiệm vụ   ·   ESC tạm dừng",small);
         }
         if(RegionIntroVisible) {
             GUI.color=new Color(1,1,1,PopupAlpha(regionUntil,3.8f));
-            float y=h*.50f;
+            float y=h*.40f;
             ShadowLabel(new Rect((w-620)/2,y-22,620,22),$"HỒI {NarrativeChapterIndex+1:00}   /   {NarrativeChapterTitle}",chapterKicker);
             ShadowLabel(new Rect((w-760)/2,y,760,84),SceneTitle(),chapterHeading);
             DrawHudLine(new Vector2(w*.5f-170,y+87),new Vector2(w*.5f+170,y+87),new Color(accent.r,accent.g,accent.b,GUI.color.a),1);

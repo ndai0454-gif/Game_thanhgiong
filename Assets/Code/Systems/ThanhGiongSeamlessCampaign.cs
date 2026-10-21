@@ -102,7 +102,7 @@ public sealed class ThanhGiongSeamlessCampaign : MonoBehaviour
     public string CurrentObjective {
         get {
             if(campaign.CurrentChapter==ThanhGiongCampaignController.Chapter.Prologue)
-                return !GrowthComplete?$"Gom lương thực trong làng: {campaign.Food:0}/{campaign.foodPerGrowth*3:0}. M mở bản đồ.":!world.HasForgedSupplies?"Lấy 6 quặng ở núi + 3 tre/gỗ trong rừng. Về lò rèn, nhấn G đúc vật tư.":"Đi đến lò rèn trong làng để nhận trang bị vua ban.";
+                return !GrowthComplete?$"Gom lương thực trong làng: {campaign.Food:0}/{campaign.foodPerGrowth*3:0}. M mở bản đồ.":!world.HasForgedSupplies?"Hỏi Thợ rèn Cả (quặng) và Cụ Ba (tre/gỗ) bằng phím F, rồi lấy 6 quặng ở núi + 3 tre/gỗ trong rừng. Về lò rèn, nhấn G đúc vật tư.":"Đi đến lò rèn trong làng để nhận trang bị vua ban.";
             if(campaign.CurrentChapter==ThanhGiongCampaignController.Chapter.Preparation)return "Tại lò rèn: E mặc giáp → Q đội nón → E lên ngựa → F thử lửa.";
             if(campaign.CurrentChapter==ThanhGiongCampaignController.Chapter.Battle)return BattleComplete?"Quân Ân đã tan. Theo đường đến Đỉnh Sóc trên bản đồ M để hóa thánh.":campaign.CurrentWeapon==ThanhGiongCampaignController.Weapon.None?$"Thương gãy! Nhổ tre E × 3. Đã hạ {campaign.Kills}/{campaign.RequiredBattleKills} giặc.":$"Dẹp trại vùng vàng, pháo đài đỏ và đại bản doanh đen. {campaign.Kills}/{campaign.RequiredBattleKills} giặc.";
             if(campaign.CurrentChapter==ThanhGiongCampaignController.Chapter.Ascension)return "Trên đỉnh Sóc: E đặt giáp → Q đặt nón → E cưỡi ngựa về trời.";
