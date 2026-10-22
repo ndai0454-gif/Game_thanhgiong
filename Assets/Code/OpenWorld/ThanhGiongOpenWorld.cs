@@ -57,6 +57,7 @@ public sealed class ThanhGiongOpenWorld : MonoBehaviour
     [SerializeField] private bool hasForgedSupplies;
 
     public OpenWorldZone CurrentZone { get; private set; }
+    public OpenWorldZone SelectedZone => selectedZone;
     public bool IsSafe => CurrentZone != null && (CurrentZone.risk == OpenWorldRisk.Safe || CurrentZone.risk == OpenWorldRisk.Blue);
     public bool CanTakeDamage => !IsSafe && !recovering;
     public bool HasForgedSupplies => hasForgedSupplies;
@@ -410,6 +411,7 @@ public sealed class ThanhGiongOpenWorld : MonoBehaviour
 
     private void OnGUI()
     {
+        if (ThanhGiongStartScreen.IsMenuVisible) return;
         if (campaign != null && campaign.hud != null && campaign.hud.IsPaused && !MapOpen) return;
         EnsureStyles();
         Matrix4x4 oldMatrix = GUI.matrix;
@@ -507,6 +509,11 @@ public sealed class ThanhGiongOpenWorld : MonoBehaviour
             GUI.Label(new Rect(1040f, rowY, 90f, 24f), GetCarriedAmount((OpenWorldResource)i).ToString(), rightStyle);
             GUI.Label(new Rect(1134f, rowY, 94f, 24f), GetStoredAmount((OpenWorldResource)i).ToString(), rightStyle);
         }
+        if (selectedZone != null && selectedZone != CurrentZone) {
+            GUI.color = new Color(1f, .85f, .3f);
+            GUI.Label(new Rect(918f, 615f, 310f, 25f), "▶ ĐANG DẪN ĐƯỜNG: " + selectedZone.displayName.ToUpper(), centeredStyle);
+            GUI.color = Color.white;
+        }
         GUI.Label(new Rect(918f, 646f, 310f, 30f), "Độ bền " + Mathf.RoundToInt(durability) + "% · [B] cất tại lò rèn", smallStyle);
     }
 
@@ -569,11 +576,31 @@ public sealed class ThanhGiongOpenWorld : MonoBehaviour
             Fill(new Rect(p.x - 4f, p.y - 4f, 8f, 8f), new Color(1f, .65f, .22f));
             if (interactive) GUI.Label(new Rect(p.x - 28f, p.y + 4f, 56f, 20f), "LÒ RÈN", centeredStyle);
         }
+        if (interactive && selectedZone != null && player != null) {
+            Vector2 from = MapPoint(player.position, area);
+            Vector2 to = MapPoint(selectedZone.center, area);
+            DrawNavigationRoute(from, to);
+        }
         if (player != null) {
             Vector2 p = MapPoint(player.position, area);
             p.x = Mathf.Clamp(p.x, area.x + 4f, area.xMax - 4f); p.y = Mathf.Clamp(p.y, area.y + 4f, area.yMax - 4f);
+            DrawBorder(new Rect(p.x - 7f, p.y - 7f, 14f, 14f), new Color(1f, .85f, .3f, 0.85f), 1.5f);
             Fill(new Rect(p.x - 5f, p.y - 5f, 10f, 10f), Color.white);
             Fill(new Rect(p.x - 3f, p.y - 3f, 6f, 6f), new Color(.3f, 1f, .85f));
+        }
+    }
+
+    private static void DrawNavigationRoute(Vector2 start, Vector2 end)
+    {
+        float dist = Vector2.Distance(start, end);
+        if (dist <= 1f) return;
+        int dots = Mathf.Clamp(Mathf.RoundToInt(dist / 16f), 3, 35);
+        float phase = Mathf.Repeat(Time.unscaledTime * 2.2f, 1f);
+        for (int i = 0; i < dots; i++) {
+            float t = (i + phase) / dots;
+            if (t > 1f) t -= 1f;
+            Vector2 pt = Vector2.Lerp(start, end, t);
+            Fill(new Rect(pt.x - 3f, pt.y - 3f, 6f, 6f), new Color(1f, .85f, .25f, 0.85f));
         }
     }
 

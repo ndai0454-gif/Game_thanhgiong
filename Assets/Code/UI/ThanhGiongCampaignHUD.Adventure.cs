@@ -34,6 +34,16 @@ public partial class ThanhGiongCampaignHUD
     readonly RaycastHit[] labelSightHits = new RaycastHit[16];
     struct DamageLabel { public Vector3 point; public float amount, started; public bool critical; }
 
+    public enum NavTargetMode { Auto, Exit, Combat, Resource }
+    NavTargetMode navMode = NavTargetMode.Auto;
+    Vector3 currentNavTarget;
+    string currentNavLabel = string.Empty;
+    Color currentNavColor = Color.white;
+    bool hasNavTarget;
+    float navDistance;
+    static readonly float[] MinimapZoomLevels = { 30f, 55f, 95f };
+    int currentZoomIndex = 1;
+
     // Called by the aiming component. HUD remains usable in legacy camera scenes as well.
     public void SetAdventureAim(bool aiming, ThanhGiongEnemy target)
     {
@@ -90,6 +100,18 @@ public partial class ThanhGiongCampaignHUD
         }
         if (observedHeat >= 0 && Mathf.Abs(campaign.Heat-observedHeat)>.01f) contextualUntil=Time.time+3;
         observedHeat=campaign.Heat;
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            currentZoomIndex = (currentZoomIndex + 1) % MinimapZoomLevels.Length;
+            minimapRange = MinimapZoomLevels[currentZoomIndex];
+            campaign?.ShowMessage($"BẢN ĐỒ: TẦM NHÌN {(int)minimapRange}M", 1.2f);
+        }
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            navMode = (NavTargetMode)(((int)navMode + 1) % 4);
+            campaign?.ShowMessage("CHỈ ĐƯỜNG: " + GetNavModeName(navMode).ToUpperInvariant(), 1.5f);
+        }
+        UpdateNavigationTarget();
         if (showAdventureMinimap) UpdateMinimapCamera();
         else if (mapCamera != null) mapCamera.enabled=false;
     }
@@ -128,6 +150,7 @@ public partial class ThanhGiongCampaignHUD
         DrawAdventureQuickSlots();
         if(!RegionIntroVisible) DrawContextualEnergy(w,h,safe,scale);
         if(!ChapterRitualVisible) DrawAdventureWorldLabels(w,h,safe,scale);
+        if(!RegionIntroVisible && !ChapterRitualVisible) DrawAdventure3DWaypoints(w,h,safe,scale);
         if(showAdventureMinimap)DrawAdventureMinimap(w,h);
     }
 
@@ -322,59 +345,144 @@ public partial class ThanhGiongCampaignHUD
             mapCamera.cullingMask=~(1<<5); // Screen/UI objects do not belong to the terrain map.
             var data=mapCameraHost.AddComponent<UniversalAdditionalCameraData>();data.renderPostProcessing=false;data.renderShadows=false;
         }
-        mapCamera.enabled=!paused&&!guidesVisible;
-        mapCamera.orthographicSize=Mathf.Max(15,minimapRange);
+        mapCamera.enabled = !paused && !guidesVisible && !ThanhGiongStartScreen.IsMenuVisible;
+        mapCamera.orthographicSize = Mathf.Max(15, minimapRange);
         mapCamera.transform.SetPositionAndRotation(campaign.transform.position+Vector3.up*100,Quaternion.Euler(90,0,0));
     }
 
     void DrawAdventureMinimap(float w,float h)
     {
-        const float radius=88;
-        Vector2 center=new Vector2(w-119,h-132);
-        Color saved=GUI.color;
-        GUI.color=new Color(.06f,.10f,.075f,.94f);GUI.DrawTexture(new Rect(center.x-radius-8,center.y-radius-8,(radius+8)*2,(radius+8)*2),mapDisc);
-        GUI.color=Color.white;
-        if(mapRender!=null&&mapCircle!=null&&mapMask!=null)
+        const float radius = 94f;
+        Vector2 center = new Vector2(w - 124, h - 138);
+        Color saved = GUI.color;
+
+        // Dark outer shadow and disc backing
+        GUI.color = new Color(.04f, .06f, .05f, .95f);
+        GUI.DrawTexture(new Rect(center.x - radius - 10, center.y - radius - 10, (radius + 10) * 2, (radius + 10) * 2), mapDisc);
+        GUI.color = Color.white;
+
+        if (mapRender != null && mapCircle != null && mapMask != null)
         {
-            if(Event.current.type==EventType.Repaint) {
+            if (Event.current.type == EventType.Repaint) {
                 // Blit changes the active render target. IMGUI must continue on the Game View backbuffer.
-                RenderTexture previousTarget=RenderTexture.active;
-                Graphics.Blit(mapRender,mapCircle,mapMask);
-                RenderTexture.active=previousTarget;
+                RenderTexture previousTarget = RenderTexture.active;
+                Graphics.Blit(mapRender, mapCircle, mapMask);
+                RenderTexture.active = previousTarget;
             }
-            GUI.DrawTexture(new Rect(center.x-radius,center.y-radius,radius*2,radius*2),mapCircle,ScaleMode.StretchToFill,true);
+            GUI.DrawTexture(new Rect(center.x - radius, center.y - radius, radius * 2, radius * 2), mapCircle, ScaleMode.StretchToFill, true);
         }
-        DrawHudArc(center,radius+4,1,new Color(Gold.r,Gold.g,Gold.b,.7f),1);
-        for(int i=0;i<24;i++)
+
+        // Luminous Golden Ring with tick marks
+        DrawHudArc(center, radius + 4, 1, new Color(Gold.r, Gold.g, Gold.b, .78f), 1.6f);
+        for (int i = 0; i < 24; i++)
         {
-            float a=i*Mathf.PI/12;Vector2 ray=new Vector2(Mathf.Sin(a),-Mathf.Cos(a));
-            DrawHudLine(center+ray*(radius+2),center+ray*(radius+7),new Color(Gold.r,Gold.g,Gold.b,.8f),i%3==0?2:1);
+            float a = i * Mathf.PI / 12;
+            Vector2 ray = new Vector2(Mathf.Sin(a), -Mathf.Cos(a));
+            bool isCardinal = (i % 6 == 0);
+            DrawHudLine(center + ray * (radius + 2), center + ray * (radius + (isCardinal ? 9 : 6)), new Color(Gold.r, Gold.g, Gold.b, isCardinal ? .95f : .6f), isCardinal ? 2.2f : 1f);
         }
-        ShadowLabel(new Rect(center.x-10,center.y-radius-23,20,20),"B",adventureCentered); // Bắc / north.
-        foreach(ThanhGiongCollectible item in mapResources)
-            if(item!=null&&!item.IsCollected&&item.gameObject.activeInHierarchy)DrawMapPin(center,radius,item.transform.position,new Color(.51f,.85f,.44f),3,false);
-        foreach(ThanhGiongImprovisedWeapon item in mapThrowables)
-            if(item!=null&&!item.IsCarried&&item.gameObject.activeInHierarchy)DrawMapPin(center,radius,item.transform.position,new Color(.65f,.77f,.75f),3,false);
-        foreach(ThanhGiongEnemy enemy in mapEnemies)
-            if(enemy!=null&&enemy.HealthRatio>0&&enemy.gameObject.activeInHierarchy)DrawMapPin(center,radius,enemy.transform.position,enemy.isBoss?new Color(1,.40f,.22f):new Color(.91f,.27f,.25f),enemy.isBoss?5:2.5f,false);
-        foreach(Transform exit in mapExits)
-            if(exit!=null&&exit.gameObject.activeInHierarchy)DrawMapPin(center,radius,exit.position,new Color(.4f,.85f,1),5,true);
-        if(campaign.openWorldCampaign!=null){
-            foreach(var node in ThanhGiongResourceNode.ActiveNodes)
-                if(node!=null&&node.IsReady)DrawMapPin(center,radius,node.transform.position,new Color(.98f,.81f,.35f),3,false);
-            foreach(var forge in ThanhGiongForgeStation.ActiveStations)
-                if(forge!=null)DrawMapPin(center,radius,forge.transform.position,new Color(1,.5f,.16f),5,true);
+
+        // Cardinal directions
+        ShadowLabel(new Rect(center.x - 12, center.y - radius - 24, 24, 20), "B", adventureCentered);
+        ShadowLabel(new Rect(center.x - 12, center.y + radius + 4, 24, 20), "N", adventureCentered);
+        ShadowLabel(new Rect(center.x + radius + 4, center.y - 10, 24, 20), "Đ", adventureCentered);
+        ShadowLabel(new Rect(center.x - radius - 28, center.y - 10, 24, 20), "T", adventureCentered);
+
+        // Navigation Line & Breadcrumbs
+        if (hasNavTarget)
+        {
+            Vector3 delta = currentNavTarget - campaign.transform.position;
+            Vector2 navOffset = new Vector2(delta.x, -delta.z) * (radius / Mathf.Max(15, minimapRange));
+            float offsetLen = navOffset.magnitude;
+            Vector2 navEnd = center + (offsetLen > radius - 6 ? navOffset.normalized * (radius - 6) : navOffset);
+
+            // Subtle path line
+            DrawHudLine(center, navEnd, new Color(currentNavColor.r, currentNavColor.g, currentNavColor.b, 0.40f), 1.8f);
+
+            // Animated breadcrumb dots along line
+            int breadcrumbs = Mathf.Clamp(Mathf.RoundToInt(Vector2.Distance(center, navEnd) / 16f), 2, 7);
+            float pulsePhase = Mathf.Repeat(Time.unscaledTime * 2.5f, 1f);
+            for (int i = 0; i < breadcrumbs; i++)
+            {
+                float t = (i + pulsePhase) / breadcrumbs;
+                if (t > 1f) t -= 1f;
+                Vector2 beadPos = Vector2.Lerp(center, navEnd, t);
+                DrawMapPinAt(beadPos, currentNavColor, 2.5f);
+            }
+
+            // Rim indicator arrow pointing towards destination
+            float navAngle = Mathf.Atan2(delta.x, -delta.z);
+            Vector2 rimDir = new Vector2(Mathf.Sin(navAngle), -Mathf.Cos(navAngle));
+            Vector2 rimPos = center + rimDir * (radius + 2);
+            Vector2 rimPerp = new Vector2(-rimDir.y, rimDir.x);
+            float arrowPulse = 1f + Mathf.PingPong(Time.unscaledTime * 3f, 0.35f);
+            DrawHudLine(rimPos + rimDir * (9f * arrowPulse), rimPos - rimDir * 4f + rimPerp * 5.5f, currentNavColor, 2.5f);
+            DrawHudLine(rimPos + rimDir * (9f * arrowPulse), rimPos - rimDir * 4f - rimPerp * 5.5f, currentNavColor, 2.5f);
+            DrawHudLine(rimPos - rimDir * 4f - rimPerp * 5.5f, rimPos - rimDir * 4f + rimPerp * 5.5f, currentNavColor, 2.5f);
         }
-        if(checkpoint!=null&&checkpoint.HasCheckpoint)DrawMapPin(center,radius,checkpoint.CheckpointPosition,Gold,4,false);
-        float angle=-campaign.transform.eulerAngles.y*Mathf.Deg2Rad;
-        Vector2 ahead=new Vector2(-Mathf.Sin(angle),-Mathf.Cos(angle)),side=new Vector2(-ahead.y,ahead.x);
-        DrawHudLine(center+ahead*8,center-ahead*4+side*4,Paper,2);
-        DrawHudLine(center+ahead*8,center-ahead*4-side*4,Paper,2);
-        DrawHudLine(center-ahead*4-side*4,center-ahead*4+side*4,Paper,2);
-        GUI.color=saved;
-        Vector3 position=campaign.transform.position;
-        ShadowLabel(new Rect(center.x-105,center.y+radius+11,210,18),$"{position.x:0}, {position.z:0} · Cao {position.y:0}m",adventureCentered);
-        ShadowLabel(new Rect(center.x-108,center.y+radius+29,216,18),campaign.openWorldCampaign!=null?"Vàng: tài nguyên · Cam: lò rèn":"Đỏ: giặc · Lục: vật phẩm · Lam: cổng",adventureCentered);
+
+        // Map Pins
+        foreach (ThanhGiongCollectible item in mapResources)
+            if (item != null && !item.IsCollected && item.gameObject.activeInHierarchy)
+                DrawMapPin(center, radius, item.transform.position, new Color(.35f, .92f, .45f), 3.5f, false);
+        foreach (ThanhGiongImprovisedWeapon item in mapThrowables)
+            if (item != null && !item.IsCarried && item.gameObject.activeInHierarchy)
+                DrawMapPin(center, radius, item.transform.position, new Color(.75f, .85f, .85f), 3f, false);
+        foreach (ThanhGiongEnemy enemy in mapEnemies)
+            if (enemy != null && enemy.HealthRatio > 0 && enemy.gameObject.activeInHierarchy)
+                DrawMapPin(center, radius, enemy.transform.position, enemy.isBoss ? new Color(1f, .40f, .22f) : new Color(.95f, .28f, .25f), enemy.isBoss ? 6f : 3.5f, false);
+        foreach (Transform exit in mapExits)
+            if (exit != null && exit.gameObject.activeInHierarchy)
+            {
+                float pulse = 5f + Mathf.PingPong(Time.unscaledTime * 4f, 2.5f);
+                DrawMapPin(center, radius, exit.position, new Color(.4f, .88f, 1f), pulse, true);
+            }
+        if (campaign.openWorldCampaign != null) {
+            foreach (var node in ThanhGiongResourceNode.ActiveNodes)
+                if (node != null && node.IsReady) DrawMapPin(center, radius, node.transform.position, new Color(.98f, .81f, .35f), 3.5f, false);
+            foreach (var forge in ThanhGiongForgeStation.ActiveStations)
+                if (forge != null) DrawMapPin(center, radius, forge.transform.position, new Color(1f, .55f, .18f), 5.5f, true);
+        }
+        if (checkpoint != null && checkpoint.HasCheckpoint)
+            DrawMapPin(center, radius, checkpoint.CheckpointPosition, Gold, 4.5f, false);
+
+        // Player / Hero Avatar (Golden Spearhead/Horse with glowing vision cone)
+        float playerAngle = -campaign.transform.eulerAngles.y * Mathf.Deg2Rad;
+        Vector2 playerAhead = new Vector2(-Mathf.Sin(playerAngle), -Mathf.Cos(playerAngle));
+        Vector2 playerSide = new Vector2(-playerAhead.y, playerAhead.x);
+
+        // Forward vision rays
+        DrawHudLine(center, center + (playerAhead * 1.5f + playerSide * 0.6f).normalized * 24f, new Color(Gold.r, Gold.g, Gold.b, 0.25f), 1.4f);
+        DrawHudLine(center, center + (playerAhead * 1.5f - playerSide * 0.6f).normalized * 24f, new Color(Gold.r, Gold.g, Gold.b, 0.25f), 1.4f);
+        DrawHudLine(center, center + playerAhead * 28f, new Color(1f, .95f, .75f, 0.50f), 1.8f);
+
+        // Dark outer backing for high contrast
+        DrawHudLine(center + playerAhead * 12f, center - playerAhead * 7f + playerSide * 7f, new Color(.04f, .02f, .02f, .95f), 4.2f);
+        DrawHudLine(center + playerAhead * 12f, center - playerAhead * 7f - playerSide * 7f, new Color(.04f, .02f, .02f, .95f), 4.2f);
+        DrawHudLine(center - playerAhead * 7f - playerSide * 7f, center - playerAhead * 2f, new Color(.04f, .02f, .02f, .95f), 4.2f);
+        DrawHudLine(center - playerAhead * 7f + playerSide * 7f, center - playerAhead * 2f, new Color(.04f, .02f, .02f, .95f), 4.2f);
+
+        // Vibrant gold hero chevron
+        DrawHudLine(center + playerAhead * 11f, center - playerAhead * 6f + playerSide * 6f, Gold, 2.4f);
+        DrawHudLine(center + playerAhead * 11f, center - playerAhead * 6f - playerSide * 6f, Gold, 2.4f);
+        DrawHudLine(center - playerAhead * 6f - playerSide * 6f, center - playerAhead * 1.5f, Gold, 2.4f);
+        DrawHudLine(center - playerAhead * 6f + playerSide * 6f, center - playerAhead * 1.5f, Gold, 2.4f);
+
+        // Center pearl
+        GUI.color = Color.white;
+        GUI.DrawTexture(new Rect(center.x - 2.5f, center.y - 2.5f, 5, 5), mapDisc);
+
+        GUI.color = saved;
+
+        // Bottom labels
+        if (hasNavTarget)
+            ShadowLabel(new Rect(center.x - 120, center.y + radius + 11, 240, 18), $"▶ {currentNavLabel}  ·  {navDistance:0}m", adventureCentered);
+        else
+        {
+            Vector3 pos = campaign.transform.position;
+            ShadowLabel(new Rect(center.x - 110, center.y + radius + 11, 220, 18), $"{pos.x:0}, {pos.z:0} · Cao {pos.y:0}m", adventureCentered);
+        }
+        ShadowLabel(new Rect(center.x - 120, center.y + radius + 29, 240, 18), $"[Z] Zoom {(int)minimapRange}m  ·  [T] Đích ({GetNavModeShort(navMode)})", adventureCentered);
     }
 
     void DrawMapPin(Vector2 center,float radius,Vector3 world,Color color,float size,bool clampEdge)
@@ -382,10 +490,340 @@ public partial class ThanhGiongCampaignHUD
         Vector3 delta=world-campaign.transform.position;
         Vector2 offset=new Vector2(delta.x,-delta.z)*(radius/Mathf.Max(15,minimapRange));
         if(offset.magnitude>radius-8){if(!clampEdge)return;offset=offset.normalized*(radius-8);}
-        Vector2 point=center+offset;Color saved=GUI.color;
-        GUI.color=new Color(.06f,.025f,.02f,.85f);GUI.DrawTexture(new Rect(point.x-size-1,point.y-size-1,size*2+2,size*2+2),mapDisc);
-        GUI.color=color;GUI.DrawTexture(new Rect(point.x-size,point.y-size,size*2,size*2),mapDisc);GUI.color=saved;
+        DrawMapPinAt(center+offset, color, size);
     }
+
+    void DrawMapPinAt(Vector2 point, Color color, float size)
+    {
+        Color saved = GUI.color;
+        GUI.color = new Color(.05f, .02f, .02f, .85f);
+        GUI.DrawTexture(new Rect(point.x - size - 1, point.y - size - 1, size * 2 + 2, size * 2 + 2), mapDisc);
+        GUI.color = color;
+        GUI.DrawTexture(new Rect(point.x - size, point.y - size, size * 2, size * 2), mapDisc);
+        GUI.color = saved;
+    }
+
+    void DrawAdventure3DWaypoints(float w, float h, Rect safe, float scale)
+    {
+        if (!hasNavTarget || adventureView == null || campaign == null || campaign.IsDead) return;
+
+        Vector3 targetWorld = currentNavTarget + Vector3.up * 1.6f;
+        Vector3 screenPos = adventureView.WorldToScreenPoint(targetWorld);
+
+        bool behind = screenPos.z <= 0;
+        Vector2 screenCenter = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
+
+        float pad = 44f * scale;
+        float minX = safe.x + pad, maxX = safe.xMax - pad;
+        float minY = safe.y + pad, maxY = safe.yMax - pad;
+
+        bool onScreen = !behind && screenPos.x >= minX && screenPos.x <= maxX && screenPos.y >= minY && screenPos.y <= maxY;
+
+        Color saved = GUI.color;
+        if (onScreen)
+        {
+            Vector2 hudPos = new Vector2((screenPos.x - safe.x) / scale, (Screen.height - screenPos.y - (Screen.height - safe.yMax)) / scale);
+
+            GUI.color = new Color(.07f, .035f, .025f, .88f);
+            Rect pill = new Rect(hudPos.x - 62, hudPos.y - 34, 124, 24);
+            GUI.DrawTexture(pill, Texture2D.whiteTexture);
+
+            GUI.color = currentNavColor;
+            DrawHudLine(new Vector2(pill.x, pill.yMax), new Vector2(pill.xMax, pill.yMax), currentNavColor, 2f);
+
+            ShadowLabel(new Rect(pill.x + 2, pill.y + 2, pill.width - 4, 20), $"{currentNavLabel} {navDistance:0}m", adventureCentered);
+            ShadowLabel(new Rect(hudPos.x - 10, hudPos.y - 12, 20, 20), "▼", adventureCentered);
+        }
+        else
+        {
+            Vector2 dir = new Vector2(screenPos.x - screenCenter.x, screenPos.y - screenCenter.y);
+            if (behind) dir = -dir;
+            if (dir.sqrMagnitude < 0.001f) dir = Vector2.up;
+            dir.Normalize();
+
+            float boundHalfW = (safe.width * 0.5f - pad);
+            float boundHalfH = (safe.height * 0.5f - pad);
+            float scaleX = Mathf.Abs(dir.x) > 0.0001f ? boundHalfW / Mathf.Abs(dir.x) : float.MaxValue;
+            float scaleY = Mathf.Abs(dir.y) > 0.0001f ? boundHalfH / Mathf.Abs(dir.y) : float.MaxValue;
+            float clampFactor = Mathf.Min(scaleX, scaleY);
+
+            Vector2 clampedScreen = screenCenter + dir * clampFactor;
+            Vector2 hudPos = new Vector2((clampedScreen.x - safe.x) / scale, (Screen.height - clampedScreen.y - (Screen.height - safe.yMax)) / scale);
+            Vector2 hudDir = new Vector2(dir.x, -dir.y);
+
+            GUI.color = new Color(.07f, .035f, .025f, .90f);
+            Rect pill = new Rect(hudPos.x - 56, hudPos.y - 14, 112, 26);
+            GUI.DrawTexture(pill, Texture2D.whiteTexture);
+
+            GUI.color = currentNavColor;
+            DrawHudLine(new Vector2(pill.x, pill.yMax), new Vector2(pill.xMax, pill.yMax), currentNavColor, 2f);
+
+            Vector2 arrowHead = hudPos + hudDir * 18f;
+            Vector2 arrowPerp = new Vector2(-hudDir.y, hudDir.x);
+            DrawHudLine(arrowHead, arrowHead - hudDir * 9f + arrowPerp * 5.5f, currentNavColor, 2.2f);
+            DrawHudLine(arrowHead, arrowHead - hudDir * 9f - arrowPerp * 5.5f, currentNavColor, 2.2f);
+
+            ShadowLabel(new Rect(pill.x + 2, pill.y + 2, pill.width - 4, 20), $"{currentNavLabel} {navDistance:0}m", adventureCentered);
+        }
+        GUI.color = saved;
+    }
+
+    void UpdateNavigationTarget()
+    {
+        hasNavTarget = false;
+        if (campaign == null || campaign.IsDead) return;
+
+        if (campaign.openWorldCampaign != null && campaign.openWorldCampaign.world != null)
+        {
+            var selected = campaign.openWorldCampaign.world.SelectedZone;
+            if (selected != null && selected != campaign.openWorldCampaign.world.CurrentZone)
+            {
+                currentNavTarget = selected.center;
+                currentNavLabel = selected.displayName.ToUpperInvariant();
+                currentNavColor = new Color(1f, .85f, .35f);
+                hasNavTarget = true;
+                navDistance = Vector3.Distance(campaign.transform.position, currentNavTarget);
+                return;
+            }
+        }
+
+        if (navMode == NavTargetMode.Exit)
+        {
+            if (TryGetNearestExit(out Vector3 exitPos))
+            {
+                currentNavTarget = exitPos;
+                currentNavLabel = "CỔNG QUA MÀN";
+                currentNavColor = new Color(.4f, .85f, 1f);
+                hasNavTarget = true;
+                navDistance = Vector3.Distance(campaign.transform.position, currentNavTarget);
+                return;
+            }
+        }
+        else if (navMode == NavTargetMode.Combat)
+        {
+            if (TryGetNearestEnemyOrBoss(out Vector3 combatPos, out string combatLabel, out bool isBoss))
+            {
+                currentNavTarget = combatPos;
+                currentNavLabel = combatLabel;
+                currentNavColor = isBoss ? new Color(1f, .4f, .22f) : new Color(.95f, .28f, .25f);
+                hasNavTarget = true;
+                navDistance = Vector3.Distance(campaign.transform.position, currentNavTarget);
+                return;
+            }
+        }
+        else if (navMode == NavTargetMode.Resource)
+        {
+            if (TryGetNearestResourceOrForge(out Vector3 resPos, out string resLabel))
+            {
+                currentNavTarget = resPos;
+                currentNavLabel = resLabel;
+                currentNavColor = new Color(.45f, .90f, .40f);
+                hasNavTarget = true;
+                navDistance = Vector3.Distance(campaign.transform.position, currentNavTarget);
+                return;
+            }
+        }
+
+        switch (campaign.CurrentChapter)
+        {
+            case ThanhGiongCampaignController.Chapter.Prologue:
+                if (campaign.Food < campaign.foodPerGrowth * 3f)
+                {
+                    if (TryGetNearestCollectible(out Vector3 foodPos))
+                    {
+                        currentNavTarget = foodPos;
+                        currentNavLabel = "LƯƠNG THỰC";
+                        currentNavColor = new Color(.45f, .90f, .40f);
+                        hasNavTarget = true;
+                    }
+                }
+                else if (TryGetNearestExit(out Vector3 exitPos))
+                {
+                    currentNavTarget = exitPos;
+                    currentNavLabel = "CỔNG QUA MÀN";
+                    currentNavColor = new Color(.4f, .85f, 1f);
+                    hasNavTarget = true;
+                }
+                break;
+
+            case ThanhGiongCampaignController.Chapter.Preparation:
+                if (campaign.bambooRoot != null)
+                {
+                    currentNavTarget = campaign.bambooRoot.transform.position;
+                    currentNavLabel = "TRANG BỊ VUA BAN";
+                    currentNavColor = Gold;
+                    hasNavTarget = true;
+                }
+                else if (TryGetNearestExit(out Vector3 prepExit))
+                {
+                    currentNavTarget = prepExit;
+                    currentNavLabel = "XUẤT QUÂN";
+                    currentNavColor = new Color(.4f, .85f, 1f);
+                    hasNavTarget = true;
+                }
+                break;
+
+            case ThanhGiongCampaignController.Chapter.Battle:
+                if (campaign.CurrentWeapon == ThanhGiongCampaignController.Weapon.None)
+                {
+                    if (campaign.bambooRoot != null)
+                    {
+                        currentNavTarget = campaign.bambooRoot.transform.position;
+                        currentNavLabel = "KHÓM TRE THẦN";
+                        currentNavColor = new Color(.55f, .88f, .27f);
+                        hasNavTarget = true;
+                    }
+                    else if (TryGetNearestCollectible(out Vector3 bambooPos, ThanhGiongCollectible.Kind.Bamboo))
+                    {
+                        currentNavTarget = bambooPos;
+                        currentNavLabel = "TRE NGÀ";
+                        currentNavColor = new Color(.55f, .88f, .27f);
+                        hasNavTarget = true;
+                    }
+                }
+                else if (!campaign.CanAdvanceToNextScene(out _))
+                {
+                    if (TryGetNearestEnemyOrBoss(out Vector3 targetEnemy, out string enemyName, out bool boss))
+                    {
+                        currentNavTarget = targetEnemy;
+                        currentNavLabel = enemyName;
+                        currentNavColor = boss ? new Color(1f, .4f, .22f) : new Color(.95f, .28f, .25f);
+                        hasNavTarget = true;
+                    }
+                }
+                else if (TryGetNearestExit(out Vector3 battleExit))
+                {
+                    currentNavTarget = battleExit;
+                    currentNavLabel = "CỔNG QUA MÀN";
+                    currentNavColor = new Color(.4f, .85f, 1f);
+                    hasNavTarget = true;
+                }
+                break;
+
+            case ThanhGiongCampaignController.Chapter.Ascension:
+                if (checkpoint != null && checkpoint.HasCheckpoint)
+                {
+                    currentNavTarget = checkpoint.CheckpointPosition;
+                    currentNavLabel = "ĐỈNH SÓC HÓA THÁNH";
+                    currentNavColor = Gold;
+                    hasNavTarget = true;
+                }
+                else if (TryGetNearestExit(out Vector3 ascExit))
+                {
+                    currentNavTarget = ascExit;
+                    currentNavLabel = "ĐỈNH SÓC";
+                    currentNavColor = Gold;
+                    hasNavTarget = true;
+                }
+                break;
+
+            default:
+                if (TryGetNearestExit(out Vector3 defExit))
+                {
+                    currentNavTarget = defExit;
+                    currentNavLabel = "ĐÍCH ĐẾN";
+                    currentNavColor = new Color(.4f, .85f, 1f);
+                    hasNavTarget = true;
+                }
+                break;
+        }
+
+        if (hasNavTarget)
+            navDistance = Vector3.Distance(campaign.transform.position, currentNavTarget);
+    }
+
+    bool TryGetNearestExit(out Vector3 pos)
+    {
+        pos = Vector3.zero;
+        Transform nearest = null; float minDistSq = float.MaxValue;
+        foreach (Transform exit in mapExits)
+        {
+            if (exit != null && exit.gameObject.activeInHierarchy)
+            {
+                float d = (exit.position - campaign.transform.position).sqrMagnitude;
+                if (d < minDistSq) { minDistSq = d; nearest = exit; }
+            }
+        }
+        if (nearest != null) { pos = nearest.position; return true; }
+        return false;
+    }
+
+    bool TryGetNearestEnemyOrBoss(out Vector3 pos, out string label, out bool isBoss)
+    {
+        pos = Vector3.zero; label = "QUÂN GIẶC"; isBoss = false;
+        if (cachedBoss != null && cachedBoss.HealthRatio > 0 && cachedBoss.gameObject.activeInHierarchy)
+        {
+            pos = cachedBoss.transform.position; label = "TƯỚNG GIẶC ÂN"; isBoss = true; return true;
+        }
+        ThanhGiongEnemy nearest = null; float minDistSq = float.MaxValue;
+        foreach (ThanhGiongEnemy enemy in mapEnemies)
+        {
+            if (enemy != null && enemy.HealthRatio > 0 && enemy.gameObject.activeInHierarchy)
+            {
+                if (enemy.isBoss) { pos = enemy.transform.position; label = "TƯỚNG GIẶC ÂN"; isBoss = true; return true; }
+                float d = (enemy.transform.position - campaign.transform.position).sqrMagnitude;
+                if (d < minDistSq) { minDistSq = d; nearest = enemy; }
+            }
+        }
+        if (nearest != null) { pos = nearest.transform.position; return true; }
+        return false;
+    }
+
+    bool TryGetNearestCollectible(out Vector3 pos, ThanhGiongCollectible.Kind? filterKind = null)
+    {
+        pos = Vector3.zero;
+        ThanhGiongCollectible nearest = null; float minDistSq = float.MaxValue;
+        foreach (ThanhGiongCollectible item in mapResources)
+        {
+            if (item != null && !item.IsCollected && item.gameObject.activeInHierarchy)
+            {
+                if (filterKind.HasValue && item.kind != filterKind.Value) continue;
+                float d = (item.transform.position - campaign.transform.position).sqrMagnitude;
+                if (d < minDistSq) { minDistSq = d; nearest = item; }
+            }
+        }
+        if (nearest != null) { pos = nearest.transform.position; return true; }
+        return false;
+    }
+
+    bool TryGetNearestResourceOrForge(out Vector3 pos, out string label)
+    {
+        pos = Vector3.zero; label = "TÀI NGUYÊN";
+        if (campaign.openWorldCampaign != null)
+        {
+            foreach (var forge in ThanhGiongForgeStation.ActiveStations)
+            {
+                if (forge != null && forge.gameObject.activeInHierarchy)
+                {
+                    pos = forge.transform.position; label = "LÒ RÈN"; return true;
+                }
+            }
+            foreach (var node in ThanhGiongResourceNode.ActiveNodes)
+            {
+                if (node != null && node.IsReady && node.gameObject.activeInHierarchy)
+                {
+                    pos = node.transform.position; label = "MỎ TÀI NGUYÊN"; return true;
+                }
+            }
+        }
+        return TryGetNearestCollectible(out pos);
+    }
+
+    static string GetNavModeName(NavTargetMode mode) => mode switch
+    {
+        NavTargetMode.Auto => "Tự động theo nhiệm vụ",
+        NavTargetMode.Exit => "Ưu tiên Cổng qua màn",
+        NavTargetMode.Combat => "Ưu tiên Quân giặc / Tướng",
+        _ => "Ưu tiên Tài nguyên / Khóm tre"
+    };
+
+    static string GetNavModeShort(NavTargetMode mode) => mode switch
+    {
+        NavTargetMode.Auto => "Tự động",
+        NavTargetMode.Exit => "Cổng",
+        NavTargetMode.Combat => "Giặc",
+        _ => "Vật phẩm"
+    };
 
     static void DrawHudLine(Vector2 start,Vector2 end,Color color,float thickness)
     {
@@ -419,5 +857,6 @@ public partial class ThanhGiongCampaignHUD
         mapCamera=null;mapCameraHost=null;mapRender=null;mapCircle=null;mapMask=null;riceGrain=null;mapDisc=null;
         adventureNumber=null;adventureWorld=null;adventureCentered=null;
         observedEnemyHealth.Clear();damageLabels.Clear();nextAdventureScan=0;
+        hasNavTarget=false;
     }
 }
