@@ -1,4 +1,5 @@
 using System.Collections;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -262,6 +263,64 @@ public class ThanhGiongStartScreen : MonoBehaviour
         StartCoroutine(TransitionIntoGameplay());
     }
 
+    public void ContinueGame()
+    {
+        BeginGame();
+    }
+
+    public void StartNewGame()
+    {
+        DeleteAllSaveData();
+        string currentScene = SceneManager.GetActiveScene().name;
+        if (currentScene == "ManHinhCho")
+        {
+            BeginGame();
+        }
+        else
+        {
+            isTransitioningToGame = true;
+            IsWaitingActive = false;
+            veilAlpha = 0f;
+            Time.timeScale = 1f;
+            if (menuAudioSource != null) menuAudioSource.Stop();
+            SceneManager.LoadScene(currentScene);
+        }
+    }
+
+    public static bool HasSaveData()
+    {
+        string openWorldSave = Path.Combine(Application.persistentDataPath, "ThanhGiongOpenWorld.v1.json");
+        if (File.Exists(openWorldSave)) return true;
+        string[] scenes = { "ThanhGiongDaiViet", "LangGiongTienTuyen", "KinhThanhRenThep", "PhaoDaiNgamQuanAn", "ThungLungVuotSong", "TranTuyenNuiSoc", "DinhSocHoaThanh" };
+        foreach (var s in scenes)
+        {
+            if (PlayerPrefs.HasKey(LegendCheckpoint.StorageKeyForScene(s)))
+                return true;
+        }
+        return false;
+    }
+
+    public static void DeleteAllSaveData()
+    {
+        try
+        {
+            string openWorldSave = Path.Combine(Application.persistentDataPath, "ThanhGiongOpenWorld.v1.json");
+            if (File.Exists(openWorldSave)) File.Delete(openWorldSave);
+            if (File.Exists(openWorldSave + ".bak")) File.Delete(openWorldSave + ".bak");
+            if (File.Exists(openWorldSave + ".tmp")) File.Delete(openWorldSave + ".tmp");
+        }
+        catch (System.Exception e) { Debug.LogWarning("[Save] Delete error: " + e.Message); }
+
+        string[] scenes = { "ThanhGiongDaiViet", "LangGiongTienTuyen", "KinhThanhRenThep", "PhaoDaiNgamQuanAn", "ThungLungVuotSong", "TranTuyenNuiSoc", "DinhSocHoaThanh" };
+        foreach (var s in scenes)
+        {
+            LegendCheckpoint.ForgetScene(s);
+        }
+        ThanhGiongVillagerProgress.ResetAll();
+        PlayerPrefs.Save();
+        Debug.Log("[ThanhGiongStartScreen] Đã xóa toàn bộ dữ liệu lưu để bắt đầu Chơi Mới.");
+    }
+
     private IEnumerator TransitionIntoGameplay()
     {
         isTransitioningToGame = true;
@@ -335,7 +394,11 @@ public class ThanhGiongStartScreen : MonoBehaviour
         // Phím tắt bắt đầu nhanh
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
-            if (currentTab == Tab.Main) BeginGame();
+            if (currentTab == Tab.Main)
+            {
+                if (HasSaveData()) ContinueGame();
+                else StartNewGame();
+            }
             else currentTab = Tab.Main;
         }
         else if (Input.GetKeyDown(KeyCode.Escape))
@@ -619,45 +682,88 @@ public class ThanhGiongStartScreen : MonoBehaviour
 
         DrawSolidColor(new Rect(menuBox.x + 36, menuBox.y + 64, 528, 1), PaleGold, veilAlpha * 0.4f);
 
-        // Nút BẮT ĐẦU CHƠI (Nút lớn nhất, phát sáng nhấp nháy, viền kép)
+        // Nút TIẾP TỤC & CHƠI MỚI
+        bool hasSave = HasSaveData();
         float glowPulse = 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 4.5f);
         Color btnBorderColor = Color.Lerp(PaleGold, BrightGold, glowPulse);
+        const float btnWidth = 528;
+        float currentBtnY = menuBox.y + 78;
 
-        Rect playBtnRect = new Rect(menuBox.x + 36, menuBox.y + 86, 528, 76);
-        DrawPanelBox(playBtnRect, new Color(Crimson.r, Crimson.g, Crimson.b, 0.88f), btnBorderColor, veilAlpha);
-
-        GUI.color = new Color(1f, 1f, 1f, veilAlpha);
-        if (GUI.Button(playBtnRect, "⚔️  BẮT ĐẦU CHƠI NGAY  ⚔️\n[ Nhấn SPACE hoặc ENTER ]", mainButtonStyle))
+        if (hasSave)
         {
-            BeginGame();
+            // 1. TIẾP TỤC HÀNH TRÌNH (Nút lớn nhất, phát sáng viền kép)
+            Rect playBtnRect = new Rect(menuBox.x + 36, currentBtnY, btnWidth, 68);
+            DrawPanelBox(playBtnRect, new Color(Crimson.r, Crimson.g, Crimson.b, 0.88f), btnBorderColor, veilAlpha);
+            GUI.color = new Color(1f, 1f, 1f, veilAlpha);
+            if (GUI.Button(playBtnRect, "⚔️  TIẾP TỤC HÀNH TRÌNH  ⚔️\n[ Nhấn SPACE hoặc ENTER ]", mainButtonStyle))
+            {
+                ContinueGame();
+            }
+            currentBtnY += 76;
+
+            // 2. CHƠI MỚI (LÀM LẠI TỪ ĐẦU)
+            Rect newGameBtnRect = new Rect(menuBox.x + 36, currentBtnY, btnWidth, 50);
+            GUI.color = new Color(1f, 1f, 1f, veilAlpha);
+            if (GUI.Button(newGameBtnRect, "🔄  CHƠI MỚI (LÀM LẠI TỪ ĐẦU)", secondaryButtonStyle))
+            {
+                PlaySfx(clickSfx);
+                StartNewGame();
+            }
+            currentBtnY += 58;
+        }
+        else
+        {
+            // 1. CHƠI MỚI (Nút lớn nhất, phát sáng viền kép)
+            Rect playBtnRect = new Rect(menuBox.x + 36, currentBtnY, btnWidth, 68);
+            DrawPanelBox(playBtnRect, new Color(Crimson.r, Crimson.g, Crimson.b, 0.88f), btnBorderColor, veilAlpha);
+            GUI.color = new Color(1f, 1f, 1f, veilAlpha);
+            if (GUI.Button(playBtnRect, "⚔️  CHƠI MỚI  ⚔️\n[ Nhấn SPACE hoặc ENTER ]", mainButtonStyle))
+            {
+                StartNewGame();
+            }
+            currentBtnY += 76;
+
+            // 2. TIẾP TỤC (Trạng thái mờ khi chưa có save)
+            Rect dimmedContinueRect = new Rect(menuBox.x + 36, currentBtnY, btnWidth, 50);
+            GUI.color = new Color(1f, 1f, 1f, veilAlpha * 0.45f);
+            if (GUI.Button(dimmedContinueRect, "⏳  TIẾP TỤC (CHƯA CÓ LƯU HÀNH TRÌNH)", secondaryButtonStyle))
+            {
+                PlaySfx(clickSfx);
+            }
+            currentBtnY += 58;
         }
 
-        // Nút 2: CHỌN MÀN CHƠI (6 MÀN)
-        Rect chBtnRect = new Rect(menuBox.x + 36, menuBox.y + 178, 528, 56);
+        GUI.color = new Color(1f, 1f, 1f, veilAlpha);
+
+        // Nút 3: CHỌN MÀN CHƠI (6 MÀN)
+        Rect chBtnRect = new Rect(menuBox.x + 36, currentBtnY, btnWidth, 48);
         if (GUI.Button(chBtnRect, "🗺️  CHỌN MÀN CHƠI  (6 MÀN CHIẾN DỊCH)", secondaryButtonStyle))
         {
             PlaySfx(clickSfx);
             currentTab = Tab.ChapterSelect;
         }
+        currentBtnY += 54;
 
-        // Nút 3: BINH PHÁP & ĐIỀU KHIỂN
-        Rect ctrlBtnRect = new Rect(menuBox.x + 36, menuBox.y + 248, 528, 56);
+        // Nút 4: BINH PHÁP & ĐIỀU KHIỂN
+        Rect ctrlBtnRect = new Rect(menuBox.x + 36, currentBtnY, btnWidth, 48);
         if (GUI.Button(ctrlBtnRect, "📜  BINH PHÁP & ĐIỀU KHIỂN  [F1]", secondaryButtonStyle))
         {
             PlaySfx(clickSfx);
             currentTab = Tab.Controls;
         }
+        currentBtnY += 54;
 
-        // Nút 4: CÀI ĐẶT ÂM THANH
-        Rect setBtnRect = new Rect(menuBox.x + 36, menuBox.y + 318, 528, 56);
+        // Nút 5: CÀI ĐẶT ÂM THANH
+        Rect setBtnRect = new Rect(menuBox.x + 36, currentBtnY, btnWidth, 48);
         if (GUI.Button(setBtnRect, "🔊  CÀI ĐẶT ÂM THANH & HIỆU ỨNG", secondaryButtonStyle))
         {
             PlaySfx(clickSfx);
             currentTab = Tab.Settings;
         }
+        currentBtnY += 54;
 
-        // Nút 5: XEM TRAILER DEMO ĐIỆN ẢNH
-        Rect trlBtnRect = new Rect(menuBox.x + 36, menuBox.y + 388, 528, 56);
+        // Nút 6: XEM TRAILER DEMO ĐIỆN ẢNH
+        Rect trlBtnRect = new Rect(menuBox.x + 36, currentBtnY, btnWidth, 48);
         if (GUI.Button(trlBtnRect, "🎬  XEM TRAILER DEMO CHIẾN DỊCH  [F10]", secondaryButtonStyle))
         {
             PlaySfx(clickSfx);
@@ -666,9 +772,10 @@ public class ThanhGiongStartScreen : MonoBehaviour
             if (menuAudioSource != null) menuAudioSource.Stop();
             ThanhGiongTrailerDirector.Instance?.PlayTrailer(false);
         }
+        currentBtnY += 54;
 
-        // Nút 6: THOÁT GAME
-        Rect quitBtnRect = new Rect(menuBox.x + 36, menuBox.y + 458, 528, 54);
+        // Nút 7: THOÁT GAME
+        Rect quitBtnRect = new Rect(menuBox.x + 36, currentBtnY, btnWidth, 46);
         if (GUI.Button(quitBtnRect, "🚪  THOÁT TRÒ CHƠI", secondaryButtonStyle))
         {
             PlaySfx(clickSfx);

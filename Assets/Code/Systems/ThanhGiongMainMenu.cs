@@ -118,7 +118,7 @@ public sealed class ThanhGiongMainMenu : MonoBehaviour
             y += h + gap;
             if (GUI.Button(new Rect(x, y, w, h), "CHƠI MỚI", button)) NewGame();
         } else {
-            if (GUI.Button(new Rect(x, y, w, h), "BẮT ĐẦU", button)) Close();
+            if (GUI.Button(new Rect(x, y, w, h), "CHƠI MỚI", button)) NewGame();
         }
         y += h + gap;
         if (GUI.Button(new Rect(x, y, w, h), "CÀI ĐẶT", button)) page = Page.Settings;
