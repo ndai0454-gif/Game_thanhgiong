@@ -28,9 +28,11 @@ public class ThanhGiongStartScreen : MonoBehaviour
     public float fadeDuration = 0.65f;
 
     public static bool IsWaitingActive { get; private set; } = false;
+    public float VeilAlpha => veilAlpha;
+    public static bool IsMenuVisible => IsWaitingActive || (Instance != null && Instance.veilAlpha > 0.001f);
 
     private Tab currentTab = Tab.Main;
-    private float veilAlpha = 1f;
+    private float veilAlpha = 0f;
     private bool isTransitioningToGame = false;
     private AudioSource menuAudioSource;
     private AudioSource sfxAudioSource;
@@ -156,11 +158,15 @@ public class ThanhGiongStartScreen : MonoBehaviour
         sfxAudioSource.loop = false;
         sfxAudioSource.playOnAwake = false;
 
-        // Bật màn hình chờ ban đầu nếu ở màn 1 hoặc màn hình sảnh
+        // Bật màn hình chờ ban đầu nếu ở màn hình sảnh hoặc các màn chơi chính
         string sceneName = SceneManager.GetActiveScene().name;
-        if (showOnStart && (sceneName == "LangGiongTienTuyen" || sceneName == "ManHinhCho" || sceneName.Contains("Start")))
+        if (showOnStart && (sceneName == "ThanhGiongDaiViet" || sceneName == "LangGiongTienTuyen" || sceneName == "ManHinhCho" || sceneName.Contains("Start")))
         {
             OpenWaitingScreen();
+        }
+        else
+        {
+            CloseWaitingScreenImmediate();
         }
     }
 
@@ -241,16 +247,11 @@ public class ThanhGiongStartScreen : MonoBehaviour
             Time.timeScale = 1f;
             if (menuAudioSource != null) menuAudioSource.Stop();
 
-            string targetScene = "LangGiongTienTuyen";
-            if (!Application.CanStreamedLevelBeLoaded(targetScene))
-            {
-                if (Application.CanStreamedLevelBeLoaded("ThanhGiongDaiViet"))
-                    targetScene = "ThanhGiongDaiViet";
-            }
+            string targetScene = Application.CanStreamedLevelBeLoaded("ThanhGiongDaiViet") ? "ThanhGiongDaiViet" : "LangGiongTienTuyen";
 
             Debug.Log($"[ThanhGiongStartScreen] Bắt đầu vào game -> Đang chuyển sang scene: {targetScene}");
 
-            if (!ThanhGiongSceneTransition.TryTransitionTo(targetScene, "ĐANG TIẾN VÀO LÀNG PHÙ ĐỔNG..."))
+            if (!ThanhGiongSceneTransition.TryTransitionTo(targetScene, "ĐANG TIẾN VÀO THẾ GIỚI ĐẠI VIỆT..."))
             {
                 SceneManager.LoadScene(targetScene);
             }

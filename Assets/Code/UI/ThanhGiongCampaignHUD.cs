@@ -204,7 +204,7 @@ public partial class ThanhGiongCampaignHUD : MonoBehaviour
     private void OnGUI()
     {
         if (campaign != null && campaign.openWorldCampaign != null && campaign.openWorldCampaign.world.MapOpen) return;
-        if (campaign == null || (ThanhGiongTrailerDirector.Instance != null && ThanhGiongTrailerDirector.Instance.IsPlayingTrailer) || ThanhGiongStartScreen.IsWaitingActive) return;
+        if (campaign == null || (ThanhGiongTrailerDirector.Instance != null && ThanhGiongTrailerDirector.Instance.IsPlayingTrailer) || ThanhGiongStartScreen.IsMenuVisible) return;
         EnsureStyles();
         Matrix4x4 oldMatrix = GUI.matrix;
         Color oldColor = GUI.color;

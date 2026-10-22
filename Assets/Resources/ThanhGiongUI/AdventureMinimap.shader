@@ -17,7 +17,10 @@ Shader "Hidden/ThanhGiong/AdventureMinimap"
                 fixed4 terrain=tex2D(_MainTex,input.uv);
                 float distanceFromCenter=length(input.uv-.5);
                 float mask=1-smoothstep(.487,.5,distanceFromCenter);
-                return fixed4(lerp(terrain.rgb,float3(.08,.17,.12),.13),mask);
+                // Enhance brightness and contrast so terrain features, roads, and water are crisp and easily visible
+                fixed3 enhanced = saturate(pow(terrain.rgb, 0.90) * 1.28);
+                float vignette = 1.0 - smoothstep(0.40, 0.495, distanceFromCenter) * 0.35;
+                return fixed4(enhanced * vignette, mask);
             }
             ENDCG
         }
