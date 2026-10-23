@@ -35,6 +35,8 @@ namespace ThanhGiong.Environment
         private Vector3 _initialLocalPos;
         private Quaternion _initialLocalRot;
         private Vector3 _initialLocalScale;
+        private float _initialLightRange;
+        private bool _capturedLight;
         private bool _initialized;
 
         private void Awake()
@@ -64,14 +66,33 @@ namespace ThanhGiong.Environment
 
             if (propLight != null)
             {
+                if (!_capturedLight)
+                {
+                    _initialLightRange = propLight.range;
+                    _capturedLight = true;
+                }
+
                 switch (effectKind)
                 {
                     case PropEffectKind.MoltenForge:
-                        propLight.intensity = baseLightIntensity * (1f + 0.28f * Mathf.Sin(t * 7.5f) + 0.14f * Mathf.Sin(t * 17.3f));
+                    {
+                        // Nhịp thở nhiệt nóng kết hợp bập bùng ngọn lửa lò rèn thần
+                        float heatPulse = Mathf.Sin(t * 1.8f) * 0.12f;
+                        float flicker = 0.22f * Mathf.Sin(t * 7.5f) + 0.11f * Mathf.Sin(t * 16.3f) + 0.05f * Mathf.Cos(t * 27.1f);
+                        propLight.intensity = baseLightIntensity * (1f + heatPulse + flicker);
+                        if (_initialLightRange > 0.01f)
+                        {
+                            propLight.range = _initialLightRange * (1f + 0.07f * Mathf.Sin(t * 2.8f));
+                        }
                         break;
+                    }
                     case PropEffectKind.EnemyWatchtowerFire:
-                        propLight.intensity = baseLightIntensity * (1f + 0.24f * Mathf.Sin(t * 9.2f) + 0.12f * Mathf.Cos(t * 14.1f));
+                    {
+                        // Lửa tháp canh giặc bập bùng dữ dội trong gió
+                        float windFlicker = 0.20f * Mathf.Sin(t * 9.2f) + 0.12f * Mathf.Cos(t * 14.1f) + 0.06f * Mathf.Sin(t * 23.5f);
+                        propLight.intensity = baseLightIntensity * (1f + windFlicker);
                         break;
+                    }
                     case PropEffectKind.SacredDrumShrine:
                     case PropEffectKind.CelestialAscensionAltar:
                     case PropEffectKind.SacredStatueAura:
@@ -80,9 +101,14 @@ namespace ThanhGiong.Environment
                     case PropEffectKind.CrimsonWarlordGaze:
                         propLight.intensity = baseLightIntensity * (1f + 0.32f * Mathf.Sin(t * 5.8f));
                         break;
+                    case PropEffectKind.HearthLantern:
                     default:
-                        propLight.intensity = baseLightIntensity * (1f + 0.12f * Mathf.Sin(t * 4.2f));
+                    {
+                        // Đèn lồng hiên nhà bập bùng êm dịu, ấm áp
+                        float gentleFlicker = 0.10f * Mathf.Sin(t * 3.8f) + 0.05f * Mathf.Sin(t * 8.6f);
+                        propLight.intensity = baseLightIntensity * (1f + gentleFlicker);
                         break;
+                    }
                 }
             }
 
