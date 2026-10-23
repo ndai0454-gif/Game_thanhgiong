@@ -118,15 +118,21 @@ namespace ThanhGiong.Environment
                 {
                     case PropEffectKind.GoldenBambooWind:
                     {
-                        float swayX = Mathf.Sin(t * 1.8f) * 2.2f;
-                        float swayZ = Mathf.Cos(t * 1.35f) * 1.6f;
-                        animatedMeshRoot.localRotation = _initialLocalRot * Quaternion.Euler(swayX, 0f, swayZ);
+                        // Mô phỏng từng đợt gió thoảng qua rặng tre: gió nền + đợt gió giật nhẹ ngẫu nhiên
+                        float gust = Mathf.Clamp01(Mathf.Sin(t * 0.42f) * 0.7f + 0.3f);
+                        float swayX = (Mathf.Sin(t * 1.6f) * 2.2f + Mathf.Sin(t * 3.4f) * 0.8f) * (0.6f + 0.6f * gust);
+                        float swayZ = (Mathf.Cos(t * 1.2f) * 1.6f + Mathf.Cos(t * 2.7f) * 0.6f) * (0.6f + 0.6f * gust);
+                        float twistY = Mathf.Sin(t * 0.9f) * 0.6f * gust;
+                        animatedMeshRoot.localRotation = _initialLocalRot * Quaternion.Euler(swayX, twistY, swayZ);
                         break;
                     }
                     case PropEffectKind.WarBannerFlutter:
                     {
-                        float swayZ = Mathf.Sin(t * 2.6f) * 1.8f;
-                        animatedMeshRoot.localRotation = _initialLocalRot * Quaternion.Euler(0f, 0f, swayZ);
+                        // Cờ chiến tung bay theo gió với độ gợn sóng tự nhiên
+                        float gust = Mathf.Clamp01(Mathf.Sin(t * 0.55f) * 0.6f + 0.4f);
+                        float flutter = (Mathf.Sin(t * 2.8f) * 1.9f + Mathf.Sin(t * 5.7f) * 0.7f) * (0.7f + 0.5f * gust);
+                        float flutterY = Mathf.Cos(t * 2.1f) * 0.6f * gust;
+                        animatedMeshRoot.localRotation = _initialLocalRot * Quaternion.Euler(0f, flutterY, flutter);
                         break;
                     }
                     case PropEffectKind.ResourceFeastHover:
